@@ -3,6 +3,7 @@ export type RootStackParamList = {
   SignIn: undefined;
   Pairing: undefined;
   Main: undefined;
+  PromptDetail: { promptId: string };
 };
 
 export type MainTabParamList = {

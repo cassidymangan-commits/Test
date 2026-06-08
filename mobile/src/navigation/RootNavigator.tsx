@@ -2,6 +2,7 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { LoadingScreen } from '../screens/LoadingScreen';
 import { OnboardingScreen } from '../screens/OnboardingScreen';
 import { PairingScreen } from '../screens/PairingScreen';
+import { PromptDetailScreen } from '../screens/PromptDetailScreen';
 import { SignInScreen } from '../screens/SignInScreen';
 import { useAppState } from '../state/AppState';
 import { MainTabs } from './MainTabs';
@@ -24,7 +25,10 @@ export function RootNavigator() {
       ) : !coupleId ? (
         <Stack.Screen name="Pairing" component={PairingScreen} />
       ) : (
-        <Stack.Screen name="Main" component={MainTabs} />
+        <>
+          <Stack.Screen name="Main" component={MainTabs} />
+          <Stack.Screen name="PromptDetail" component={PromptDetailScreen} />
+        </>
       )}
     </Stack.Navigator>
   );

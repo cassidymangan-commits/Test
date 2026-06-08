@@ -21,24 +21,30 @@ npm run start          # Expo dev server — scan QR with Expo Go on your phone
 
 ## What's wired up
 
-- React Navigation: auth-aware root stack (Onboarding/SignIn → Pairing → Main tabs)
-- Bottom tabs: Today, History, Profile (placeholders, no prompt data yet)
-- Auth: email/password (Sign in with Apple deferred until launch — see Phase 1+)
+- React Navigation: auth-aware root stack (Onboarding/SignIn → Pairing → Main tabs → PromptDetail)
+- Bottom tabs: Today, History, Profile
+- Auth: email/password (Sign in with Apple deferred until launch)
 - Firebase Auth with AsyncStorage persistence — stays signed in across launches
 - Couple pairing: create a couple, share a 6-char invite code, partner joins by code
-- AppState provider streams `users/{uid}` and `couples/{id}` via Firestore live snapshots
-- Profile shows display name, email, pairing state, notification time
-- TypeScript strict throughout
+- AppState streams `users/{uid}`, `couples/{id}`, and today's prompt via live snapshots
+- **Daily prompt loop:** Today screen shows one of four states — no-prompt → compose → waiting → reveal — and updates live the moment your partner answers
+- **History:** list of revealed prompts with tap-through to full detail
+- **Seed prompts button** (dev only, in Profile): writes the 90 prompts from `src/data/prompts.json` to Firestore `promptBank`
+- "Pull today's prompt" button on Today picks a weighted-random prompt from the bank (skipping ones used in the last 30 days). Manual for now — auto-delivery comes with the Cloud Function in Phase 3.
+
+## How to try it end-to-end
+
+1. Sign up on your phone (your partner does too, on theirs).
+2. Profile → **Seed prompt bank** (dev) — only needs to be done once for the project.
+3. One of you creates a couple, shares the invite code; the other joins.
+4. Today → **Pull today's prompt** → both of you answer → reveal unlocks live.
 
 ## Not wired up yet (next phases)
 
-- Daily prompt UI on the Today screen (write/read answers, "waiting for partner" / "reveal" states)
-- History list reading from `couples/{id}/prompts`
+- Cloud Function for daily prompt fan-out (replaces the manual "Pull" button)
 - Push notification registration + token storage on the user doc
-- Cloud Function for daily prompt fan-out
-- Notification time picker in the profile
-- Firestore security rules
-- Seed script for `promptBank` (from the repo's `prompts.json`)
+- Notification time picker in Profile
+- Firestore security rules (currently relying on test-mode open access)
 
 ## Structure
 
@@ -50,12 +56,15 @@ mobile/
 ├── src/
 │   ├── lib/
 │   │   ├── firebase.ts                # Firebase init (lazy, env-driven)
-│   │   ├── auth.ts                    # email + Apple sign-in
+│   │   ├── auth.ts                    # email sign-in / sign-up / sign-out
 │   │   ├── couples.ts                 # create / join couple
 │   │   ├── inviteCode.ts              # 6-char code generator
+│   │   ├── prompts.ts                 # seed bank + pull today's + submit answer + history
 │   │   └── types.ts                   # Firestore document types
+│   ├── data/
+│   │   └── prompts.json               # 90 seed prompts (canonical bank)
 │   ├── state/
-│   │   └── AppState.tsx               # auth + couple context
+│   │   └── AppState.tsx               # auth + couple + today's prompt context
 │   ├── navigation/
 │   │   ├── RootNavigator.tsx          # auth-aware top-level stack
 │   │   ├── MainTabs.tsx               # Today / History / Profile tabs
@@ -65,8 +74,9 @@ mobile/
 │   │   ├── SignInScreen.tsx
 │   │   ├── PairingScreen.tsx
 │   │   ├── LoadingScreen.tsx
-│   │   ├── TodayScreen.tsx
+│   │   ├── TodayScreen.tsx            # 4-state prompt UI
 │   │   ├── HistoryScreen.tsx
-│   │   └── ProfileScreen.tsx
+│   │   ├── PromptDetailScreen.tsx
+│   │   └── ProfileScreen.tsx          # has dev "Seed prompts" button
 │   └── theme/colors.ts
 ```

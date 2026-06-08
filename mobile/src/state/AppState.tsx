@@ -9,6 +9,8 @@ import {
   type ReactNode,
 } from 'react';
 import { getAuthInstance, getDb, firebaseConfigured } from '../lib/firebase';
+import { todayDateInTz } from '../lib/prompts';
+import type { PromptDoc } from '../lib/types';
 
 type CoupleState = {
   id: string;
@@ -24,6 +26,7 @@ type AppState = {
   user: User | null;
   coupleId: string | null;
   couple: CoupleState;
+  todayPrompt: PromptDoc | null;
 };
 
 const Ctx = createContext<AppState>({
@@ -32,6 +35,7 @@ const Ctx = createContext<AppState>({
   user: null,
   coupleId: null,
   couple: null,
+  todayPrompt: null,
 });
 
 export function AppStateProvider({ children }: { children: ReactNode }) {
@@ -39,6 +43,7 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [coupleId, setCoupleId] = useState<string | null>(null);
   const [couple, setCouple] = useState<CoupleState>(null);
+  const [todayPrompt, setTodayPrompt] = useState<PromptDoc | null>(null);
 
   useEffect(() => {
     if (!firebaseConfigured) {
@@ -50,6 +55,7 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
       if (!u) {
         setCoupleId(null);
         setCouple(null);
+        setTodayPrompt(null);
       }
       setReady(true);
     });
@@ -89,6 +95,23 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
     return unsub;
   }, [coupleId]);
 
+  useEffect(() => {
+    if (!coupleId || !couple) {
+      setTodayPrompt(null);
+      return;
+    }
+    const promptId = todayDateInTz(couple.primaryTimezone);
+    const promptRef = doc(getDb(), 'couples', coupleId, 'prompts', promptId);
+    const unsub = onSnapshot(promptRef, (snap) => {
+      if (!snap.exists()) {
+        setTodayPrompt(null);
+        return;
+      }
+      setTodayPrompt({ id: snap.id, ...(snap.data() as Omit<PromptDoc, 'id'>) });
+    });
+    return unsub;
+  }, [coupleId, couple]);
+
   const value = useMemo<AppState>(
     () => ({
       ready,
@@ -96,8 +119,9 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
       user,
       coupleId,
       couple,
+      todayPrompt,
     }),
-    [ready, user, coupleId, couple]
+    [ready, user, coupleId, couple, todayPrompt]
   );
 
   return <Ctx.Provider value={value}>{children}</Ctx.Provider>;

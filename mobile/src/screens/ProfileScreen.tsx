@@ -1,11 +1,21 @@
-import { Alert, Pressable, StyleSheet, Text, View } from 'react-native';
+import { useState } from 'react';
+import {
+  ActivityIndicator,
+  Alert,
+  Pressable,
+  StyleSheet,
+  Text,
+  View,
+} from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { signOut } from '../lib/auth';
+import { seedPromptBank } from '../lib/prompts';
 import { useAppState } from '../state/AppState';
 import { colors } from '../theme/colors';
 
 export function ProfileScreen() {
   const { user, couple } = useAppState();
+  const [seeding, setSeeding] = useState(false);
 
   const partnerCount = couple ? couple.members.length - 1 : 0;
 
@@ -14,6 +24,18 @@ export function ProfileScreen() {
       { text: 'Cancel', style: 'cancel' },
       { text: 'Sign out', style: 'destructive', onPress: () => signOut() },
     ]);
+  };
+
+  const onSeed = async () => {
+    setSeeding(true);
+    try {
+      const count = await seedPromptBank();
+      Alert.alert('Seeded', `${count} prompts written to Firestore.`);
+    } catch (err) {
+      Alert.alert('Seed failed', (err as Error).message);
+    } finally {
+      setSeeding(false);
+    }
   };
 
   return (
@@ -32,6 +54,23 @@ export function ProfileScreen() {
       <Row label="Timezone" value={couple?.primaryTimezone ?? '—'} />
 
       <View style={{ flex: 1 }} />
+
+      {__DEV__ && (
+        <View style={styles.devSection}>
+          <Text style={styles.devLabel}>Developer</Text>
+          <Pressable
+            style={[styles.devButton, seeding && styles.buttonDisabled]}
+            disabled={seeding}
+            onPress={onSeed}
+          >
+            {seeding ? (
+              <ActivityIndicator color={colors.accent} />
+            ) : (
+              <Text style={styles.devButtonText}>Seed prompt bank</Text>
+            )}
+          </Pressable>
+        </View>
+      )}
 
       <Pressable style={styles.signOut} onPress={onSignOut}>
         <Text style={styles.signOutText}>Sign out</Text>
@@ -76,6 +115,26 @@ const styles = StyleSheet.create({
     flexShrink: 1,
     textAlign: 'right',
   },
+  devSection: {
+    marginVertical: 12,
+    gap: 8,
+  },
+  devLabel: {
+    fontSize: 11,
+    color: colors.textMuted,
+    fontWeight: '600',
+    textTransform: 'uppercase',
+    letterSpacing: 0.5,
+  },
+  devButton: {
+    borderWidth: 1,
+    borderColor: colors.border,
+    borderRadius: 12,
+    paddingVertical: 14,
+    alignItems: 'center',
+  },
+  buttonDisabled: { opacity: 0.6 },
+  devButtonText: { color: colors.accent, fontSize: 15, fontWeight: '500' },
   signOut: {
     paddingVertical: 16,
     alignItems: 'center',
