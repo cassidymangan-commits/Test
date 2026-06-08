@@ -129,7 +129,8 @@ export async function submitAnswer(
     if (Object.keys(answers).length >= 2 && !data.unlockedAt) {
       update.unlockedAt = serverTimestamp();
     }
-    tx.update(ref, update);
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    tx.update(ref, update as any);
   });
 }
 
