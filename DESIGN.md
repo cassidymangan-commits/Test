@@ -85,15 +85,53 @@ This is the heart of v1, so it gets its own section.
 
 ## Prompt Bank (starter set)
 
-Seed with ~50 prompts across these categories so day-to-day feels varied:
+**Tone:** chaotic-good. Funny, playful, occasionally unhinged, lightly roast-y, with real intimacy underneath. Think "your group chat with one person." Not earnest, not horny — the App Store cares.
 
-- **Memory:** "What's a small moment with me you keep coming back to?"
-- **Appreciation:** "What's something I did this week you didn't get a chance to thank me for?"
-- **Future:** "Pick a city we've never been to and tell me what we'd do on day one."
-- **Playful:** "If I were a snack, which one would I be and why?"
-- **Check-in:** "How full is your cup today, 1–10? What would top it up?"
+Seed with ~60 prompts across these categories so day-to-day feels varied. Examples below — the real bank ships in `prompts.json`.
 
-Bank lives in a JSON file in the repo and is seeded into Firestore via a one-off script.
+**🥊 Light roast / brutal honesty**
+- "Rank my top 5 most annoying habits. No wrong answers."
+- "What's a hill I'd die on that you actually agree with but won't admit?"
+- "What's a compliment I give myself that you secretly think is cope?"
+- "If I were a Wikipedia article, what would the 'Controversies' section say?"
+
+**🎬 Reality-show brain**
+- "If our relationship got a Netflix documentary, what's the title?"
+- "Cast us as a reality show. Show name, premise, and who's the villain edit."
+- "What's the trailer voiceover for our last argument?"
+- "If we had a tag-team wrestling name, what is it?"
+
+**🧠 Hot takes & lore**
+- "What's my Roman Empire? You know the one."
+- "What's a take I have that's so wrong it's basically a personality trait?"
+- "Three words that would summon me from across a room."
+- "Pitch my villain origin story. What's the inciting incident?"
+
+**🥪 Cursed hypotheticals**
+- "If I were a sandwich, what's on it and why is it slightly cursed?"
+- "We have to commit one (1) federal crime together. What is it?"
+- "We're a two-person cult. What do we worship?"
+- "I die tragically. What's the most chaotic thing in my eulogy?"
+
+**❤️ Soft underneath (the secret weapon)**
+- "What's something I do that you find weirdly hot?"
+- "When was the last time I made you feel safe? Be specific."
+- "What's a small thing I did this week that you're still thinking about?"
+- "If you had to bottle a feeling I give you, what's on the label?"
+
+**📊 Rank / rate**
+- "Rate this week from 1–10. Defend your answer."
+- "Rank our last 5 dates. The worst one is now law."
+- "On a scale of 1 to red flag, how concerning is my last Spotify Wrapped?"
+
+**🔮 Future chaos**
+- "Pick a city we've never been to. We're going. What do we do day one?"
+- "We retire tomorrow. What's the first dumb thing we buy?"
+- "Plan our funeral. Mine first. Make it humiliating."
+
+Bank lives in `prompts.json` in the repo and is seeded into Firestore via a one-off script. New prompts can be added without an app update.
+
+**Content policy:** keep prompts edgy but App-Store-safe. No sex acts, no slurs, no targeting protected categories. "Cursed" and "unhinged" are fine; explicit is not. A separate "spicy mode" pack could ship as a v2 IAP if there's appetite.
 
 ## Screens (v1)
 
