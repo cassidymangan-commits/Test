@@ -1520,7 +1520,8 @@ let leafMap=null, markerLayer=null;
 function statusColor(s){ return s==='active'?'#2f9e6b':s==='loi'?'#e08a2b':'#8a8f98'; }
 function renderMap(){
   const el=document.getElementById('map-board');
-  if(typeof L==='undefined'){ el.innerHTML='<div style="padding:24px;color:var(--muted)">Map tiles need an internet connection — open this file in a browser to see the live map.</div>'; return; }
+  if(typeof L==='undefined'){ setTimeout(renderMap,200); return; }
+  if(el.offsetHeight<40){ setTimeout(renderMap,100); return; }
   if(!leafMap){
     el.innerHTML='';
     leafMap=L.map(el,{scrollWheelZoom:false});
@@ -1546,7 +1547,10 @@ function renderMap(){
   });
   if(pts.length) leafMap.fitBounds(pts,{padding:[34,34],maxZoom:11});
   setTimeout(()=>leafMap.invalidateSize(),60);
+  setTimeout(()=>leafMap.invalidateSize(),400);
+  setTimeout(()=>leafMap.invalidateSize(),1000);
 }
+window.addEventListener('load',()=>{ if(leafMap) leafMap.invalidateSize(); else renderMap(); });
 
 function renderFollowups(){
   const open=followups.map((f,i)=>({f,i})).filter(o=>!o.f.done);
