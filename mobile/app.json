@@ -1,0 +1,39 @@
+{
+  "expo": {
+    "name": "LoveMaxxing",
+    "slug": "lovemaxxing",
+    "version": "0.1.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "light",
+    "scheme": "lovemaxxing",
+    "ios": {
+      "supportsTablet": false,
+      "bundleIdentifier": "app.lovemaxxing",
+      "infoPlist": {
+        "NSUserNotificationsUsageDescription": "LoveMaxxing sends you and your partner a new prompt each day at the time you choose."
+      }
+    },
+    "android": {
+      "package": "app.lovemaxxing",
+      "adaptiveIcon": {
+        "backgroundColor": "#FFF1F2",
+        "foregroundImage": "./assets/android-icon-foreground.png",
+        "backgroundImage": "./assets/android-icon-background.png",
+        "monochromeImage": "./assets/android-icon-monochrome.png"
+      },
+      "predictiveBackGestureEnabled": false
+    },
+    "web": {
+      "favicon": "./assets/favicon.png"
+    },
+    "plugins": [
+      [
+        "expo-notifications",
+        {
+          "color": "#E11D48"
+        }
+      ]
+    ]
+  }
+}
