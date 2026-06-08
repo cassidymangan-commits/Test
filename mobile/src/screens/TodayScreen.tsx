@@ -212,6 +212,10 @@ function ComposeState({
         onChangeText={setText}
         multiline
         textAlignVertical="top"
+        autoCorrect
+        autoCapitalize="sentences"
+        spellCheck
+        keyboardType="default"
       />
       <Pressable
         style={[styles.button, busy && styles.buttonDisabled]}
