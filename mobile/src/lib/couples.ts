@@ -13,6 +13,7 @@ import {
 } from 'firebase/firestore';
 import { getDb } from './firebase';
 import { generateInviteCode, normalizeInviteCode } from './inviteCode';
+import { DEFAULT_NOTIFICATION_TIMES } from './types';
 
 function localTimezone(): string {
   try {
@@ -30,7 +31,7 @@ export async function createCouple(uid: string): Promise<string> {
     members: [uid],
     pairedAt: null,
     inviteCode,
-    notificationTime: '08:00',
+    notificationTimes: DEFAULT_NOTIFICATION_TIMES,
     primaryTimezone: localTimezone(),
     createdAt: serverTimestamp(),
   });
@@ -84,11 +85,5 @@ export async function joinCoupleByCode(
 export async function fetchCouple(coupleId: string) {
   const snap = await getDoc(doc(getDb(), 'couples', coupleId));
   if (!snap.exists()) return null;
-  return { id: snap.id, ...snap.data() } as {
-    id: string;
-    members: string[];
-    inviteCode: string | null;
-    notificationTime: string;
-    primaryTimezone: string;
-  };
+  return { id: snap.id, ...snap.data() };
 }

@@ -12,7 +12,7 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { fetchPromptHistory } from '../lib/prompts';
-import type { PromptDoc } from '../lib/types';
+import { SLOT_LABEL, type PromptDoc } from '../lib/types';
 import type { MainTabParamList, RootStackParamList } from '../navigation/types';
 import { useAppState } from '../state/AppState';
 import { colors } from '../theme/colors';
@@ -71,7 +71,10 @@ export function HistoryScreen({ navigation }: Props) {
               navigation.navigate('PromptDetail', { promptId: item.id })
             }
           >
-            <Text style={styles.rowDate}>{item.promptDate}</Text>
+            <Text style={styles.rowDate}>
+              {item.promptDate}
+              {item.slot ? ` · ${SLOT_LABEL[item.slot]}` : ''}
+            </Text>
             <Text style={styles.rowText} numberOfLines={2}>
               {item.promptText}
             </Text>

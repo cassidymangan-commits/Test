@@ -15,7 +15,8 @@ import {
 } from 'firebase/firestore';
 import promptBankSeed from '../data/prompts.json';
 import { getDb } from './firebase';
-import type { PromptCategory, PromptDoc } from './types';
+import type { PromptCategory, PromptDoc, Slot } from './types';
+import { promptDocId, SLOT_CATEGORY_POOLS } from './types';
 
 type PromptBankEntry = {
   id: string;
@@ -62,7 +63,10 @@ export async function seedPromptBank(): Promise<number> {
   return seed.length;
 }
 
-async function pickRandomTemplate(coupleId: string): Promise<PromptBankEntry> {
+async function pickRandomTemplateForSlot(
+  coupleId: string,
+  slot: Slot
+): Promise<PromptBankEntry> {
   const db = getDb();
   const bankSnap = await getDocs(collection(db, 'promptBank'));
   const bank: PromptBankEntry[] = bankSnap.empty
@@ -72,12 +76,15 @@ async function pickRandomTemplate(coupleId: string): Promise<PromptBankEntry> {
         ...(d.data() as Omit<PromptBankEntry, 'id'>),
       }));
 
+  const allowedCategories = new Set<PromptCategory>(SLOT_CATEGORY_POOLS[slot]);
+  const slotBank = bank.filter((p) => allowedCategories.has(p.category));
+
   const recent = await getDocs(
-    query(promptsCollection(coupleId), orderBy('createdAt', 'desc'), limit(30))
+    query(promptsCollection(coupleId), orderBy('createdAt', 'desc'), limit(40))
   );
   const used = new Set(recent.docs.map((d) => d.data().templateId as string));
-  const available = bank.filter((p) => !used.has(p.id));
-  const pool = available.length > 0 ? available : bank;
+  const available = slotBank.filter((p) => !used.has(p.id));
+  const pool = available.length > 0 ? available : slotBank;
 
   const totalWeight = pool.reduce((s, p) => s + (p.weight ?? 1), 0);
   let r = Math.random() * totalWeight;
@@ -88,26 +95,29 @@ async function pickRandomTemplate(coupleId: string): Promise<PromptBankEntry> {
   return pool[pool.length - 1];
 }
 
-export async function pullPromptForToday(
+export async function pullPromptForSlot(
   coupleId: string,
-  primaryTimezone: string
+  primaryTimezone: string,
+  slot: Slot
 ): Promise<string> {
-  const promptId = todayDateInTz(primaryTimezone);
-  const ref = promptRef(coupleId, promptId);
+  const date = todayDateInTz(primaryTimezone);
+  const id = promptDocId(date, slot);
+  const ref = promptRef(coupleId, id);
   const existing = await getDoc(ref);
-  if (existing.exists()) return promptId;
+  if (existing.exists()) return id;
 
-  const template = await pickRandomTemplate(coupleId);
+  const template = await pickRandomTemplateForSlot(coupleId, slot);
   await setDoc(ref, {
     promptText: template.text,
-    promptDate: promptId,
+    promptDate: date,
+    slot,
     templateId: template.id,
     category: template.category,
     answers: {},
     unlockedAt: null,
     createdAt: serverTimestamp(),
   });
-  return promptId;
+  return id;
 }
 
 export async function submitAnswer(
@@ -136,7 +146,7 @@ export async function submitAnswer(
 
 export async function fetchPromptHistory(
   coupleId: string,
-  max = 50
+  max = 60
 ): Promise<PromptDoc[]> {
   const q = query(
     promptsCollection(coupleId),

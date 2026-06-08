@@ -70,7 +70,18 @@ export function ProfileScreen() {
       <Row label="Display name" value={user?.displayName ?? '—'} />
       <Row label="Email" value={user?.email ?? '—'} />
       <Row label="Partner" value={isPaired ? 'Paired' : 'Not paired yet'} />
-      <Row label="Daily notification" value={couple?.notificationTime ?? '—'} />
+      <Row
+        label="Morning prompt"
+        value={couple?.notificationTimes.morning ?? '—'}
+      />
+      <Row
+        label="Afternoon prompt"
+        value={couple?.notificationTimes.afternoon ?? '—'}
+      />
+      <Row
+        label="Night prompt"
+        value={couple?.notificationTimes.night ?? '—'}
+      />
       <Row label="Timezone" value={couple?.primaryTimezone ?? '—'} />
 
       <View style={{ flex: 1 }} />

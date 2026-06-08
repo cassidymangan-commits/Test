@@ -10,7 +10,7 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { fetchPrompt } from '../lib/prompts';
-import type { PromptDoc } from '../lib/types';
+import { SLOT_LABEL, type PromptDoc } from '../lib/types';
 import type { RootStackParamList } from '../navigation/types';
 import { useAppState } from '../state/AppState';
 import { colors } from '../theme/colors';
@@ -70,7 +70,10 @@ export function PromptDetailScreen({ navigation, route }: Props) {
     <SafeAreaView style={styles.container}>
       <Header onBack={() => navigation.goBack()} />
       <ScrollView contentContainerStyle={styles.scroll}>
-        <Text style={styles.date}>{prompt.promptDate}</Text>
+        <Text style={styles.date}>
+          {prompt.promptDate}
+          {prompt.slot ? ` · ${SLOT_LABEL[prompt.slot]}` : ''}
+        </Text>
         <View style={styles.promptCard}>
           <Text style={styles.promptText}>{prompt.promptText}</Text>
         </View>

@@ -10,15 +10,29 @@ import {
 } from 'react';
 import { getAuthInstance, getDb, firebaseConfigured } from '../lib/firebase';
 import { todayDateInTz } from '../lib/prompts';
-import type { PromptDoc } from '../lib/types';
+import {
+  DEFAULT_NOTIFICATION_TIMES,
+  SLOTS,
+  promptDocId,
+  type PromptDoc,
+  type Slot,
+} from '../lib/types';
 
 type CoupleState = {
   id: string;
   members: string[];
   inviteCode: string | null;
-  notificationTime: string;
+  notificationTimes: Record<Slot, string>;
   primaryTimezone: string;
 } | null;
+
+type TodaySlots = Record<Slot, PromptDoc | null>;
+
+const EMPTY_TODAY: TodaySlots = {
+  morning: null,
+  afternoon: null,
+  night: null,
+};
 
 type AppState = {
   ready: boolean;
@@ -26,7 +40,7 @@ type AppState = {
   user: User | null;
   coupleId: string | null;
   couple: CoupleState;
-  todayPrompt: PromptDoc | null;
+  todaySlots: TodaySlots;
 };
 
 const Ctx = createContext<AppState>({
@@ -35,7 +49,7 @@ const Ctx = createContext<AppState>({
   user: null,
   coupleId: null,
   couple: null,
-  todayPrompt: null,
+  todaySlots: EMPTY_TODAY,
 });
 
 export function AppStateProvider({ children }: { children: ReactNode }) {
@@ -43,7 +57,7 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [coupleId, setCoupleId] = useState<string | null>(null);
   const [couple, setCouple] = useState<CoupleState>(null);
-  const [todayPrompt, setTodayPrompt] = useState<PromptDoc | null>(null);
+  const [todaySlots, setTodaySlots] = useState<TodaySlots>(EMPTY_TODAY);
 
   useEffect(() => {
     if (!firebaseConfigured) {
@@ -55,7 +69,7 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
       if (!u) {
         setCoupleId(null);
         setCouple(null);
-        setTodayPrompt(null);
+        setTodaySlots(EMPTY_TODAY);
       }
       setReady(true);
     });
@@ -88,7 +102,9 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
         id: snap.id,
         members: data.members ?? [],
         inviteCode: data.inviteCode ?? null,
-        notificationTime: data.notificationTime ?? '08:00',
+        notificationTimes:
+          (data.notificationTimes as Record<Slot, string>) ??
+          DEFAULT_NOTIFICATION_TIMES,
         primaryTimezone: data.primaryTimezone ?? 'UTC',
       });
     });
@@ -97,19 +113,25 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     if (!coupleId || !couple) {
-      setTodayPrompt(null);
+      setTodaySlots(EMPTY_TODAY);
       return;
     }
-    const promptId = todayDateInTz(couple.primaryTimezone);
-    const promptRef = doc(getDb(), 'couples', coupleId, 'prompts', promptId);
-    const unsub = onSnapshot(promptRef, (snap) => {
-      if (!snap.exists()) {
-        setTodayPrompt(null);
-        return;
-      }
-      setTodayPrompt({ id: snap.id, ...(snap.data() as Omit<PromptDoc, 'id'>) });
+    const date = todayDateInTz(couple.primaryTimezone);
+    const unsubs = SLOTS.map((slot) => {
+      const id = promptDocId(date, slot);
+      const ref = doc(getDb(), 'couples', coupleId, 'prompts', id);
+      return onSnapshot(ref, (snap) => {
+        setTodaySlots((prev) => ({
+          ...prev,
+          [slot]: snap.exists()
+            ? ({ id: snap.id, ...(snap.data() as Omit<PromptDoc, 'id'>) } as PromptDoc)
+            : null,
+        }));
+      });
     });
-    return unsub;
+    return () => {
+      unsubs.forEach((u) => u());
+    };
   }, [coupleId, couple]);
 
   const value = useMemo<AppState>(
@@ -119,9 +141,9 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
       user,
       coupleId,
       couple,
-      todayPrompt,
+      todaySlots,
     }),
-    [ready, user, coupleId, couple, todayPrompt]
+    [ready, user, coupleId, couple, todaySlots]
   );
 
   return <Ctx.Provider value={value}>{children}</Ctx.Provider>;
