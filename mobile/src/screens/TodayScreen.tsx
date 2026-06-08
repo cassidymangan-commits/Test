@@ -6,6 +6,7 @@ import {
   Platform,
   Pressable,
   ScrollView,
+  Share,
   StyleSheet,
   Text,
   TextInput,
@@ -35,14 +36,18 @@ export function TodayScreen() {
   const partnerAnswer = partnerUid
     ? todayPrompt?.answers?.[partnerUid]?.text ?? null
     : null;
+  const awaitingPartner = couple.members.length < 2;
 
-  const state: 'no-prompt' | 'compose' | 'waiting' | 'reveal' = !todayPrompt
-    ? 'no-prompt'
-    : !myAnswer
-      ? 'compose'
-      : !todayPrompt.unlockedAt
-        ? 'waiting'
-        : 'reveal';
+  const state: 'awaiting-partner' | 'no-prompt' | 'compose' | 'waiting' | 'reveal' =
+    awaitingPartner
+      ? 'awaiting-partner'
+      : !todayPrompt
+        ? 'no-prompt'
+        : !myAnswer
+          ? 'compose'
+          : !todayPrompt.unlockedAt
+            ? 'waiting'
+            : 'reveal';
 
   const onPull = async () => {
     setPulling(true);
@@ -70,6 +75,9 @@ export function TodayScreen() {
             <Text style={styles.heading}>Today's prompt</Text>
           </View>
 
+          {state === 'awaiting-partner' && (
+            <AwaitingPartnerState inviteCode={couple.inviteCode} />
+          )}
           {state === 'no-prompt' && (
             <NoPromptState onPull={onPull} pulling={pulling} />
           )}
@@ -96,6 +104,38 @@ export function TodayScreen() {
         </ScrollView>
       </KeyboardAvoidingView>
     </SafeAreaView>
+  );
+}
+
+function AwaitingPartnerState({ inviteCode }: { inviteCode: string | null }) {
+  const onShare = async () => {
+    if (!inviteCode) return;
+    await Share.share({
+      message: `Join me on LoveMaxxing — invite code: ${inviteCode}`,
+    });
+  };
+
+  return (
+    <View style={styles.card}>
+      <Text style={styles.cardTitle}>Waiting for your partner</Text>
+      <Text style={styles.cardSub}>
+        Send them this code. The moment they join, today's prompt unlocks.
+      </Text>
+      {inviteCode ? (
+        <>
+          <View style={styles.codeBox}>
+            <Text style={styles.codeText}>{inviteCode}</Text>
+          </View>
+          <Pressable style={styles.button} onPress={onShare}>
+            <Text style={styles.buttonText}>Share code</Text>
+          </Pressable>
+        </>
+      ) : (
+        <Text style={styles.cardSub}>
+          Head to Profile to get a fresh invite code.
+        </Text>
+      )}
+    </View>
   );
 }
 
@@ -281,6 +321,19 @@ const styles = StyleSheet.create({
   },
   cardTitle: { fontSize: 17, fontWeight: '600', color: colors.text },
   cardSub: { fontSize: 14, color: colors.textMuted, lineHeight: 20 },
+  codeBox: {
+    backgroundColor: colors.accentSoft,
+    borderRadius: 12,
+    paddingVertical: 18,
+    alignItems: 'center',
+    marginTop: 4,
+  },
+  codeText: {
+    fontSize: 32,
+    fontWeight: '700',
+    color: colors.accent,
+    letterSpacing: 8,
+  },
   answerInput: {
     backgroundColor: colors.surface,
     borderColor: colors.border,

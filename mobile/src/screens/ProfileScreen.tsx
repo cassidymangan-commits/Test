@@ -3,6 +3,7 @@ import {
   ActivityIndicator,
   Alert,
   Pressable,
+  Share,
   StyleSheet,
   Text,
   View,
@@ -17,7 +18,9 @@ export function ProfileScreen() {
   const { user, couple } = useAppState();
   const [seeding, setSeeding] = useState(false);
 
-  const partnerCount = couple ? couple.members.length - 1 : 0;
+  const inviteCode = couple?.inviteCode ?? null;
+  const isWaiting = !!inviteCode && (couple?.members.length ?? 0) < 2;
+  const isPaired = (couple?.members.length ?? 0) >= 2;
 
   const onSignOut = () => {
     Alert.alert('Sign out?', 'You can sign back in any time.', [
@@ -38,18 +41,35 @@ export function ProfileScreen() {
     }
   };
 
+  const onShareCode = async () => {
+    if (!inviteCode) return;
+    await Share.share({
+      message: `Join me on LoveMaxxing — invite code: ${inviteCode}`,
+    });
+  };
+
   return (
     <SafeAreaView style={styles.container} edges={['top']}>
       <View style={styles.header}>
         <Text style={styles.heading}>Profile</Text>
       </View>
 
+      {isWaiting && (
+        <View style={styles.inviteCard}>
+          <Text style={styles.inviteLabel}>Your invite code</Text>
+          <Text style={styles.inviteCode}>{inviteCode}</Text>
+          <Text style={styles.inviteHint}>
+            Send this to your partner. The moment they enter it, you'll be paired.
+          </Text>
+          <Pressable style={styles.shareButton} onPress={onShareCode}>
+            <Text style={styles.shareButtonText}>Share code</Text>
+          </Pressable>
+        </View>
+      )}
+
       <Row label="Display name" value={user?.displayName ?? '—'} />
       <Row label="Email" value={user?.email ?? '—'} />
-      <Row
-        label="Partner"
-        value={partnerCount > 0 ? 'Paired' : 'Not paired yet'}
-      />
+      <Row label="Partner" value={isPaired ? 'Paired' : 'Not paired yet'} />
       <Row label="Daily notification" value={couple?.notificationTime ?? '—'} />
       <Row label="Timezone" value={couple?.primaryTimezone ?? '—'} />
 
@@ -99,6 +119,41 @@ const styles = StyleSheet.create({
     color: colors.text,
     letterSpacing: -0.5,
   },
+  inviteCard: {
+    backgroundColor: colors.accentSoft,
+    borderRadius: 16,
+    padding: 20,
+    marginBottom: 16,
+    gap: 10,
+    alignItems: 'center',
+  },
+  inviteLabel: {
+    fontSize: 12,
+    color: colors.accent,
+    fontWeight: '600',
+    textTransform: 'uppercase',
+    letterSpacing: 0.5,
+  },
+  inviteCode: {
+    fontSize: 36,
+    fontWeight: '700',
+    color: colors.accent,
+    letterSpacing: 8,
+  },
+  inviteHint: {
+    fontSize: 13,
+    color: colors.textMuted,
+    textAlign: 'center',
+    paddingHorizontal: 12,
+  },
+  shareButton: {
+    backgroundColor: colors.accent,
+    paddingVertical: 12,
+    paddingHorizontal: 22,
+    borderRadius: 12,
+    marginTop: 6,
+  },
+  shareButtonText: { color: '#fff', fontSize: 15, fontWeight: '600' },
   row: {
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -115,10 +170,7 @@ const styles = StyleSheet.create({
     flexShrink: 1,
     textAlign: 'right',
   },
-  devSection: {
-    marginVertical: 12,
-    gap: 8,
-  },
+  devSection: { marginVertical: 12, gap: 8 },
   devLabel: {
     fontSize: 11,
     color: colors.textMuted,
@@ -135,10 +187,6 @@ const styles = StyleSheet.create({
   },
   buttonDisabled: { opacity: 0.6 },
   devButtonText: { color: colors.accent, fontSize: 15, fontWeight: '500' },
-  signOut: {
-    paddingVertical: 16,
-    alignItems: 'center',
-    marginBottom: 12,
-  },
+  signOut: { paddingVertical: 16, alignItems: 'center', marginBottom: 12 },
   signOutText: { color: colors.accent, fontSize: 15, fontWeight: '500' },
 });

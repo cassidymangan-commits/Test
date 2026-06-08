@@ -15,12 +15,10 @@ export function RootNavigator() {
 
   if (!ready) return <LoadingScreen />;
 
-  // Stay on Pairing until the couple has both members. Once a user creates
-  // a couple, coupleId is set immediately but they still need to share the
-  // invite code with their partner — otherwise they'd get bumped to Main
-  // before ever seeing the code.
+  // Once the user has a coupleId on their user doc we drop them into Main —
+  // the invite code (visible until the partner joins) lives on Profile + Today
+  // so they don't lose access to the rest of the app while waiting.
   const coupleLoading = coupleId !== null && couple === null;
-  const fullyPaired = couple !== null && couple.members.length >= 2;
 
   if (user && coupleLoading) return <LoadingScreen />;
 
@@ -31,7 +29,7 @@ export function RootNavigator() {
           <Stack.Screen name="Onboarding" component={OnboardingScreen} />
           <Stack.Screen name="SignIn" component={SignInScreen} />
         </>
-      ) : !fullyPaired ? (
+      ) : !coupleId ? (
         <Stack.Screen name="Pairing" component={PairingScreen} />
       ) : (
         <>
