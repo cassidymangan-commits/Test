@@ -1,15 +1,17 @@
-# Relationship App — Design Doc
+# UandI — Design Doc
 
-A two-person app for couples to share notes, photos, and love letters, and to answer a daily prompt together.
+**UandI** (styled **U & I** in the wordmark) — a two-person app for couples to share notes, photos, and love letters, and to answer a daily prompt together.
 
 ## v1 Scope
 
 The smallest version that feels alive on day one.
 
+- **Platform:** iOS first (Apple Developer account in hand). Android in a later phase.
+- **Pricing:** paid upfront, **$2.99**. No IAP plumbing in v1.
 - **Pair up:** two users link into one couple-space via an invite code.
-- **Daily prompt:** every day a new question/template lands in both partners' inboxes via push notification. Each partner answers privately, then both answers unlock once both have replied.
+- **Daily prompt:** every day at the couple's chosen time, a new question lands in both partners' inboxes via push notification. Tap the notification to read the prompt, then answer when ready. Both answers unlock once both have replied.
 - **Prompt history:** scroll back through past prompts and answers.
-- **Auth + profile:** sign in with email or Apple/Google, set display name + avatar.
+- **Auth + profile:** sign in with email or Apple, set display name + avatar, set the couple's daily notification time.
 
 Notes, photos, and love letters are **v2** — see roadmap. Building v1 narrow keeps the daily-prompt loop sharp before adding surface area.
 
@@ -41,6 +43,8 @@ couples/{coupleId}
   members: [userId, userId]
   pairedAt: timestamp
   inviteCode: string | null   // null once second member joins
+  notificationTime: string    // "HH:mm" in primary timezone, e.g. "08:00"
+  primaryTimezone: string     // first member's tz; used for daily delivery
 
 couples/{coupleId}/prompts/{promptId}
   promptText: string
@@ -66,11 +70,11 @@ promptBank/{templateId}        // global, not per-couple
 
 This is the heart of v1, so it gets its own section.
 
-1. **Scheduled Cloud Function** runs hourly. For each couple whose local midnight just passed (based on their timezone), it:
+1. **Scheduled Cloud Function** runs every 15 minutes. For each couple whose `notificationTime` falls in the just-elapsed window (in their `primaryTimezone`), it:
    - Picks a prompt from `promptBank` (weighted random, excluding prompts used in the last N days).
    - Creates `couples/{coupleId}/prompts/{promptId}` with `promptDate = today`.
-   - Sends a push to both members' `expoPushToken`s.
-2. **Client** opens to today's prompt card. Each partner types their answer privately.
+   - Sends a push to both members' `expoPushToken`s. Notification body contains the prompt text so tapping it opens straight to the answer composer.
+2. **Client** opens to today's prompt card. Either partner can read the prompt first, then answer privately when ready.
 3. When a partner submits, a Firestore `onUpdate` trigger checks if both answers are present. If yes, it sets `unlockedAt` and sends a "your partner answered!" push to both.
 4. Once unlocked, both answers render side-by-side.
 
@@ -93,10 +97,10 @@ Bank lives in a JSON file in the repo and is seeded into Firestore via a one-off
 
 ## Screens (v1)
 
-1. **Onboarding** — sign in → create or join couple (invite code) → set timezone + push permission.
-2. **Today** — today's prompt card. Either "answer" composer, "waiting for partner" state, or "both answered" reveal.
+1. **Onboarding** — sign in (email or Apple) → create or join couple (invite code) → set timezone, daily notification time, and push permission.
+2. **Today** — today's prompt card. Read the prompt up top; below it is either the "answer" composer, "waiting for partner" state (your answer locked in, theirs pending), or "both answered" reveal showing both side-by-side.
 3. **History** — scrollable list of past prompts with both answers.
-4. **Profile** — name, avatar, partner info, notification time, sign out.
+4. **Profile** — name, avatar, partner info, daily notification time picker, sign out.
 
 Four screens. No tab clutter; bottom nav with Today / History / Profile.
 
@@ -116,22 +120,18 @@ Pair up, daily push, answer + reveal, history.
 **v4 — Polish**
 - Streaks, gentle reminders, custom prompt categories, export-as-keepsake (PDF of a year of answers).
 
-## Open Questions
+## Decisions Locked
 
-Things to decide before coding starts:
-
-1. **App name?** Placeholder needed for bundle ID, app store listing, branding.
-2. **Notification time?** Fixed (e.g. 8am local) or user-configurable per couple?
-3. **Can either partner see the prompt before answering, or only after they commit to answer?** Affects whether prompts feel like a surprise or a planned conversation.
-4. **Free or paid?** Affects whether we need IAP/subscription plumbing in v1 or can defer.
-5. **Apple Developer + Google Play accounts** — required to actually ship; ~$100 + $25 one-time. Not blocking dev but blocking distribution.
+1. **Name:** **UandI** (wordmark: **U & I**). Bundle ID placeholder: `app.uandi`.
+2. **Notification time:** user-configurable per couple, set during onboarding and editable in Profile.
+3. **Prompt UX:** read-then-answer (tap notification → see prompt → answer when ready).
+4. **Pricing:** paid upfront, **$2.99**. No IAP/subscription plumbing in v1.
+5. **Platform priority:** iOS first (Apple Developer account in hand). Android added in a later phase.
 
 ## Next Steps
 
-Once the above is approved:
-
 1. `npx create-expo-app` scaffold + Firebase project setup.
-2. Auth + couple pairing flow end-to-end.
+2. Auth (email + Sign in with Apple) + couple pairing flow end-to-end.
 3. Prompt bank seeded; today/history screens reading from Firestore.
-4. Cloud Function for daily fan-out + push notifications.
-5. TestFlight / Play internal track build for real-device testing.
+4. Cloud Function for daily fan-out + push notifications, honoring per-couple `notificationTime`.
+5. TestFlight build for real-device testing.
