@@ -1,6 +1,6 @@
-# UandI — Design Doc
+# LoveMaxxing — Design Doc
 
-**UandI** (styled **U & I** in the wordmark) — a two-person app for couples to share notes, photos, and love letters, and to answer a daily prompt together.
+**LoveMaxxing** — a two-person app for couples to share notes, photos, and love letters, and to answer a daily prompt together. Maximizing the love, daily.
 
 ## v1 Scope
 
@@ -122,7 +122,7 @@ Pair up, daily push, answer + reveal, history.
 
 ## Decisions Locked
 
-1. **Name:** **UandI** (wordmark: **U & I**). Bundle ID placeholder: `app.uandi`.
+1. **Name:** **LoveMaxxing**. Bundle ID placeholder: `app.lovemaxxing`. (Verify availability on App Store + USPTO before locking.)
 2. **Notification time:** user-configurable per couple, set during onboarding and editable in Profile.
 3. **Prompt UX:** read-then-answer (tap notification → see prompt → answer when ready).
 4. **Pricing:** paid upfront, **$2.99**. No IAP/subscription plumbing in v1.
