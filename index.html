@@ -1,0 +1,625 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Listing Hub — Prototype</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.js"></script>
+<style>
+  :root{
+    --bg:#eef1f5; --panel:#ffffff; --ink:#2b3440; --muted:#697586;
+    --line:#e2e6ec; --brand:#235a93; --brand2:#2b7fd4; --accent:#2f6fb0;
+    --active:#2f9e6b; --loi:#e08a2b; --closed:#8a93a0; --soft:#eef3fb;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;background:var(--bg);color:var(--ink);font-size:14px;line-height:1.45}
+  .app{display:flex;min-height:100vh}
+  .side{width:218px;background:#586676;color:#e3e8ef;flex-shrink:0;display:flex;flex-direction:column;position:sticky;top:0;height:100vh}
+  .logo{padding:20px 20px 16px;font-weight:700;font-size:17px;color:#fff;letter-spacing:.3px;border-bottom:1px solid rgba(255,255,255,.14)}
+  .logo span{color:#a9cbf2}
+  .nav{padding:10px 8px;flex:1}
+  .nav a{display:flex;align-items:center;gap:10px;padding:10px 12px;margin:2px 0;border-radius:8px;color:#cdd5e0;text-decoration:none;cursor:pointer;font-weight:500}
+  .nav a:hover{background:rgba(255,255,255,.10);color:#fff}
+  .nav a.on{background:var(--brand2);color:#fff}
+  .nav .ic{width:18px;text-align:center;opacity:.9}
+  .side .foot{padding:14px 18px;font-size:12px;color:#aab4c2;border-top:1px solid rgba(255,255,255,.14)}
+  .side .foot a{color:#a9cbf2;cursor:pointer;text-decoration:underline}
+  .main{flex:1;min-width:0}
+  .top{background:var(--panel);border-bottom:1px solid var(--line);padding:14px 26px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:5}
+  .top h1{font-size:18px;margin:0}
+  .top .sub{color:var(--muted);font-size:12.5px;margin-top:2px}
+  .btn{background:var(--brand2);color:#fff;border:none;padding:8px 14px;border-radius:8px;font-weight:600;cursor:pointer;font-size:13px}
+  .btn:hover{background:var(--brand)}
+  .btn.ghost{background:#fff;color:var(--brand);border:1px solid var(--line)}
+  .btn.ghost:hover{background:var(--soft)}
+  .wrap{padding:24px 26px;max-width:1080px}
+  .cards{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:22px}
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:16px}
+  .card .k{font-size:12px;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:.4px}
+  .card .v{font-size:26px;font-weight:700;margin-top:6px}
+  .card .d{font-size:12px;margin-top:4px;color:var(--brand2);font-weight:600}
+  .card .d.warn{color:var(--loi)}
+  .panel{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:18px;margin-bottom:20px}
+  .panel h2{font-size:15px;margin:0 0 14px}
+  .panel h2 .small{font-weight:500;color:var(--muted);font-size:12px}
+  .row{display:flex;gap:20px}
+  .row > *{flex:1}
+  .lgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+  .listing{background:var(--panel);border:1px solid var(--line);border-radius:12px;overflow:hidden;cursor:pointer;transition:.15s;display:flex;flex-direction:column}
+  .listing:hover{box-shadow:0 6px 20px rgba(20,40,30,.12);transform:translateY(-2px)}
+  .listing .ph{height:118px;background:linear-gradient(135deg,#e4e3e1,#d0cfcd);position:relative}
+  .listing .ph .type{position:absolute;bottom:8px;left:10px;background:rgba(0,0,0,.55);color:#fff;font-size:11px;padding:3px 8px;border-radius:6px;font-weight:600}
+  .listing .b{padding:13px 14px}
+  .listing .b .addr{font-weight:700;font-size:14px}
+  .listing .b .meta{color:var(--muted);font-size:12.5px;margin-top:3px}
+  .listing .b .price{margin-top:8px;font-weight:700;color:var(--brand)}
+  .listing .b .mini{margin-top:8px;display:flex;gap:12px;color:var(--muted);font-size:11.5px;border-top:1px solid var(--line);padding-top:8px}
+  .listing .b .mini b{color:var(--ink)}
+  .toolbar{display:flex;gap:10px;margin-bottom:16px;flex-wrap:wrap;align-items:center}
+  .toolbar input{flex:1;min-width:220px;padding:9px 12px;border:1px solid var(--line);border-radius:8px;font-size:13.5px;font-family:inherit}
+  .toolbar select{padding:9px 12px;border:1px solid var(--line);border-radius:8px;font-size:13.5px;font-family:inherit;background:#fff;cursor:pointer}
+  .badge{display:inline-block;font-size:11px;font-weight:700;padding:3px 9px;border-radius:20px;color:#fff}
+  .b-active{background:var(--active)} .b-loi{background:var(--loi)} .b-closed{background:var(--closed)}
+  .tabs{display:flex;gap:4px;border-bottom:1px solid var(--line);margin-bottom:18px;flex-wrap:wrap}
+  .tabs button{background:none;border:none;padding:10px 16px;font-size:13.5px;font-weight:600;color:var(--muted);cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-1px}
+  .tabs button.on{color:var(--brand);border-bottom-color:var(--brand)}
+  .kv{display:grid;grid-template-columns:repeat(2,1fr);gap:12px 30px;margin-top:4px}
+  .kv div span{display:block;color:var(--muted);font-size:11.5px;text-transform:uppercase;letter-spacing:.3px;font-weight:600}
+  .kv div b{font-size:15px;font-weight:600}
+  .frm{display:grid;grid-template-columns:repeat(2,1fr);gap:14px 24px}
+  .frm label{display:flex;flex-direction:column;font-size:11px;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:.3px;gap:5px}
+  .frm input,.frm select{padding:8px 10px;border:1px solid var(--line);border-radius:8px;font-size:14px;font-family:inherit;color:var(--ink);text-transform:none;font-weight:500;background:#fff}
+  .frm input:focus,.frm select:focus{outline:none;border-color:var(--brand2)}
+  .ovhead{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px}
+  .ovhead h2{font-size:15px;margin:0}
+  .specrow{display:grid;grid-template-columns:1fr 1fr auto;gap:10px;margin-bottom:8px;align-items:center}
+  .specrow input{padding:8px 10px;border:1px solid var(--line);border-radius:8px;font-size:13.5px;font-family:inherit}
+  .specrow input:focus{outline:none;border-color:var(--brand2)}
+  .specrow .del{background:none;border:none;color:var(--muted);cursor:pointer;font-size:16px;padding:0 6px;line-height:1}
+  .specrow .del:hover{color:#c0392b}
+  .subhead{font-size:12px;text-transform:uppercase;letter-spacing:.3px;color:var(--muted);font-weight:700;margin:0}
+  .phgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+  .phcard{border:1px solid var(--line);border-radius:10px;overflow:hidden;background:#fff}
+  .phcard .thumb{height:112px;display:flex;align-items:center;justify-content:center;font-size:30px;position:relative}
+  .phcard .bnum{position:absolute;top:8px;left:8px;background:var(--brand);color:#fff;font-size:11px;font-weight:700;padding:2px 8px;border-radius:12px}
+  .phcard .cnum{position:absolute;top:8px;right:8px;background:var(--accent);color:#fff;font-size:11px;font-weight:800;padding:2px 8px;border-radius:12px}
+  .listing .ph .phcap{position:absolute;bottom:8px;left:10px;color:#fff;font-size:11px;background:rgba(0,0,0,.42);padding:2px 7px;border-radius:5px}
+  .phcard .bar2{display:flex;align-items:center;justify-content:space-between;padding:8px 10px;gap:6px}
+  .phcard .ph-name{flex:1;border:1px solid var(--line);border-radius:6px;padding:5px 8px;font-size:13px;font-family:inherit}
+  .phcard .ph-name:focus{outline:none;border-color:var(--brand2)}
+  .mv{display:flex;gap:4px}
+  .iconbtn{background:var(--soft);border:1px solid var(--line);border-radius:6px;cursor:pointer;font-size:12px;padding:3px 8px;color:var(--ink)}
+  .iconbtn:hover{background:#e2ebe6}
+  .iconbtn:disabled{opacity:.35;cursor:default}
+  .toggle{font-size:12px;display:flex;align-items:center;gap:5px;cursor:pointer;color:var(--muted)}
+  .selrow{font-size:12.5px;color:var(--ink);display:flex;align-items:center;gap:6px;padding:3px 0;cursor:pointer}
+  .selrow b{font-weight:600}
+  .gen{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+  .gen .tile{border:1px solid var(--line);border-radius:10px;padding:16px;text-align:center;background:var(--soft)}
+  .gen .tile .ic2{font-size:30px}
+  .gen .tile h3{margin:8px 0 4px;font-size:14px}
+  .gen .tile p{margin:0 0 12px;color:var(--muted);font-size:12px;min-height:32px}
+  .genstat{margin-top:8px;font-size:12px;font-weight:700;color:var(--active);min-height:16px}
+  .achip{display:inline-block;background:#e8f6ee;color:var(--active);border:1px solid #bfe6cf;font-size:11px;font-weight:700;padding:1px 6px;border-radius:10px;margin-right:4px}
+  .preview{margin-top:16px;border:1px dashed var(--line);border-radius:10px;padding:0;overflow:hidden;display:none}
+  .preview.show{display:block}
+  .email-pv{font-family:Arial,sans-serif}
+  .email-pv .hd{background:var(--brand);color:#fff;padding:16px 18px;font-weight:700}
+  .email-pv .img{height:150px;background:linear-gradient(135deg,#dfe8e3,#cdd9d2);display:flex;align-items:center;justify-content:center;color:#7d8c84;font-size:13px}
+  .email-pv .bd{padding:18px}
+  .email-pv .bd h3{margin:0 0 6px;color:var(--brand)}
+  .email-pv .cta{display:inline-block;background:var(--accent);color:#222;font-weight:700;padding:9px 18px;border-radius:6px;margin-top:12px;font-size:13px}
+  .email-pv .ft{background:#f0f3f1;padding:12px 18px;color:#7d8c84;font-size:11px}
+  .pillbar{display:flex;gap:8px;align-items:center;background:#fffaf0;border:1px solid #f0e2c0;color:#8a6a1f;padding:8px 12px;border-radius:8px;font-size:12.5px;margin:12px 14px}
+  .broch{display:flex;gap:14px;padding:16px}
+  .broch .pg{flex:1;border:1px solid var(--line);border-radius:6px;background:#fff;padding:14px;box-shadow:0 2px 8px rgba(0,0,0,.05)}
+  .broch .pg .hero{height:80px;background:linear-gradient(135deg,#dfe8e3,#cdd9d2);border-radius:4px;margin-bottom:10px}
+  .broch .pg .ttl{font-weight:700;color:var(--brand);font-size:13px}
+  .broch .pg .ln{height:7px;background:#eef1ee;border-radius:4px;margin-top:6px}
+  .broch .pg .ln.s{width:60%}
+  .sign{padding:18px;display:flex;justify-content:center}
+  .sign .board{width:300px;border:3px solid var(--brand);border-radius:8px;text-align:center;padding:18px;background:#fff}
+  .sign .board .lease{background:var(--brand);color:#fff;font-weight:800;font-size:22px;letter-spacing:2px;padding:8px;border-radius:4px}
+  .sign .board .det{margin:12px 0;font-weight:700;font-size:14px}
+  .sign .board .qr{width:64px;height:64px;margin:8px auto;background:
+    repeating-linear-gradient(90deg,#1c2733 0 6px,#fff 6px 12px),
+    repeating-linear-gradient(0deg,rgba(0,0,0,.5) 0 6px,transparent 6px 12px);
+    background-blend-mode:multiply;border:3px solid #1c2733;border-radius:4px}
+  .sign .board .ph2{color:var(--brand);font-weight:700}
+  .timeline{position:relative;padding-left:22px}
+  .timeline:before{content:"";position:absolute;left:6px;top:4px;bottom:4px;width:2px;background:var(--line)}
+  .ev{position:relative;padding:0 0 16px 0}
+  .ev:before{content:"";position:absolute;left:-19px;top:3px;width:11px;height:11px;border-radius:50%;background:var(--brand2);border:2px solid #fff;box-shadow:0 0 0 1px var(--line)}
+  .ev.tour:before{background:var(--brand2)} .ev.call:before{background:#3a78c2} .ev.email:before{background:var(--accent)} .ev.status:before{background:var(--closed)}
+  .ev .h{font-weight:600;font-size:13.5px}
+  .ev .h .tag{font-size:10.5px;font-weight:700;text-transform:uppercase;padding:2px 7px;border-radius:5px;margin-right:8px;color:#fff;letter-spacing:.3px}
+  .tag.tour{background:var(--brand2)} .tag.call{background:#3a78c2} .tag.email{background:var(--accent);color:#fff} .tag.status{background:var(--closed)} .tag.note{background:var(--closed)}
+  .ev .m{color:var(--muted);font-size:12.5px;margin-top:2px}
+  .ev .src{color:var(--brand2);font-size:11.5px;font-weight:600;margin-top:2px}
+  .ev .when{color:var(--muted);font-size:11.5px;float:right}
+  .tnote{margin:6px 0 0 2px;padding:4px 0 4px 10px;border-left:2px solid var(--brand2);color:#46505f;font-size:12.5px}
+  .addbar{display:flex;gap:8px;margin-bottom:4px;flex-wrap:wrap}
+  .addbar select,.addbar input{padding:8px 10px;border:1px solid var(--line);border-radius:8px;font-size:13px;font-family:inherit}
+  .addbar input{flex:1;min-width:160px}
+  .bar{display:flex;align-items:center;gap:10px;margin:7px 0}
+  .bar .lbl{width:130px;font-size:12.5px;color:var(--muted);flex-shrink:0}
+  .bar .track{flex:1;background:#eef1ee;border-radius:6px;height:16px;overflow:hidden}
+  .bar .fill{height:100%;background:var(--brand2);border-radius:6px}
+  .bar .num{width:48px;text-align:right;font-weight:700;font-size:12.5px}
+  table{width:100%;border-collapse:collapse;font-size:13px}
+  th,td{text-align:left;padding:9px 8px;border-bottom:1px solid var(--line)}
+  th{color:var(--muted);font-size:11.5px;text-transform:uppercase;letter-spacing:.3px}
+  .owner-rep{border:1px solid var(--line);border-radius:10px;overflow:hidden}
+  .owner-rep .ohd{background:var(--brand);color:#fff;padding:18px 20px}
+  .owner-rep .ohd h3{margin:0;font-size:16px}
+  .owner-rep .ohd p{margin:4px 0 0;opacity:.85;font-size:12.5px}
+  .owner-rep .ob{padding:18px 20px}
+  .ostat{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:16px}
+  .ostat .o{background:var(--soft);border-radius:8px;padding:12px;text-align:center}
+  .ostat .o .n{font-size:22px;font-weight:700;color:var(--brand)}
+  .ostat .o .l{font-size:11.5px;color:var(--muted);margin-top:2px}
+  .hide{display:none}
+  .crumb{color:var(--muted);font-size:12.5px;cursor:pointer;margin-bottom:8px;display:inline-block}
+  .crumb:hover{color:var(--brand)}
+  .scope{font-size:12px;color:var(--muted);margin:-6px 0 14px}
+  .scope b{color:var(--brand)}
+  .dropzone{border:2px dashed var(--brand2);border-radius:12px;text-align:center;background:var(--soft);padding:26px}
+  .tplcard{border:1px solid var(--line);border-radius:10px;padding:14px;background:#fff}
+  .cmsg{padding:9px 12px;border-radius:10px;margin:6px 0;font-size:13px;max-width:82%;line-height:1.5}
+  .cmsg.claude{background:var(--soft);color:var(--ink);border:1px solid var(--line)}
+  .cmsg.user{background:var(--brand2);color:#fff;margin-left:auto}
+  #tpl-chat{display:flex;flex-direction:column;max-height:260px;overflow:auto;margin-bottom:12px;padding-right:4px}
+  .chip{display:inline-block;background:#eef3f0;border:1px solid #cfe0d6;color:var(--brand);font-size:11.5px;padding:3px 9px;border-radius:14px;margin:3px 4px 0 0;cursor:pointer}
+  .chip:hover{background:var(--brand2);color:#fff}
+  .map{position:relative;z-index:0;height:360px;border-radius:10px;overflow:hidden;border:1px solid var(--line);background:linear-gradient(135deg,#ececeb,#e0dfdd)}
+  .map .leaflet-container{height:100%;width:100%;border-radius:10px}
+  .map .bay{position:absolute;left:30%;top:18%;width:16%;height:64%;background:rgba(90,150,190,.28);border-radius:46% 54% 50% 50%/40% 40% 60% 60%;filter:blur(1px)}
+  .map .mcap{position:absolute;right:10px;bottom:8px;font-size:10.5px;color:var(--muted);background:rgba(255,255,255,.7);padding:2px 7px;border-radius:6px}
+  .pin{position:absolute;transform:translate(-50%,-50%);cursor:pointer;z-index:2}
+  .pin .dot{display:block;width:16px;height:16px;border-radius:50% 50% 50% 0;transform:rotate(-45deg);border:2px solid #fff;box-shadow:0 2px 5px rgba(0,0,0,.35)}
+  .pin-active .dot{background:var(--active)} .pin-loi .dot{background:var(--loi)} .pin-closed .dot{background:var(--closed)}
+  .pin .plabel{position:absolute;left:50%;bottom:18px;transform:translateX(-50%);white-space:nowrap;background:var(--ink);color:#fff;font-size:11px;padding:4px 8px;border-radius:6px;opacity:0;pointer-events:none;transition:.15s;font-weight:600}
+  .pin:hover{z-index:6}
+  .pin:hover .plabel{opacity:1}
+  .maplegend{display:flex;gap:16px;margin-top:12px;font-size:12px;color:var(--muted);flex-wrap:wrap}
+  .maplegend span{display:flex;align-items:center;gap:6px}
+  .maplegend i{width:11px;height:11px;border-radius:50%;display:inline-block}
+  .dropdown{position:absolute;right:0;top:42px;background:#fff;border:1px solid var(--line);border-radius:10px;box-shadow:0 8px 24px rgba(0,0,0,.12);min-width:160px;z-index:1200;overflow:hidden}
+  .dropdown.hide{display:none}
+  .dropdown a{display:block;padding:10px 14px;font-size:13.5px;color:var(--ink);cursor:pointer;text-decoration:none}
+  .dropdown a:hover{background:var(--soft)}
+  .quote{background:linear-gradient(90deg,#eef3fb,#f7f9fc);border-left:4px solid var(--brand2);border-radius:10px;padding:14px 18px;margin-bottom:18px;font-style:italic;color:var(--ink);font-size:15.5px;display:flex;justify-content:space-between;align-items:center;gap:12px}
+  .quote.hide{display:none}
+  .quote .x{font-style:normal;color:var(--muted);cursor:pointer;font-size:13px}
+  .lirow{padding:8px 0;border-bottom:1px solid var(--line);font-size:13.5px;display:flex;justify-content:space-between;gap:10px}
+  .lirow .x{color:var(--muted);cursor:pointer}.lirow .x:hover{color:#c0392b}
+  .furow{display:flex;gap:10px;align-items:flex-start;padding:9px 0;border-bottom:1px solid var(--line)}
+  .furow input{margin-top:3px;flex-shrink:0}
+  .qa{position:fixed;inset:0;background:rgba(20,30,40,.45);z-index:2000;display:none;align-items:center;justify-content:center}
+  .qa.show{display:flex}
+  .qa .box{background:#fff;border-radius:12px;width:400px;max-width:92vw;padding:18px;box-shadow:0 12px 40px rgba(0,0,0,.25)}
+  .qa .box h3{margin:0 0 12px;font-size:15px}
+  .qa .box input,.qa .box select{width:100%;padding:9px 11px;border:1px solid var(--line);border-radius:8px;font-size:14px;font-family:inherit;margin-bottom:10px;background:#fff}
+  .qa .box .actions{display:flex;gap:8px;justify-content:flex-end;margin-top:4px}
+  .proplist{border:1px solid var(--line);border-radius:8px;max-height:150px;overflow:auto;margin-bottom:10px}
+  .proplist .opt{padding:8px 11px;font-size:13px;cursor:pointer}
+  .proplist .opt:hover{background:var(--soft)}
+  .proplist .opt .sub{color:var(--muted);font-size:11.5px}
+  .propsel{background:var(--soft);border:1px solid var(--line);border-radius:8px;padding:9px 11px;font-size:13px;display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+  .propsel .chg{color:var(--brand2);cursor:pointer;font-size:12px;font-weight:600}
+  .modal{position:fixed;inset:0;background:rgba(20,30,25,.6);z-index:2000;display:none;flex-direction:column}
+  .modal.show{display:flex}
+  .modal .mbar{background:var(--ink);color:#fff;padding:10px 16px;display:flex;justify-content:space-between;align-items:center;gap:10px}
+  .modal .mbar .t{font-weight:600;font-size:14px}
+  .modal .mbar .btn{background:transparent;color:#fff;border:1px solid rgba(255,255,255,.4)}
+  .modal .mbar .btn:hover{background:rgba(255,255,255,.12)}
+  .modal .stage{flex:1;overflow:auto;display:flex;justify-content:center;padding:20px;background:#5b6b62}
+  .modal iframe{border:none;background:#fff;box-shadow:0 8px 30px rgba(0,0,0,.35)}
+  .toast{position:fixed;bottom:22px;right:22px;background:var(--ink);color:#fff;padding:12px 18px;border-radius:10px;font-size:13px;opacity:0;transform:translateY(10px);transition:.25s;z-index:3000;box-shadow:0 8px 24px rgba(0,0,0,.2)}
+  .toast.show{opacity:1;transform:translateY(0)}
+  .note{font-size:11.5px;color:var(--muted);font-style:italic;margin-top:6px}
+</style>
+</head>
+<body>
+<div class="app">
+  <aside class="side">
+    <div class="logo">Listing<span>Hub</span></div>
+    <nav class="nav">
+      <a data-action="nav" data-view="dashboard" class="on"><span class="ic">▦</span> Dashboard</a>
+      <a data-action="nav" data-view="listings"><span class="ic">⌂</span> Listings</a>
+      <a data-action="nav" data-view="marketing"><span class="ic">✦</span> Marketing</a>
+      <a data-action="nav" data-view="templates"><span class="ic">▣</span> Templates</a>
+    </nav>
+    <div class="foot">
+      <div id="save-status">Saved locally ✓</div>
+      <div style="margin-top:6px"><a data-action="resetdata">Reset to sample data</a></div>
+    </div>
+  </aside>
+
+  <div class="main">
+    <div class="top">
+      <div>
+        <h1 id="ttl">Dashboard</h1>
+        <div class="sub" id="sub">Your week at a glance</div>
+      </div>
+      <div style="position:relative">
+        <button class="btn" id="newbtn" data-action="new" style="display:none">＋ New Listing</button>
+        <button class="btn" id="dashadd" data-action="dashmenu">＋ Add ▾</button>
+        <div id="dashmenu" class="dropdown hide">
+          <a data-action="qadd" data-kind="note">📝 Note</a>
+          <a data-action="qadd" data-kind="tour">📅 Tour</a>
+          <a data-action="qadd" data-kind="tournote">🗒️ Tour Note</a>
+          <a data-action="addfu">✅ Follow-up</a>
+          <a data-action="qadd" data-kind="goal">🎯 Goal</a>
+          <a data-action="qadd" data-kind="quote">💬 Motivational Quote</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- DASHBOARD -->
+    <div class="wrap view" id="v-dashboard">
+      <div id="dash-quote" class="quote hide"></div>
+      <div class="cards" id="dash-cards"></div>
+      <div class="panel">
+        <h2>Portfolio Map <span class="small">— click a pin to open · switch map type (top-right)</span></h2>
+        <div class="map" id="map-board"><div class="bay"></div><div class="mcap">Schematic view · production uses live Google/Mapbox tiles</div></div>
+        <div class="maplegend">
+          <span><i style="background:var(--active)"></i> Active</span>
+          <span><i style="background:var(--loi)"></i> Pending</span>
+          <span><i style="background:var(--closed)"></i> Closed / Leased</span>
+        </div>
+      </div>
+      <div class="row">
+        <div class="panel"><h2>Goals</h2><div id="dash-goals"></div></div>
+        <div class="panel"><h2>Notes</h2><div id="dash-notes"></div></div>
+      </div>
+      <div class="row">
+        <div>
+          <div class="panel">
+            <h2>Upcoming Activity</h2>
+            <div class="timeline" id="dash-upcoming"></div>
+          </div>
+          <div class="panel">
+            <h2>Recent Activity</h2>
+            <div class="timeline" id="dash-timeline"></div>
+          </div>
+        </div>
+        <div>
+          <div class="panel">
+            <h2>Follow-ups Needing Attention</h2>
+            <div id="dash-followups"></div>
+          </div>
+          <div class="panel">
+            <h2>Listings Needing Attention</h2>
+            <div id="dash-needing"></div>
+            <p class="note">Open a listing to see its tours, outreach, and reports.</p>
+            <button class="btn ghost" data-action="nav" data-view="listings">Go to listings →</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- LISTINGS SECTION: All Listings · Archived -->
+    <div class="wrap view hide" id="v-listings">
+      <div class="tabs" id="lsub">
+        <button class="on" data-action="sub" data-sub="all">All Listings</button>
+        <button data-action="sub" data-sub="archived">Archived</button>
+      </div>
+
+      <!-- SUB: ALL LISTINGS -->
+      <div class="sub" id="s-all">
+        <div class="toolbar">
+          <input id="lsearch" placeholder="🔍  Search address, city, or property type…">
+          <select id="lsort">
+            <option value="az">Sort: A–Z (address)</option>
+            <option value="sf">Sort: Size — largest first</option>
+            <option value="comm">Sort: Commission — highest first</option>
+          </select>
+        </div>
+        <div class="lgrid" id="lgrid"></div>
+        <p class="note" id="lcount"></p>
+      </div>
+
+      <!-- SUB: ARCHIVED -->
+      <div class="sub hide" id="s-archived">
+        <p class="scope">Closed, leased, and sold listings — kept for records, comps, and reporting.</p>
+        <div class="toolbar">
+          <input id="archsearch" placeholder="🔍  Search archived listings…">
+        </div>
+        <div class="lgrid" id="archgrid"></div>
+        <p class="note" id="archcount"></p>
+      </div>
+    </div>
+
+    <!-- LISTING DETAIL -->
+    <div class="wrap view hide" id="v-detail">
+      <span class="crumb" data-action="nav" data-view="listings">← All listings</span>
+      <div class="panel">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start">
+          <div>
+            <h2 style="font-size:18px;margin-bottom:2px" id="d-addr"></h2>
+            <div class="sub" id="d-meta"></div>
+          </div>
+          <div style="text-align:right">
+            <span id="d-badge"></span>
+            <div><select id="d-status" style="margin-top:8px;padding:6px 9px;border:1px solid var(--line);border-radius:8px;font-size:12.5px;font-family:inherit;background:#fff;cursor:pointer">
+              <option value="active">Set: Active</option>
+              <option value="loi">Set: Pending</option>
+              <option value="closed">Set: Closed → Archive</option>
+            </select></div>
+          </div>
+        </div>
+        <div class="tabs" id="d-tabs" style="margin-top:16px">
+          <button class="on" data-action="dtab" data-tab="overview">Overview</button>
+          <button data-action="dtab" data-tab="tours">Tours</button>
+          <button data-action="dtab" data-tab="outreach">Outreach</button>
+          <button data-action="dtab" data-tab="notes">Notes</button>
+          <button data-action="dtab" data-tab="contacts">Contacts</button>
+          <button data-action="dtab" data-tab="reports">Reports</button>
+        </div>
+
+        <div class="tab" id="t-overview">
+          <div class="ovhead">
+            <h2>Property Specs</h2>
+            <div>
+              <button class="btn ghost" data-action="gomkt">✦ Generate marketing</button>
+              <button class="btn ghost" id="ov-editbtn" data-action="editspecs">✎ Edit specs</button>
+              <button class="btn" id="ov-savebtn" data-action="savespecs" style="display:none">Save</button>
+              <button class="btn ghost" id="ov-cancelbtn" data-action="cancelspecs" style="display:none">Cancel</button>
+              <button class="btn ghost" data-action="deletelisting" style="margin-left:6px;color:#c0392b">🗑 Delete</button>
+            </div>
+          </div>
+          <div class="kv" id="d-kv"></div>
+          <div id="ov-edit" class="hide">
+            <div class="frm">
+              <label>Address<input id="f-addr"></label>
+              <label>City<input id="f-city"></label>
+              <label>Owner / Landlord<input id="f-owner" placeholder="e.g. Pacific Holdings LLC"></label>
+              <label>Property Type
+                <select id="f-type">
+                  <option>Warehouse / Distribution</option><option>Manufacturing</option>
+                  <option>Flex / R&amp;D</option><option>Cold Storage</option>
+                  <option>Industrial Outdoor Storage</option><option>Truck Terminal</option>
+                  <option>Land</option>
+                </select>
+              </label>
+              <label>Status
+                <select id="f-status">
+                  <option value="active">Active</option>
+                  <option value="loi">Pending</option>
+                  <option value="closed">Closed (moves to Archived)</option>
+                </select>
+              </label>
+              <label>Asking Rate<input id="f-rate" placeholder="e.g. $1.15 / SF / Mo NNN"></label>
+              <label>Est. Commission ($)<input id="f-comm" type="number" min="0"></label>
+              <label>Days on Market<input id="f-dom" type="number" min="0"></label>
+            </div>
+            <div style="margin-top:22px">
+              <p class="subhead" style="margin-bottom:10px">Specifications</p>
+              <div class="frm" id="f-specs"></div>
+            </div>
+            <div style="margin-top:22px">
+              <div class="ovhead" style="margin-bottom:10px">
+                <p class="subhead">Additional Specs</p>
+                <button class="btn ghost" data-action="addspec">＋ Add spec</button>
+              </div>
+              <div style="margin-bottom:12px;display:flex;flex-wrap:wrap" id="spec-chips"></div>
+              <div id="f-custom"></div>
+            </div>
+          </div>
+          <div style="margin-top:28px;border-top:1px solid var(--line);padding-top:20px">
+            <div class="ovhead">
+              <h2>Photos <span class="small">— ★ sets the cover image</span></h2>
+              <button class="btn" data-action="phadd">＋ Add photo</button>
+            </div>
+            <p class="note" style="margin-bottom:14px">Star a photo to use it as the listing's <b>cover image</b>. Toggle <b>In brochure</b> to include it in generated brochures. Rename a photo by typing in its title field.</p>
+            <div class="phgrid" id="photo-grid"></div>
+            <div class="ovhead" style="margin-top:26px"><h2>Map, Site Plan &amp; Space Plan</h2></div>
+            <div class="phgrid" id="map-grid"></div>
+          </div>
+          <div id="ov-assets"></div>
+        </div>
+
+        <div class="tab hide" id="t-tours">
+          <div class="addbar">
+            <input id="ev-tour-text" placeholder="Log a tour — who toured, interest level, next step">
+            <button class="btn" data-action="addev" data-kind="tour">Log tour</button>
+            <button class="btn ghost" data-action="tournote">＋ Tour note</button>
+          </div>
+          <div class="timeline" id="d-tours" style="margin-top:14px"></div>
+        </div>
+
+        <div class="tab hide" id="t-outreach">
+          <div class="addbar">
+            <select id="ev-out-type">
+              <option value="call">Call</option>
+              <option value="email">Email</option>
+              <option value="text">Text</option>
+            </select>
+            <input id="ev-out-text" placeholder="Log a reach-out — who, channel, outcome">
+            <button class="btn" data-action="addev" data-kind="outreach">Log outreach</button>
+          </div>
+          <div class="timeline" id="d-outreach" style="margin-top:14px"></div>
+        </div>
+
+        <div class="tab hide" id="t-notes">
+          <div class="addbar">
+            <input id="ev-note-text" placeholder="Add a note about this property">
+            <button class="btn" data-action="addev" data-kind="note">Add note</button>
+          </div>
+          <div class="timeline" id="d-notes" style="margin-top:14px"></div>
+        </div>
+
+        <div class="tab hide" id="t-contacts">
+          <div class="frm" style="grid-template-columns:repeat(3,1fr)">
+            <label>Name<input id="c-name" placeholder="e.g. Dana Reeves"></label>
+            <label>Company<input id="c-company" placeholder="e.g. Pacific Holdings LLC"></label>
+            <label>Role
+              <select id="c-role">
+                <option>Prospect</option><option>Owner</option><option>Tenant</option>
+                <option>Co-op Broker</option><option>Attorney</option><option>Lender</option><option>Vendor</option>
+              </select>
+            </label>
+            <label>Phone<input id="c-phone" placeholder="(510) 555-0100"></label>
+            <label>Email<input id="c-email" placeholder="name@company.com"></label>
+            <div style="display:flex;align-items:flex-end"><button class="btn" data-action="cadd" style="width:100%">＋ Add contact</button></div>
+          </div>
+          <div id="d-contacts" style="margin-top:18px"></div>
+        </div>
+
+        <div class="tab hide" id="t-reports">
+          <div class="tabs" id="lr-tabs">
+            <button class="on" data-action="lrtab" data-lr="perf">Performance</button>
+            <button data-action="lrtab" data-lr="mktg">Marketing / Email</button>
+            <button data-action="lrtab" data-lr="act">Tour &amp; Outreach</button>
+            <button data-action="lrtab" data-lr="owner">Owner Report</button>
+          </div>
+          <div id="lr-body"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- MARKETING (top-level) -->
+    <div class="wrap view hide" id="v-marketing">
+      <div class="panel">
+        <h2>Generate Marketing</h2>
+        <p class="note" style="margin:0 0 12px">Pick a property, then generate a brochure, email, or signage. Approved pieces are filed under that listing's Overview.</p>
+        <select id="mkt-listing" style="padding:9px 11px;border:1px solid var(--line);border-radius:8px;font-size:14px;font-family:inherit;background:#fff;min-width:280px"></select>
+      </div>
+      <div id="mkt-body" class="hide">
+        <div class="gen">
+          <div class="tile">
+            <div class="ic2">✉️</div><h3>Email Campaign</h3>
+            <p>Fill the email template, ready to push to Constant Contact.</p>
+            <button class="btn" data-action="genx" data-kind="email">Generate</button>
+            <div class="genstat" id="gs-email"></div>
+          </div>
+          <div class="tile">
+            <div class="ic2">📄</div><h3>Brochure</h3>
+            <p>One-page PDF flyer from this listing's data + photos.</p>
+            <button class="btn" data-action="genx" data-kind="brochure">Generate</button>
+            <div class="genstat" id="gs-brochure"></div>
+          </div>
+          <div class="tile">
+            <div class="ic2">🪧</div><h3>Signage</h3>
+            <p>Print-ready For-Lease sign (24×36) with QR code.</p>
+            <button class="btn" data-action="genx" data-kind="signage">Generate</button>
+            <div class="genstat" id="gs-signage"></div>
+          </div>
+          <div class="tile">
+            <div class="ic2">🌐</div><h3>Web Brochure</h3>
+            <p>Shareable hosted listing page with a lead form &amp; live analytics.</p>
+            <button class="btn" data-action="genx" data-kind="web">Generate</button>
+            <div class="genstat" id="gs-web"></div>
+          </div>
+          <div class="tile">
+            <div class="ic2">📑</div><h3>Listing Agreement</h3>
+            <p>Auto-fill a listing agreement from this property's details.</p>
+            <button class="btn" data-action="genx" data-kind="agreement">Generate</button>
+            <div class="genstat" id="gs-agreement"></div>
+          </div>
+        </div>
+        <div class="preview" id="gen-config"></div>
+        <div class="preview" id="gen-out">
+          <div class="pillbar" id="gen-pill"></div>
+          <div style="padding:0 14px 14px">
+            <div style="display:flex;gap:8px;margin:0 0 10px;flex-wrap:wrap">
+              <button class="btn" data-action="genapprove">✓ Approve</button>
+              <button class="btn ghost" data-action="genedit">✎ Edit choices</button>
+              <button class="btn ghost" data-action="genopen">Open full size ↗</button>
+              <button class="btn ghost" data-action="gencopy" id="gen-copy" style="display:none">Copy HTML</button>
+              <button class="btn ghost" data-action="genpush" id="gen-push" style="display:none">Push to Constant Contact</button>
+            </div>
+            <iframe id="gen-frame" title="preview" style="width:100%;height:540px;border:1px solid var(--line);border-radius:8px;background:#fff"></iframe>
+            <div id="gen-analytics" class="hide" style="margin-top:14px">
+              <div class="pillbar" style="background:#eef2f7;border-color:#cfe0f0;color:var(--brand);margin:0 0 12px">📊 Live page analytics (sample) — this is the data a hosted web brochure captures that a PDF can't.</div>
+              <div id="gen-analytics-body"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TEMPLATES -->
+    <div class="wrap view hide" id="v-templates">
+      <div class="dropzone" style="margin-bottom:20px">
+        <div style="font-size:32px">📥</div>
+        <h2 style="justify-content:center;display:block;margin:6px 0 4px">Drop your templates here</h2>
+        <p style="color:var(--muted);margin:0 auto 12px;max-width:560px">Brochures, flyers, one-pagers, signage, email layouts. Claude reads them, maps your listing fields into the placeholders, and edits them whenever you ask.</p>
+        <button class="btn" data-action="toast" data-msg="Upload (prototype) — .pptx recommended">Upload template</button>
+        <p class="note">Recommended: <b>.pptx</b> (editable source). Also accepts .docx and .html. Drop a <b>.pdf</b> and Claude rebuilds it into an editable template.</p>
+      </div>
+
+      <div class="panel" style="background:#fffaf0;border-color:#f0e2c0">
+        <h2 style="color:#8a6a1f">Why PowerPoint, not PDF?</h2>
+        <p style="margin:0;color:#6f5a22;font-size:13px">A PDF is finished and flattened — perfect for printing and sending, but hard to edit or restyle reliably. PowerPoint (.pptx) is structured: every text box, placeholder, and image is addressable, so Claude can change the layout and your listing data drops cleanly into the placeholders. <b>Upload .pptx as your editable source; the finished material exports to PDF.</b></p>
+      </div>
+
+      <div class="panel">
+        <h2>Your Templates</h2>
+        <div id="tpl-grid" style="display:grid;grid-template-columns:repeat(2,1fr);gap:14px"></div>
+      </div>
+
+      <div class="panel hide" id="tpl-editor">
+        <h2>Edit with Claude — <span id="tpl-ename" style="color:var(--brand)"></span></h2>
+        <div id="tpl-chat"></div>
+        <div style="margin-bottom:8px" id="tpl-chips"></div>
+        <div class="addbar">
+          <input id="tpl-msg" placeholder="e.g. Move the price to the top and use our new logo">
+          <button class="btn" data-action="tplsend">Send</button>
+        </div>
+        <p class="note">Claude edits the .pptx directly and regenerates previews for every listing that uses this template.</p>
+      </div>
+    </div>
+
+  </div>
+</div>
+<input type="file" id="file-input" accept="image/*" style="display:none">
+<div class="qa" id="fu-modal"><div class="box">
+  <h3>Add Follow-up</h3>
+  <select id="fu-listing"></select>
+  <select id="fu-tour" style="display:none"></select>
+  <input id="fu-contact" placeholder="Contact — who to follow up with">
+  <input id="fu-comment" placeholder="Comment — what needs to happen">
+  <input id="fu-when" placeholder="Reminder date — e.g. Fri, or 6/15">
+  <label class="selrow" style="margin:2px 0 6px"><input type="checkbox" id="fu-daily"> Remind every day until checked</label>
+  <div class="actions"><button class="btn ghost" data-action="fucancel">Cancel</button><button class="btn" data-action="fusave">Save</button></div>
+</div></div>
+<div class="qa" id="tn-modal"><div class="box">
+  <h3>Add Tour Note</h3>
+  <select id="tn-select"></select>
+  <input id="tn-text" placeholder="Note for this tour…">
+  <div class="actions"><button class="btn ghost" data-action="tncancel">Cancel</button><button class="btn" data-action="tnsave">Save</button></div>
+</div></div>
+<div class="qa" id="qa-modal"><div class="box">
+  <h3 id="qa-title">Add</h3>
+  <div id="qa-goaltype-wrap" style="display:none">
+    <select id="qa-goaltype"><option value="general">General goal</option><option value="yearend">Year-End Commission Goal</option></select>
+  </div>
+  <div id="qa-prop" style="display:none">
+    <input id="qa-prop-search" placeholder="🔍 Search property…" autocomplete="off">
+    <div id="qa-prop-list" class="proplist"></div>
+    <div id="qa-prop-sel" class="propsel" style="display:none"></div>
+  </div>
+  <div id="qa-tourwrap" style="display:none"><select id="qa-tour-select"></select></div>
+  <input id="qa-1" placeholder="">
+  <input id="qa-2" placeholder="" style="display:none">
+  <div class="actions"><button class="btn ghost" data-action="qacancel">Cancel</button><button class="btn" data-action="qasave">Save</button></div>
+</div></div>
+<div class="modal" id="gen-modal">
+  <div class="mbar">
+    <span class="t" id="gen-modal-title">Full size</span>
+    <span style="display:flex;gap:8px">
+      <button class="btn" data-action="genprint">🖨 Print / Save PDF</button>
+      <button class="btn" data-action="gendownload">⬇ Download HTML</button>
+      <button class="btn" data-action="genclose">✕ Close</button>
+    </span>
+  </div>
+  <div class="stage"><iframe id="gen-modal-frame" title="full preview"></iframe></div>
+</div>
+<div class="toast" id="toast"></div>
+<script src="app.js"></script>
+</body>
+</html>
+
