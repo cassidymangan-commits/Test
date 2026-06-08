@@ -64,5 +64,39 @@
   { "id": "future_003", "category": "future", "weight": 1.0, "text": "Plan our funeral. Mine first. Make it humiliating." },
   { "id": "future_004", "category": "future", "weight": 1.0, "text": "We win the lottery. Walk me through the next 24 hours." },
   { "id": "future_005", "category": "future", "weight": 1.0, "text": "Describe our life 10 years from now in five very specific objects on a kitchen counter." },
-  { "id": "future_006", "category": "future", "weight": 1.0, "text": "We start a podcast tomorrow. What's the title, the premise, and the inevitable scandal?" }
+  { "id": "future_006", "category": "future", "weight": 1.0, "text": "We start a podcast tomorrow. What's the title, the premise, and the inevitable scandal?" },
+
+  { "id": "gratitude_001", "category": "gratitude", "weight": 1.0, "text": "What's something I do that you don't say thank you for enough?" },
+  { "id": "gratitude_002", "category": "gratitude", "weight": 1.0, "text": "Tell me one thing I've grown into since we met." },
+  { "id": "gratitude_003", "category": "gratitude", "weight": 1.0, "text": "What's a quality of mine you didn't notice at first, but love now?" },
+  { "id": "gratitude_004", "category": "gratitude", "weight": 1.0, "text": "Name a moment this week I was exactly who you needed me to be." },
+  { "id": "gratitude_005", "category": "gratitude", "weight": 1.0, "text": "What's a way I've made your life quieter, softer, or easier?" },
+  { "id": "gratitude_006", "category": "gratitude", "weight": 1.0, "text": "What's something I do without being asked that you notice every time?" },
+  { "id": "gratitude_007", "category": "gratitude", "weight": 1.0, "text": "What's a recent moment you felt proud to be with me?" },
+  { "id": "gratitude_008", "category": "gratitude", "weight": 1.0, "text": "What's a way I love you that took you a while to recognize as love?" },
+
+  { "id": "deep_001", "category": "deep", "weight": 1.0, "text": "How are you, really? Not the short answer." },
+  { "id": "deep_002", "category": "deep", "weight": 1.0, "text": "What's been heavy this week?" },
+  { "id": "deep_003", "category": "deep", "weight": 1.0, "text": "What's something you've been carrying alone that I could help hold?" },
+  { "id": "deep_004", "category": "deep", "weight": 1.0, "text": "When was the last time you felt distant from me, even briefly?" },
+  { "id": "deep_005", "category": "deep", "weight": 1.0, "text": "What's a fear about us you haven't said out loud?" },
+  { "id": "deep_006", "category": "deep", "weight": 1.0, "text": "What do you wish I asked you more often?" },
+  { "id": "deep_007", "category": "deep", "weight": 1.0, "text": "What's something you wish I knew without you having to say it?" },
+  { "id": "deep_008", "category": "deep", "weight": 1.0, "text": "What's a chapter of us you're proud we made it through?" },
+  { "id": "deep_009", "category": "deep", "weight": 1.0, "text": "What do you need from me right now — words, space, presence, or something else?" },
+  { "id": "deep_010", "category": "deep", "weight": 1.0, "text": "What's something we've gotten better at as a couple this year?" },
+
+  { "id": "memory_001", "category": "memory", "weight": 1.0, "text": "What's a moment with me you replay when you need a smile?" },
+  { "id": "memory_002", "category": "memory", "weight": 1.0, "text": "What's the first time you knew you loved me — really knew?" },
+  { "id": "memory_003", "category": "memory", "weight": 1.0, "text": "Tell me about a small moment with me that stuck for no clear reason." },
+  { "id": "memory_004", "category": "memory", "weight": 1.0, "text": "What's a tiny detail from when we first met that you still remember?" },
+  { "id": "memory_005", "category": "memory", "weight": 1.0, "text": "What's a version of me from earlier in us that you miss, even a little?" },
+  { "id": "memory_006", "category": "memory", "weight": 1.0, "text": "What's a memory of us that's gotten better with time?" },
+
+  { "id": "dreams_001", "category": "dreams", "weight": 1.0, "text": "What's a version of our life you sometimes think about but haven't said out loud?" },
+  { "id": "dreams_002", "category": "dreams", "weight": 1.0, "text": "Where do you most want to take me that we haven't been?" },
+  { "id": "dreams_003", "category": "dreams", "weight": 1.0, "text": "What's a dream of mine that you're quietly rooting for?" },
+  { "id": "dreams_004", "category": "dreams", "weight": 1.0, "text": "What's something you hope we still do together when we're old?" },
+  { "id": "dreams_005", "category": "dreams", "weight": 1.0, "text": "What does a perfect slow Sunday in our future look like?" },
+  { "id": "dreams_006", "category": "dreams", "weight": 1.0, "text": "What's a small, quiet life we could build that would make you genuinely happy?" }
 ]
