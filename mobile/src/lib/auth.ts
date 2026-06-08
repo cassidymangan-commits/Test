@@ -2,8 +2,6 @@ import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
   signOut as fbSignOut,
-  OAuthProvider,
-  signInWithCredential,
 } from 'firebase/auth';
 import {
   doc,
@@ -57,29 +55,6 @@ export async function signInWithEmail(email: string, password: string) {
     password
   );
   await ensureUserDoc(user.uid, user.displayName ?? email.split('@')[0]);
-  return user;
-}
-
-export async function signInWithApple(args: {
-  identityToken: string;
-  nonce: string;
-  fullName: { givenName: string | null; familyName: string | null } | null;
-}) {
-  const provider = new OAuthProvider('apple.com');
-  const credential = provider.credential({
-    idToken: args.identityToken,
-    rawNonce: args.nonce,
-  });
-  const { user } = await signInWithCredential(getAuthInstance(), credential);
-  const fallbackName =
-    [args.fullName?.givenName, args.fullName?.familyName]
-      .filter(Boolean)
-      .join(' ')
-      .trim() ||
-    user.displayName ||
-    user.email?.split('@')[0] ||
-    'Friend';
-  await ensureUserDoc(user.uid, fallbackName);
   return user;
 }
 

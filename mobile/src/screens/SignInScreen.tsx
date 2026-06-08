@@ -1,4 +1,3 @@
-import * as AppleAuthentication from 'expo-apple-authentication';
 import { useState } from 'react';
 import {
   ActivityIndicator,
@@ -10,14 +9,9 @@ import {
   StyleSheet,
   Text,
   TextInput,
-  View,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import {
-  signInWithApple,
-  signInWithEmail,
-  signUpWithEmail,
-} from '../lib/auth';
+import { signInWithEmail, signUpWithEmail } from '../lib/auth';
 import { firebaseConfigured } from '../lib/firebase';
 import { colors } from '../theme/colors';
 
@@ -51,41 +45,6 @@ export function SignInScreen() {
       }
     } catch (err) {
       Alert.alert('Something went wrong', (err as Error).message);
-    } finally {
-      setBusy(false);
-    }
-  };
-
-  const onApple = async () => {
-    if (!firebaseConfigured) {
-      Alert.alert(
-        'Firebase not configured',
-        'Copy mobile/.env.example to mobile/.env and add your Firebase web config.'
-      );
-      return;
-    }
-    setBusy(true);
-    try {
-      const nonce = Math.random().toString(36).slice(2);
-      const credential = await AppleAuthentication.signInAsync({
-        requestedScopes: [
-          AppleAuthentication.AppleAuthenticationScope.FULL_NAME,
-          AppleAuthentication.AppleAuthenticationScope.EMAIL,
-        ],
-        nonce,
-      });
-      if (!credential.identityToken) {
-        throw new Error('Apple did not return an identity token.');
-      }
-      await signInWithApple({
-        identityToken: credential.identityToken,
-        nonce,
-        fullName: credential.fullName,
-      });
-    } catch (err) {
-      const e = err as { code?: string; message?: string };
-      if (e.code === 'ERR_REQUEST_CANCELED') return;
-      Alert.alert('Apple sign-in failed', e.message ?? 'Unknown error');
     } finally {
       setBusy(false);
     }
@@ -154,29 +113,6 @@ export function SignInScreen() {
             )}
           </Pressable>
 
-          {Platform.OS === 'ios' && (
-            <>
-              <View style={styles.divider}>
-                <View style={styles.dividerLine} />
-                <Text style={styles.dividerText}>or</Text>
-                <View style={styles.dividerLine} />
-              </View>
-              <AppleAuthentication.AppleAuthenticationButton
-                buttonType={
-                  mode === 'signup'
-                    ? AppleAuthentication.AppleAuthenticationButtonType.SIGN_UP
-                    : AppleAuthentication.AppleAuthenticationButtonType.SIGN_IN
-                }
-                buttonStyle={
-                  AppleAuthentication.AppleAuthenticationButtonStyle.BLACK
-                }
-                cornerRadius={14}
-                style={styles.appleButton}
-                onPress={onApple}
-              />
-            </>
-          )}
-
           <Pressable
             onPress={() => setMode(mode === 'signup' ? 'signin' : 'signup')}
             style={styles.switch}
@@ -223,15 +159,6 @@ const styles = StyleSheet.create({
   },
   buttonDisabled: { opacity: 0.6 },
   buttonText: { color: '#fff', fontSize: 16, fontWeight: '600' },
-  divider: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 12,
-    marginVertical: 8,
-  },
-  dividerLine: { flex: 1, height: 1, backgroundColor: colors.border },
-  dividerText: { color: colors.textMuted, fontSize: 13 },
-  appleButton: { height: 50, width: '100%' },
   switch: { alignItems: 'center', marginTop: 12 },
   switchText: { color: colors.accent, fontSize: 14, fontWeight: '500' },
 });

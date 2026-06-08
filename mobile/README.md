@@ -16,14 +16,14 @@ npm run start          # Expo dev server — scan QR with Expo Go on your phone
 1. Create a project at https://console.firebase.google.com
 2. Add a Web app to the project (Project settings → Your apps → Web). Copy the config.
 3. Paste each value into `mobile/.env` (keys match `mobile/.env.example`).
-4. Enable Auth providers: **Email/Password** at minimum, **Apple** for iOS native sign-in.
+4. Enable Auth providers: **Email/Password**. (Sign in with Apple will be added back closer to App Store launch — it needs Apple Developer Portal config and a dev build to test, so we're keeping it out of the dev loop for now.)
 5. Create a Firestore database (start in test mode for dev; we'll add security rules in a later phase).
 
 ## What's wired up
 
 - React Navigation: auth-aware root stack (Onboarding/SignIn → Pairing → Main tabs)
 - Bottom tabs: Today, History, Profile (placeholders, no prompt data yet)
-- Auth: email/password + Sign in with Apple (iOS only)
+- Auth: email/password (Sign in with Apple deferred until launch — see Phase 1+)
 - Firebase Auth with AsyncStorage persistence — stays signed in across launches
 - Couple pairing: create a couple, share a 6-char invite code, partner joins by code
 - AppState provider streams `users/{uid}` and `couples/{id}` via Firestore live snapshots
