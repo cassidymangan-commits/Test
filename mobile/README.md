@@ -7,41 +7,66 @@ Expo (React Native) + Firebase. iOS-first, Android later.
 ```bash
 cd mobile
 npm install
-npm run ios     # iOS Simulator (requires Xcode on macOS)
-npm run start   # Expo dev server — scan QR with Expo Go on your phone
+cp .env.example .env   # fill in your Firebase web config
+npm run start          # Expo dev server — scan QR with Expo Go on your phone
 ```
+
+## Firebase setup
+
+1. Create a project at https://console.firebase.google.com
+2. Add a Web app to the project (Project settings → Your apps → Web). Copy the config.
+3. Paste each value into `mobile/.env` (keys match `mobile/.env.example`).
+4. Enable Auth providers: **Email/Password** at minimum, **Apple** for iOS native sign-in.
+5. Create a Firestore database (start in test mode for dev; we'll add security rules in a later phase).
 
 ## What's wired up
 
-- React Navigation: root stack (Onboarding → Main tabs) + bottom tabs (Today, History, Profile)
-- Placeholder screens for all four
-- TypeScript strict mode
-- Brand palette in `src/theme/colors.ts`
+- React Navigation: auth-aware root stack (Onboarding/SignIn → Pairing → Main tabs)
+- Bottom tabs: Today, History, Profile (placeholders, no prompt data yet)
+- Auth: email/password + Sign in with Apple (iOS only)
+- Firebase Auth with AsyncStorage persistence — stays signed in across launches
+- Couple pairing: create a couple, share a 6-char invite code, partner joins by code
+- AppState provider streams `users/{uid}` and `couples/{id}` via Firestore live snapshots
+- Profile shows display name, email, pairing state, notification time
+- TypeScript strict throughout
 
 ## Not wired up yet (next phases)
 
-- Firebase init (`src/lib/firebase.ts`)
-- Auth (email + Sign in with Apple)
-- Couple pairing via invite code
-- Firestore data layer for prompts
-- Push notifications
+- Daily prompt UI on the Today screen (write/read answers, "waiting for partner" / "reveal" states)
+- History list reading from `couples/{id}/prompts`
+- Push notification registration + token storage on the user doc
 - Cloud Function for daily prompt fan-out
+- Notification time picker in the profile
+- Firestore security rules
+- Seed script for `promptBank` (from the repo's `prompts.json`)
 
 ## Structure
 
 ```
 mobile/
-├── App.tsx                          # Root, mounts NavigationContainer
+├── App.tsx                            # AppStateProvider + NavigationContainer
+├── app.json                           # Expo config: bundle ID, notifications plugin
+├── .env.example                       # Firebase config template
 ├── src/
+│   ├── lib/
+│   │   ├── firebase.ts                # Firebase init (lazy, env-driven)
+│   │   ├── auth.ts                    # email + Apple sign-in
+│   │   ├── couples.ts                 # create / join couple
+│   │   ├── inviteCode.ts              # 6-char code generator
+│   │   └── types.ts                   # Firestore document types
+│   ├── state/
+│   │   └── AppState.tsx               # auth + couple context
 │   ├── navigation/
-│   │   ├── RootNavigator.tsx        # Onboarding ↔ Main
-│   │   ├── MainTabs.tsx             # Today / History / Profile
-│   │   └── types.ts                 # Param-list types
+│   │   ├── RootNavigator.tsx          # auth-aware top-level stack
+│   │   ├── MainTabs.tsx               # Today / History / Profile tabs
+│   │   └── types.ts                   # typed param lists
 │   ├── screens/
 │   │   ├── OnboardingScreen.tsx
+│   │   ├── SignInScreen.tsx
+│   │   ├── PairingScreen.tsx
+│   │   ├── LoadingScreen.tsx
 │   │   ├── TodayScreen.tsx
 │   │   ├── HistoryScreen.tsx
 │   │   └── ProfileScreen.tsx
 │   └── theme/colors.ts
-└── app.json                         # Expo config (bundle ID, plugins)
 ```

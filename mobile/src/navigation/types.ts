@@ -1,5 +1,7 @@
 export type RootStackParamList = {
   Onboarding: undefined;
+  SignIn: undefined;
+  Pairing: undefined;
   Main: undefined;
 };
 

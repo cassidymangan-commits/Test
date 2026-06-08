@@ -15,7 +15,7 @@ export function OnboardingScreen({ navigation }: Props) {
       </View>
       <Pressable
         style={styles.button}
-        onPress={() => navigation.replace('Main')}
+        onPress={() => navigation.navigate('SignIn')}
       >
         <Text style={styles.buttonText}>Get started</Text>
       </Pressable>
