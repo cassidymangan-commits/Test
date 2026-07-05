@@ -1669,57 +1669,8 @@ const SEED_MKTREPORTS={
   4:{monthly:[{m:'Mar',views:410,tours:0,inquiries:11,emails:1,linkedin:1},{m:'Apr',views:520,tours:1,inquiries:14,emails:1,linkedin:2},{m:'May',views:640,tours:1,inquiries:18,emails:1,linkedin:3},{m:'Jun',views:735,tours:2,inquiries:22,emails:1,linkedin:3}], campaigns:[]},
 };
 
-// === PARCELS (Hamilton County OH — seeded Camp Washington/Queensgate industrial) ===
-// Rectangle helper: center [lat,lng] + w/h in feet → GeoJSON polygon coordinates (lng,lat)
-function _rect(lat,lng,wFt,hFt){
-  const dLat=hFt*(1/364000), dLng=wFt*(1/(279000*Math.cos(lat*Math.PI/180)));
-  return [[[lng-dLng/2,lat-dLat/2],[lng+dLng/2,lat-dLat/2],[lng+dLng/2,lat+dLat/2],[lng-dLng/2,lat+dLat/2],[lng-dLng/2,lat-dLat/2]]];
-}
-const _P=(id,apn,addr,city,zip,owner,ownerAddr,useCode,useDesc,landSF,bldgSF,yb,stories,landVal,bldgVal,lastSale,history,zoning,lat,lng,wFt,hFt)=>({
-  id,apn,addr,city,zip,ownerName:owner,ownerAddress:ownerAddr,useCode,useDesc,landSF,buildingSF:bldgSF,yearBuilt:yb,stories,landValue:landVal,buildingValue:bldgVal,totalValue:landVal+bldgVal,lastSale,saleHistory:history,zoning,lat,lng,
-  geometry:{type:'Polygon',coordinates:_rect(lat,lng,wFt,hFt)},
-  notes:[],photos:[],contacts:[],userSpecs:{},tags:[]
-});
-const SEED_PARCELS=[
-  // === Camp Washington cluster (industrial) — shared owner: "Queensgate Industrial Partners LLC"
-  _P(0,'100-0004-0125','2801 Colerain Ave','Cincinnati','45225','Queensgate Industrial Partners LLC','4400 Vine St, Cincinnati OH 45217','402','Warehouse/Distribution',108900,72000,1968,1,485000,1420000,{date:'2019-08-14',price:2900000,deed:'GD',grantor:'CW Realty LLC',grantee:'Queensgate Industrial Partners LLC'},[{date:'2019-08-14',price:2900000},{date:'2001-03-22',price:1150000}],'M-2 Heavy Industrial',39.1391,-84.5312,340,320),
-  _P(1,'100-0004-0140','2825 Colerain Ave','Cincinnati','45225','Queensgate Industrial Partners LLC','4400 Vine St, Cincinnati OH 45217','402','Warehouse/Distribution',84600,54000,1972,1,378000,1080000,{date:'2019-08-14',price:2900000,deed:'GD',grantor:'CW Realty LLC',grantee:'Queensgate Industrial Partners LLC'},[{date:'2019-08-14',price:2900000,note:'Portfolio purchase with 2801 Colerain'}],'M-2 Heavy Industrial',39.1398,-84.5313,265,320),
-  _P(2,'100-0004-0155','2900 Spring Grove Ave','Cincinnati','45225','Queensgate Industrial Partners LLC','4400 Vine St, Cincinnati OH 45217','404','Industrial Outdoor Storage',143700,3200,1955,1,612000,145000,{date:'2019-08-14',price:2900000,deed:'GD',grantor:'CW Realty LLC',grantee:'Queensgate Industrial Partners LLC'},[{date:'2019-08-14',price:2900000,note:'Portfolio purchase'}],'M-2 Heavy Industrial',39.1385,-84.5296,410,350),
-  _P(3,'100-0004-0170','2820 Este Ave','Cincinnati','45232','Queensgate Industrial Partners LLC','4400 Vine St, Cincinnati OH 45217','401','Manufacturing',96800,68500,1962,2,432000,1180000,{date:'2019-08-14',price:2900000,deed:'GD',grantor:'CW Realty LLC',grantee:'Queensgate Industrial Partners LLC'},[{date:'2019-08-14',price:2900000,note:'Portfolio purchase'}],'M-2 Heavy Industrial',39.1408,-84.5285,310,315),
-  // === Standalone owners in Camp Washington
-  _P(4,'100-0004-0190','3020 Central Pkwy','Cincinnati','45225','Kettering Trust','P.O. Box 22910, Cincinnati OH 45222','402','Warehouse/Distribution',235400,145000,1953,1,890000,2340000,{date:'1998-06-30',price:2100000,deed:'GD',grantor:'Kettering Family Partnership',grantee:'Kettering Trust'},[{date:'1998-06-30',price:2100000}],'M-2 Heavy Industrial',39.1421,-84.5343,540,440),
-  _P(5,'100-0005-0032','3200 Central Pkwy','Cincinnati','45225','Baldwin Industries Ohio Inc','3200 Central Pkwy, Cincinnati OH 45225','401','Manufacturing',324500,215000,1948,3,1150000,3620000,{date:'2016-11-08',price:6800000,deed:'GD',grantor:'Baldwin Piano Co',grantee:'Baldwin Industries Ohio Inc'},[{date:'2016-11-08',price:6800000}],'M-2 Heavy Industrial',39.1436,-84.5321,680,480),
-  _P(6,'100-0005-0055','2955 Beekman St','Cincinnati','45225','Beekman St Holdings LLC','c/o Marcus Reyes, 1200 Broadway Oakland CA','404','Industrial Outdoor Storage',172800,4200,1961,1,738000,132000,{date:'2023-01-12',price:2450000,deed:'GD',grantor:'Beekman Industries',grantee:'Beekman St Holdings LLC'},[{date:'2023-01-12',price:2450000}],'M-2 Heavy Industrial',39.1428,-84.5289,432,400),
-  _P(7,'100-0005-0072','2410 Massachusetts Ave','Cincinnati','45225','Estate of William Voigt','c/o Ellen Park Esq., Perkins Coie, Cincinnati OH','402','Warehouse/Distribution',68500,48000,1959,1,301000,842000,{date:'1984-09-04',price:340000,deed:'GD',grantor:'Voigt Cooperage Co',grantee:'William Voigt'},[{date:'1984-09-04',price:340000}],'M-2 Heavy Industrial',39.1372,-84.5327,250,275),
-  _P(8,'100-0005-0080','2450 Massachusetts Ave','Cincinnati','45225','VACANT','—','500','Vacant Industrial Land',54200,0,0,0,178000,0,{date:'2010-05-15',price:145000,deed:'FF',grantor:'Cincinnati Land Bank',grantee:'Massachusetts Ave LLC'},[{date:'2010-05-15',price:145000}],'M-2 Heavy Industrial',39.1370,-84.5314,240,225),
-  // === Queensgate cluster (owned by "West End Rail Holdings LP" — 3 parcels)
-  _P(9,'098-0001-0022','1055 W 6th St','Cincinnati','45203','West End Rail Holdings LP','200 W 4th St #900, Cincinnati OH 45202','403','Truck Terminal',287400,58000,1969,1,1080000,890000,{date:'2018-04-11',price:5200000,deed:'GD',grantor:'CSX Real Estate',grantee:'West End Rail Holdings LP'},[{date:'2018-04-11',price:5200000},{date:'1972-06-18',price:410000}],'M-2 Heavy Industrial',39.1080,-84.5335,520,540),
-  _P(10,'098-0001-0038','1201 W 6th St','Cincinnati','45203','West End Rail Holdings LP','200 W 4th St #900, Cincinnati OH 45202','404','Industrial Outdoor Storage',198400,3600,1971,1,724000,98000,{date:'2018-04-11',price:5200000,deed:'GD',grantor:'CSX Real Estate',grantee:'West End Rail Holdings LP'},[{date:'2018-04-11',price:5200000}],'M-2 Heavy Industrial',39.1075,-84.5354,468,420),
-  _P(11,'098-0001-0045','710 Freeman Ave','Cincinnati','45203','West End Rail Holdings LP','200 W 4th St #900, Cincinnati OH 45202','402','Warehouse/Distribution',96500,68000,1968,1,395000,1240000,{date:'2018-04-11',price:5200000,deed:'GD',grantor:'CSX Real Estate',grantee:'West End Rail Holdings LP'},[{date:'2018-04-11',price:5200000}],'M-2 Heavy Industrial',39.1082,-84.5372,310,315),
-  // === Queensgate standalones
-  _P(12,'098-0001-0058','950 Bank St','Cincinnati','45203','Bank St Property Co','950 Bank St, Cincinnati OH 45203','405','Flex / R&D',48200,32500,1985,2,215000,782000,{date:'2007-02-14',price:1980000,deed:'GD',grantor:'Bank St Realty Trust',grantee:'Bank St Property Co'},[{date:'2007-02-14',price:1980000}],'M-1 Light Industrial',39.1091,-84.5330,235,205),
-  _P(13,'098-0001-0060','1010 Bank St','Cincinnati','45203','Cincinnati Terminal Warehouse Co','1010 Bank St, Cincinnati OH 45203','402','Warehouse/Distribution',185600,124000,1948,4,672000,2840000,{date:'1962-10-30',price:820000,deed:'GD',grantor:'C&O Railway',grantee:'Cincinnati Terminal Warehouse Co'},[{date:'1962-10-30',price:820000}],'M-2 Heavy Industrial',39.1097,-84.5320,405,458),
-  _P(14,'098-0001-0075','625 Court St','Cincinnati','45203','Court St Realty LLC','c/o Frank DiSanto, 2200 Doolittle Dr','410','Commercial Office/Retail',24600,18500,1902,3,120000,415000,{date:'2020-07-19',price:685000,deed:'GD',grantor:'Court St Family Trust',grantee:'Court St Realty LLC'},[{date:'2020-07-19',price:685000},{date:'1968-03-02',price:52000}],'CBD',39.1099,-84.5290,158,155),
-  // === Norwood cluster — owned by "Norwood Yard Assemblage LLC" (potential redevelopment)
-  _P(15,'620-0002-0110','3800 Montgomery Rd','Norwood','45212','Norwood Yard Assemblage LLC','c/o Deepa Rangan, 450 Cypress Ct','404','Industrial Outdoor Storage',196200,8400,1975,1,1350000,285000,{date:'2022-03-08',price:4200000,deed:'GD',grantor:'Norwood Metal Works',grantee:'Norwood Yard Assemblage LLC'},[{date:'2022-03-08',price:4200000}],'M-1 Light Industrial',39.1601,-84.4602,465,422),
-  _P(16,'620-0002-0125','3830 Montgomery Rd','Norwood','45212','Norwood Yard Assemblage LLC','c/o Deepa Rangan, 450 Cypress Ct','404','Industrial Outdoor Storage',128000,0,0,0,880000,0,{date:'2022-03-08',price:4200000,deed:'GD',grantor:'Norwood Metal Works',grantee:'Norwood Yard Assemblage LLC'},[{date:'2022-03-08',price:4200000,note:'Assemblage — Norwood plant redev'}],'M-1 Light Industrial',39.1607,-84.4593,355,360),
-  _P(17,'620-0002-0140','3910 Montgomery Rd','Norwood','45212','Norwood Yard Assemblage LLC','c/o Deepa Rangan, 450 Cypress Ct','500','Vacant Industrial Land',72800,0,0,0,540000,0,{date:'2022-08-15',price:1150000,deed:'GD',grantor:'Norwood Recycling',grantee:'Norwood Yard Assemblage LLC'},[{date:'2022-08-15',price:1150000,note:'Fills the assemblage'}],'M-1 Light Industrial',39.1613,-84.4586,268,270),
-  // === Standalone Norwood industrial
-  _P(18,'620-0002-0165','4050 Smith Rd','Norwood','45212','Smith Rd Industrial LP','4050 Smith Rd, Norwood OH 45212','401','Manufacturing',162400,98500,1958,2,690000,1780000,{date:'2011-11-22',price:3300000,deed:'GD',grantor:'GM Norwood Assembly Trust',grantee:'Smith Rd Industrial LP'},[{date:'2011-11-22',price:3300000},{date:'1998-01-15',price:2100000}],'M-1 Light Industrial',39.1621,-84.4571,420,388),
-  _P(19,'620-0002-0180','4200 Montgomery Rd','Norwood','45212','Rangan Family Trust','450 Cypress Ct, Milpitas CA 95035','405','Flex / R&D',34200,22800,1988,1,215000,548000,{date:'2015-06-04',price:1450000,deed:'GD',grantor:'Rangan Enterprises',grantee:'Rangan Family Trust'},[{date:'2015-06-04',price:1450000}],'M-1 Light Industrial',39.1628,-84.4558,215,160),
-  // === Sharonville industrial cluster
-  _P(20,'620-0004-0230','11500 Reading Rd','Sharonville','45241','Prologis Cincinnati LLC','1800 Wazee St, Denver CO 80202','402','Warehouse/Distribution',548600,325000,2002,1,2450000,8940000,{date:'2019-12-10',price:22400000,deed:'GD',grantor:'Duke Realty',grantee:'Prologis Cincinnati LLC'},[{date:'2019-12-10',price:22400000}],'M-1 Light Industrial',39.2745,-84.4132,760,720),
-  _P(21,'620-0004-0245','11600 Reading Rd','Sharonville','45241','Prologis Cincinnati LLC','1800 Wazee St, Denver CO 80202','402','Warehouse/Distribution',412000,285000,2004,1,1980000,7820000,{date:'2019-12-10',price:22400000,deed:'GD',grantor:'Duke Realty',grantee:'Prologis Cincinnati LLC'},[{date:'2019-12-10',price:22400000,note:'Portfolio purchase'}],'M-1 Light Industrial',39.2758,-84.4128,660,620),
-  _P(22,'620-0004-0250','11750 Chester Rd','Sharonville','45241','Chester Rd Industrial LLC','—','402','Warehouse/Distribution',148600,102000,1998,1,650000,2820000,{date:'2013-04-18',price:6100000,deed:'GD',grantor:'Chester Development Co',grantee:'Chester Rd Industrial LLC'},[{date:'2013-04-18',price:6100000}],'M-1 Light Industrial',39.2762,-84.4152,385,388),
-  // === Northern Ky-facing Riverfront (potential IOS play)
-  _P(23,'098-0002-0022','1450 River Rd','Cincinnati','45204','Riverfront IOS LLC','c/o Robert Kwan, 7150 Nimitz Fwy Oakland CA','404','Industrial Outdoor Storage',285400,4800,1955,1,1420000,145000,{date:'2021-09-24',price:4850000,deed:'GD',grantor:'River Terminal Co',grantee:'Riverfront IOS LLC'},[{date:'2021-09-24',price:4850000}],'M-2 Heavy Industrial',39.1039,-84.5555,585,490),
-  _P(24,'098-0002-0038','1500 River Rd','Cincinnati','45204','Riverfront IOS LLC','c/o Robert Kwan, 7150 Nimitz Fwy Oakland CA','404','Industrial Outdoor Storage',196800,3200,1961,1,986000,98000,{date:'2021-09-24',price:4850000,deed:'GD',grantor:'River Terminal Co',grantee:'Riverfront IOS LLC'},[{date:'2021-09-24',price:4850000,note:'Portfolio'}],'M-2 Heavy Industrial',39.1046,-84.5570,450,435),
-  _P(25,'098-0002-0055','1620 River Rd','Cincinnati','45204','VACANT','—','500','Vacant Industrial Land',89600,0,0,0,412000,0,{date:'2005-08-10',price:245000,deed:'FF',grantor:'City of Cincinnati',grantee:'River Rd Holdings LLC'},[{date:'2005-08-10',price:245000}],'M-2 Heavy Industrial',39.1054,-84.5585,335,265),
-  // === Small flex / commercial infill (mixed)
-  _P(26,'100-0006-0090','1420 Findlay St','Cincinnati','45214','Findlay Market Realty','1420 Findlay St, Cincinnati OH 45214','410','Commercial Retail',12800,9600,1911,3,68000,285000,{date:'1998-05-22',price:118000,deed:'GD',grantor:'Findlay Family LP',grantee:'Findlay Market Realty'},[{date:'1998-05-22',price:118000}],'CBD',39.1180,-84.5178,128,100),
-  _P(27,'100-0006-0102','1500 Elm St','Cincinnati','45214','OTR Investors LLC','1500 Elm St, Cincinnati OH 45214','410','Commercial Mixed-Use',9200,7400,1898,4,62000,224000,{date:'2019-11-14',price:850000,deed:'GD',grantor:'Elm St Partners',grantee:'OTR Investors LLC'},[{date:'2019-11-14',price:850000},{date:'1971-02-04',price:22000}],'OTR-1',39.1185,-84.5182,92,100),
-  _P(28,'100-0006-0125','1345 Elm St','Cincinnati','45214','Kettering Trust','P.O. Box 22910, Cincinnati OH 45222','405','Flex / R&D',22400,18000,1972,2,105000,342000,{date:'1996-08-20',price:245000,deed:'GD',grantor:'Kettering Family Partnership',grantee:'Kettering Trust'},[{date:'1996-08-20',price:245000}],'M-1 Light Industrial',39.1194,-84.5188,160,140),
-];
+// Parcels come exclusively from live CAGIS pulls (lasso / click-identify).
+// No demo parcels — the county tile layer is the only thing drawn until you query.
 
 // Simple demographic dataset by rough census tract centers
 const DEMO_ZONES=[
@@ -1755,8 +1706,7 @@ function saveState(){
         notes:p.notes,contacts:p.contacts,photos:p.photos,tags:p.tags,userSpecs:p.userSpecs};
     }
   });
-  const persistParcels=parcels.filter(p=>!p.__live);
-  const payload={listings,activity,goals,notes,quote,followups,commissionGoal,templates,upcoming,prospects,crmContacts,deals,comps,lois,bovs,mktReports,parcels:persistParcels,parcelEdits,requirements,savedParcels};
+  const payload={listings,activity,goals,notes,quote,followups,commissionGoal,templates,upcoming,prospects,crmContacts,deals,comps,lois,bovs,mktReports,parcelEdits,requirements,savedParcels};
   const trySave=obj=>{ try{ localStorage.setItem(STORE_KEY,JSON.stringify(obj)); return true; }catch(e){ return false; } };
   if(trySave(payload)) return setSaveStatus('Saved locally ✓');
   const trimmed=JSON.parse(JSON.stringify(payload,(k,v)=>(typeof v==='string'&&v.length>50000&&v.startsWith('data:'))?null:v));
@@ -1780,7 +1730,7 @@ function loadState(){
     lois=s.lois||structuredCloneSafe(SEED_LOIS);
     bovs=s.bovs||[];
     mktReports=s.mktReports||structuredCloneSafe(SEED_MKTREPORTS);
-    parcels=(s.parcels||structuredCloneSafe(SEED_PARCELS)).filter(p=>!p.__live);
+    parcels=[]; // live-only now; user parcel data lives in parcelEdits + savedParcels
     parcelEdits=s.parcelEdits||{};
     requirements=s.requirements||structuredCloneSafe(SEED_REQUIREMENTS);
     savedParcels=s.savedParcels||[];
@@ -1804,7 +1754,7 @@ function seed(){
   lois=structuredCloneSafe(SEED_LOIS);
   bovs=[];
   mktReports=structuredCloneSafe(SEED_MKTREPORTS);
-  parcels=structuredCloneSafe(SEED_PARCELS);
+  parcels=[];
   parcelEdits={};
   requirements=structuredCloneSafe(SEED_REQUIREMENTS);
   savedParcels=[];
@@ -3810,7 +3760,6 @@ function renderParcelPolygons(){
   const q=(document.getElementById('p-search').value||'').toLowerCase().trim();
   const uc=document.getElementById('p-usecode').value;
   const visible=parcels.filter(p=>{
-    if(cagisOK===true && !p.__live) return false; // real county lines are up — drop demo shapes
     if(uc && p.useCode!==uc) return false;
     if(q && !(p.addr+' '+p.city+' '+p.ownerName+' '+p.apn).toLowerCase().includes(q)) return false;
     return true;
@@ -4426,15 +4375,18 @@ const CAGIS_PARCEL_FIELDS = ['PARCELID','OWNNM1','OWNNM2','ADDRNO','ADDRST','ADD
 // fetch first, JSONP fallback for endpoints without CORS
 function arcgisQuery(url, params){
   params = Object.assign({ f:'json' }, params);
-  const qs = new URLSearchParams(params).toString();
-  return fetch(url + '?' + qs).then(r => r.json())
+  const body = new URLSearchParams(params);
+  // POST first — lasso polygons carry hundreds of vertices and overflow GET URL limits
+  return fetch(url,{method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded'},body:body.toString()})
+    .then(r=>r.json())
+    .catch(()=>fetch(url+'?'+body.toString()).then(r=>r.json()))
     .catch(() => new Promise((res, rej) => {
       const cb = 'agcb' + Math.random().toString(36).slice(2);
-      window[cb] = d => { res(d); try{delete window[cb]}catch(e){window[cb]=undefined;} s.remove(); };
-      const s = document.createElement('script');
-      s.src = url + '?' + qs + '&callback=' + cb;
-      s.onerror = () => rej(new Error('ArcGIS unreachable'));
-      document.body.appendChild(s);
+      window[cb] = d => { res(d); try{delete window[cb]}catch(e){window[cb]=undefined;} sc.remove(); };
+      const sc = document.createElement('script');
+      sc.src = url + '?' + body.toString() + '&callback=' + cb;
+      sc.onerror = () => rej(new Error('ArcGIS unreachable'));
+      document.body.appendChild(sc);
     }));
 }
 function epochToISO(ms){ if(!ms) return ''; const d=new Date(ms); return isNaN(d)?'':d.toISOString().slice(0,10); }
@@ -4512,8 +4464,15 @@ function ingestCagisFeatures(feats){
   if(recs.length){ cagisOK=true; updateCagisBadge(true); }
   return recs;
 }
+function simplifyRing(pts,maxPts){
+  if(pts.length<=maxPts) return pts;
+  const step=pts.length/maxPts, out=[];
+  for(let i=0;i<pts.length;i+=step) out.push(pts[Math.floor(i)]);
+  return out;
+}
 async function cagisPolygonQuery(latlngs){
-  const ring=latlngs.map(p=>[p.lng,p.lat]); ring.push(ring[0]);
+  const slim=simplifyRing(latlngs,80);
+  const ring=slim.map(p=>[p.lng,p.lat]); ring.push(ring[0]);
   let feats=[], offset=0, more=true, guard=0;
   while(more && guard<6){
     const res=await arcgisQuery(CAGIS_PARCELS,{
