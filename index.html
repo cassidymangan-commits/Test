@@ -379,6 +379,7 @@
 
   /* === PARCELS module === */
   #v-parcels{padding:0;max-width:none;height:calc(100vh - 57px);display:flex;flex-direction:column}
+  #v-parcels.hide{display:none}
   #p-topbar{display:flex;align-items:center;gap:8px;padding:9px 14px;background:#fff;border-bottom:1px solid var(--line);flex-wrap:wrap;position:relative;z-index:1001}
   #p-topbar input{width:250px;padding:8px 11px;border:1px solid var(--line);border-radius:8px;font-size:13px;font-family:inherit}
   #p-topbar select{padding:8px 10px;border:1px solid var(--line);border-radius:8px;font-size:12.5px;font-family:inherit;cursor:pointer}
@@ -399,6 +400,34 @@
   #p-topbar .p-legend{margin:0 0 0 auto;padding:0;border:none}
   #p-topbar .live{background:var(--active);color:#fff;font-size:10px;padding:3px 9px;border-radius:10px;font-weight:800;letter-spacing:.5px}
   #p-topbar .live.seed{background:var(--loi)}
+
+  /* === DEAL BOARD === */
+  .dealboard{display:grid;grid-template-columns:1fr 1fr;gap:18px;align-items:start}
+  .db-head{font-size:13.5px;font-weight:700;margin:0 0 10px;color:var(--ink)}
+  .db-count{color:var(--muted);font-weight:600;font-size:12px}
+  .dbcard{background:#fff;border:1px solid var(--line);border-radius:10px;box-shadow:var(--shadow-sm);padding:12px 14px;margin-bottom:10px;display:flex;gap:12px;cursor:pointer;transition:.12s}
+  .dbcard:hover{box-shadow:var(--shadow-md);transform:translateY(-1px)}
+  .dbcard .thumb{width:78px;height:58px;border-radius:8px;background:linear-gradient(135deg,#e9edf3,#d8dfe8);background-size:cover;background-position:center;flex:none}
+  .dbcard .db-main{flex:1;min-width:0}
+  .dbcard .db-addr{font-weight:700;font-size:13.5px}
+  .dbcard .db-meta{color:var(--muted);font-size:12px;margin-top:2px}
+  .dbcard .db-rate{color:var(--brand);font-weight:700;font-size:12.5px;margin-top:4px}
+  .dbcard .db-fit{font-size:11px;color:#1e6b3c;background:#e2f3e8;border-radius:10px;padding:2px 8px;font-weight:700;display:inline-block;margin-top:5px}
+  .reqcard{background:#fff;border:1px solid var(--line);border-left:3px solid var(--accent);border-radius:10px;box-shadow:var(--shadow-sm);padding:12px 14px;margin-bottom:10px}
+  .reqcard.paused{opacity:.62;border-left-color:var(--closed)}
+  .reqcard.fulfilled{border-left-color:var(--active)}
+  .reqcard .rq-head{display:flex;justify-content:space-between;align-items:flex-start;gap:8px}
+  .reqcard .rq-client{font-weight:700;font-size:13.5px}
+  .reqcard .rq-co{color:var(--muted);font-size:12px}
+  .reqcard .rq-facts{display:grid;grid-template-columns:1fr 1fr;gap:4px 14px;font-size:12px;margin:8px 0 6px}
+  .reqcard .rq-facts span{color:var(--muted)}
+  .reqcard .rq-facts b{font-weight:600}
+  .reqcard .rq-musts{font-size:11.5px;color:var(--muted);background:#f7f9fc;border-radius:6px;padding:6px 8px;margin:6px 0}
+  .reqcard .mchip{display:inline-block;background:#e8f0fd;color:var(--brand);font-size:11px;font-weight:600;padding:3px 9px;border-radius:12px;margin:3px 4px 0 0;cursor:pointer}
+  .reqcard .mchip:hover{background:var(--brand);color:#fff}
+  .reqcard .rq-nomatch{font-size:11.5px;color:var(--muted);font-style:italic;margin-top:4px}
+  .reqcard .rq-actions{display:flex;gap:6px;margin-top:9px}
+  .reqcard .rq-actions button{padding:5px 10px;font-size:11.5px}
   .p-toolbar{position:absolute;top:14px;left:14px;background:#fff;border:1px solid var(--line);border-radius:10px;box-shadow:0 4px 14px rgba(20,40,60,.12);padding:10px 12px;z-index:1000;min-width:290px;max-width:320px}
   .p-toolbar h3{margin:0 0 6px;font-size:13px;color:var(--ink);display:flex;justify-content:space-between;align-items:center}
   .p-toolbar h3 .live{background:var(--active);color:#fff;font-size:9.5px;padding:2px 7px;border-radius:10px;font-weight:800;letter-spacing:.4px}
@@ -619,7 +648,7 @@
       <a data-action="nav" data-view="dashboard" class="on"><span class="ic">▦</span> Dashboard</a>
       <a data-action="nav" data-view="parcels"><span class="ic">◎</span> Prospecting</a>
       <a data-action="nav" data-view="crm"><span class="ic">◫</span> CRM</a>
-      <a data-action="nav" data-view="pipeline"><span class="ic">▤</span> Pipeline</a>
+      <a data-action="nav" data-view="dealboard"><span class="ic">▤</span> Deals</a>
       <a data-action="nav" data-view="listings"><span class="ic">⌂</span> Listings</a>
       <a data-action="nav" data-view="bov"><span class="ic">Σ</span> Valuation</a>
       <a data-action="nav" data-view="marketing"><span class="ic">✦</span> Marketing</a>
@@ -988,7 +1017,7 @@
         </div>
         <span class="p-divider"></span>
         <div class="p-toolgroup">
-          <button data-action="p-tryload" title="Pull live Hamilton Co parcels">🔄 Live CAGIS</button>
+          <button data-action="p-tryload" title="Load every commercial/industrial parcel in the current view">⟳ Load area</button>
           <button data-action="p-clear" title="Clear selection &amp; tools">✕ Clear</button>
         </div>
         <span id="p-datasrc" class="live seed">SEED</span>
@@ -1133,6 +1162,25 @@
       </div>
       <div id="crm-companies" class="hide"></div>
       <div id="crm-tenants" class="hide"></div>
+    </div>
+
+    <!-- DEAL BOARD: supply (listings) vs demand (client requirements) -->
+    <div class="wrap view hide" id="v-dealboard" style="max-width:1280px">
+      <div class="toolbar" style="margin-bottom:16px">
+        <input id="db-q" placeholder="🔍 Search clients, companies, or addresses…">
+        <button class="btn" data-action="req-add">＋ Add requirement</button>
+        <button class="btn ghost" data-action="nav" data-view="listings">Listings →</button>
+      </div>
+      <div class="dealboard">
+        <div>
+          <div class="db-head">🏢 Listings — Supply <span class="db-count" id="db-supply-count"></span></div>
+          <div id="db-supply"></div>
+        </div>
+        <div>
+          <div class="db-head">🎯 Client Requirements — Demand <span class="db-count" id="db-demand-count"></span></div>
+          <div id="db-demand"></div>
+        </div>
+      </div>
     </div>
 
     <!-- PIPELINE / DEALS (kanban) -->
@@ -1348,6 +1396,23 @@
     <label>Source<select id="cm-src"><option value="own">My Deal</option><option value="CoStar">CoStar</option><option value="RCA">RCA</option><option value="broker">Broker Network</option></select></label>
   </div>
   <div class="actions"><button class="btn ghost" data-action="comp-cancel">Cancel</button><button class="btn" data-action="comp-save">Save Comp</button></div>
+</div></div>
+
+<div class="qa wide" id="req-modal"><div class="box">
+  <h3 id="req-modal-title">Add Client Requirement</h3>
+  <div class="frmg">
+    <label>Client Contact<input id="rm-client" placeholder="e.g. Mike Torres"></label>
+    <label>Company<input id="rm-company" placeholder="e.g. NorCal Logistics"></label>
+    <label>Property Type<select id="rm-type"><option>Warehouse / Distribution</option><option>Manufacturing</option><option>Flex / R&amp;D</option><option>Cold Storage</option><option>Industrial Outdoor Storage</option><option>Land</option></select></label>
+    <label>Timeline<input id="rm-timeline" placeholder="e.g. Q3 2026 occupancy"></label>
+    <label>Min SF<input id="rm-sfmin" type="number" placeholder="e.g. 70000"></label>
+    <label>Max SF<input id="rm-sfmax" type="number" placeholder="e.g. 100000"></label>
+    <label>Budget / Rate Ceiling<input id="rm-budget" placeholder="e.g. ≤ $1.20/SF/Mo NNN"></label>
+    <label>Submarkets<input id="rm-submarkets" placeholder="e.g. Oakland · San Leandro"></label>
+  </div>
+  <label style="display:block;font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.3px;font-weight:600;margin-top:12px">Must-haves</label>
+  <input id="rm-musts" placeholder="e.g. 28'+ clear, 10+ docks, heavy power">
+  <div class="actions"><button class="btn ghost" data-action="req-cancel">Cancel</button><button class="btn" data-action="req-save">Save requirement</button></div>
 </div></div>
 
 <div class="qa" id="prospect-modal"><div class="box">
@@ -1635,14 +1700,34 @@ const DEMO_ZONES=[
   {lat:39.275,lng:-84.413,r:3,pop:14100,mhi:71800,mha:41,hhu:6100,daytime:32400,label:'Sharonville'},
 ];
 
+// === CLIENT REQUIREMENTS (demand side of the Deal Board) ===
+const SEED_REQUIREMENTS=[
+  {id:0,client:'Mike Torres',company:'NorCal Logistics',type:'Warehouse / Distribution',sfMin:70000,sfMax:100000,submarkets:'Oakland · San Leandro · Hayward',budget:'≤ $1.20/SF/Mo NNN',timeline:'Q3 2026 occupancy',musts:"28'+ clear, 10+ docks, heavy power",status:'active',added:'3 wks ago'},
+  {id:1,client:'Tom Berg',company:'Bay Distribution Co',type:'Warehouse / Distribution',sfMin:100000,sfMax:150000,submarkets:'Union City · Fremont',budget:'≤ $1.05/SF/Mo NNN',timeline:'Immediate — LOI out',musts:'Trailer parking, cross-dock preferred',status:'active',added:'6 wks ago'},
+  {id:2,client:'Sarah Kim',company:'Helix Robotics',type:'Flex / R&D',sfMin:20000,sfMax:35000,submarkets:'Fremont · Milpitas',budget:'≤ $1.70/SF/Mo NNN',timeline:'Q4 2026',musts:'40% office/lab buildout, 600A+ power',status:'active',added:'10 days ago'},
+  {id:3,client:'Ops Team',company:'Precision Components Inc',type:'Manufacturing',sfMin:35000,sfMax:60000,submarkets:'Hayward · San Leandro',budget:'≤ $1.30/SF/Mo NNN',timeline:'Flexible',musts:'Bridge crane, 2,000A+, M zoning',status:'active',added:'2 wks ago'},
+  {id:4,client:'Robert Kwan',company:'Coastal Freight',type:'Industrial Outdoor Storage',sfMin:0,sfMax:0,submarkets:'Richmond · Oakland',budget:'≤ $0.40/SF/Mo',timeline:'Q1 2027',musts:'3–8 AC · paved, fenced, power to yard',status:'paused',added:'1 mo ago'},
+];
+
 let listings=[], activity={}, goals=[], notes=[], quote='', followups=[], commissionGoal=0, templates=[], upcoming=[];
 let prospects=[], crmContacts=[], deals=[], comps=[], lois=[], bovs=[], mktReports={};
-let parcels=[];
+let parcels=[], parcelEdits={}, requirements=[];
 
 const STORE_KEY='listingHub.v3';
 const STORE_KEY_LEGACY='listingHub.v1';
 function saveState(){
-  const payload={listings,activity,goals,notes,quote,followups,commissionGoal,templates,upcoming,prospects,crmContacts,deals,comps,lois,bovs,mktReports,parcels};
+  // Live CAGIS parcels are refetched per session — persist only seeds plus an
+  // edit overlay keyed by APN, so user notes/photos/specs survive without
+  // blowing the localStorage quota on thousands of polygons.
+  parcels.forEach(p=>{
+    if(p.__live && p.__dirty){
+      parcelEdits[p.apn]={addr:p.addr,city:p.city,useCode:p.useCode,useDesc:p.useDesc,
+        buildingSF:p.buildingSF,yearBuilt:p.yearBuilt,zoning:p.zoning,
+        notes:p.notes,contacts:p.contacts,photos:p.photos,tags:p.tags,userSpecs:p.userSpecs};
+    }
+  });
+  const persistParcels=parcels.filter(p=>!p.__live);
+  const payload={listings,activity,goals,notes,quote,followups,commissionGoal,templates,upcoming,prospects,crmContacts,deals,comps,lois,bovs,mktReports,parcels:persistParcels,parcelEdits,requirements};
   const trySave=obj=>{ try{ localStorage.setItem(STORE_KEY,JSON.stringify(obj)); return true; }catch(e){ return false; } };
   if(trySave(payload)) return setSaveStatus('Saved locally ✓');
   const trimmed=JSON.parse(JSON.stringify(payload,(k,v)=>(typeof v==='string'&&v.length>50000&&v.startsWith('data:'))?null:v));
@@ -1666,7 +1751,9 @@ function loadState(){
     lois=s.lois||structuredCloneSafe(SEED_LOIS);
     bovs=s.bovs||[];
     mktReports=s.mktReports||structuredCloneSafe(SEED_MKTREPORTS);
-    parcels=s.parcels||structuredCloneSafe(SEED_PARCELS);
+    parcels=(s.parcels||structuredCloneSafe(SEED_PARCELS)).filter(p=>!p.__live);
+    parcelEdits=s.parcelEdits||{};
+    requirements=s.requirements||structuredCloneSafe(SEED_REQUIREMENTS);
   }catch(e){ seed(); }
 }
 function structuredCloneSafe(v){ return JSON.parse(JSON.stringify(v)); }
@@ -1688,6 +1775,8 @@ function seed(){
   bovs=[];
   mktReports=structuredCloneSafe(SEED_MKTREPORTS);
   parcels=structuredCloneSafe(SEED_PARCELS);
+  parcelEdits={};
+  requirements=structuredCloneSafe(SEED_REQUIREMENTS);
   listings.forEach(l=>{
     l.owner=OWNERS[l.id]||'';
     l.contacts=structuredCloneSafe(SEED_CONTACTS[l.id]||[]);
@@ -1722,10 +1811,10 @@ function flatActivity(){
 }
 function findListing(id){ return listings.find(l=>l.id===id); }
 
-const HUB_OF={parcels:'prospect',prospecting:'prospect',pipeline:'deals',loi:'deals',bov:'val',comps:'val',marketing:'mkt',analytics:'mkt',templates:'mkt'};
+const HUB_OF={parcels:'prospect',prospecting:'prospect',dealboard:'deals',pipeline:'deals',loi:'deals',bov:'val',comps:'val',marketing:'mkt',analytics:'mkt',templates:'mkt'};
 const HUB_TABS={
   prospect:[['parcels','Map'],['prospecting','Leads']],
-  deals:[['pipeline','Deals'],['loi','LOI Analyzer']],
+  deals:[['dealboard','Deal Board'],['pipeline','Pipeline'],['loi','LOI Analyzer']],
   val:[['bov','BOV Builder'],['comps','Comps DB']],
   mkt:[['marketing','Generate'],['analytics','Analytics'],['templates','Templates']]
 };
@@ -1754,6 +1843,7 @@ function go(v){
   if(v==='prospecting'){setTop('Prospecting','AI-scored off-market opportunities in your farm');renderProspects();}
   if(v==='crm'){setTop('CRM','All your contacts, companies, and tenants in market');renderCRM();}
   if(v==='pipeline'){setTop('Pipeline','Every deal from sourcing → close');renderPipeline();}
+  if(v==='dealboard'){setTop('Deals','Your listings and client requirements, matched side by side');renderDealBoard();}
   if(v==='bov'){setTop('BOV Builder','Auto-pull comps, compute value, generate deck');renderBOV();}
   if(v==='loi'){setTop('LOI Analyzer','Compare offers, track redlines, close → auto-comp');renderLOI();}
   if(v==='comps'){setTop('Comps Database','Self-building from closed deals + CoStar/RCA imports');renderComps();}
@@ -2985,6 +3075,94 @@ function dealOpen(id){
 }
 
 // =========================================================================
+// DEAL BOARD — listings (supply) matched against client requirements (demand)
+// =========================================================================
+function reqMatches(r){
+  return listings.filter(l=>l.status!=='closed'
+    && l.type===r.type
+    && (!r.sfMin || !l.sf || l.sf>=r.sfMin*0.85)
+    && (!r.sfMax || !l.sf || l.sf<=r.sfMax*1.2));
+}
+function renderDealBoard(){
+  const q=(document.getElementById('db-q').value||'').toLowerCase().trim();
+  // Supply: active + pending listings
+  const supply=listings.filter(l=>l.status!=='closed')
+    .filter(l=>!q||(l.addr+' '+l.city+' '+(l.owner||'')).toLowerCase().includes(q));
+  const activeReqs=requirements.filter(r=>r.status==='active');
+  document.getElementById('db-supply-count').textContent=`(${supply.length})`;
+  document.getElementById('db-supply').innerHTML=supply.length?supply.map(l=>{
+    const photos=l.photos||[]; const cover=photos.find(p=>p.starred)||photos[0];
+    const fits=activeReqs.filter(r=>reqMatches(r).some(x=>x.id===l.id)).length;
+    return `<div class="dbcard" data-action="open" data-id="${l.id}">
+      <div class="thumb" ${cover&&cover.src?`style="background-image:url('${cover.src}')"`:''}></div>
+      <div class="db-main">
+        <div class="db-addr">${esc(l.addr)} ${badge(l.status)}</div>
+        <div class="db-meta">${esc(l.city)} · ${esc(l.type)} · ${esc(l.size)}</div>
+        <div class="db-rate">${esc(l.rate||'—')}</div>
+        ${fits?`<span class="db-fit">✓ Fits ${fits} client requirement${fits>1?'s':''}</span>`:''}
+      </div>
+    </div>`;
+  }).join(''):'<p class="note">No active listings match.</p>';
+  // Demand: requirements
+  const reqs=requirements.filter(r=>!q||(r.client+' '+r.company+' '+r.type+' '+(r.submarkets||'')).toLowerCase().includes(q));
+  document.getElementById('db-demand-count').textContent=`(${reqs.filter(r=>r.status==='active').length} active)`;
+  document.getElementById('db-demand').innerHTML=reqs.length?reqs.map(r=>{
+    const m=r.status==='active'?reqMatches(r):[];
+    const sfTxt=r.sfMin||r.sfMax?`${fmtNum(r.sfMin)}–${fmtNum(r.sfMax)} SF`:'Any size';
+    return `<div class="reqcard ${r.status}">
+      <div class="rq-head">
+        <div><div class="rq-client">${esc(r.client)}</div><div class="rq-co">${esc(r.company)} · added ${esc(r.added||'—')}</div></div>
+        <span class="pill ${r.status==='active'?'meeting':r.status==='fulfilled'?'won':'lost'}">${r.status.toUpperCase()}</span>
+      </div>
+      <div class="rq-facts">
+        <div><span>Type</span><br><b>${esc(r.type)}</b></div>
+        <div><span>Size</span><br><b>${sfTxt}</b></div>
+        <div><span>Budget</span><br><b>${esc(r.budget||'—')}</b></div>
+        <div><span>Timeline</span><br><b>${esc(r.timeline||'—')}</b></div>
+        <div style="grid-column:1/-1"><span>Submarkets</span><br><b>${esc(r.submarkets||'—')}</b></div>
+      </div>
+      ${r.musts?`<div class="rq-musts">Must-haves: ${esc(r.musts)}</div>`:''}
+      ${r.status==='active'?(m.length
+        ?`<div>${m.map(l=>`<span class="mchip" data-action="open" data-id="${l.id}">↔ ${esc(l.addr)} · ${esc(l.size)}</span>`).join('')}</div>`
+        :'<div class="rq-nomatch">No inventory match yet — check the parcel map for off-market fits.</div>'):''}
+      <div class="rq-actions">
+        ${r.status!=='fulfilled'?`<button class="btn ghost" data-action="req-fulfill" data-id="${r.id}">✓ Fulfilled</button>`:''}
+        ${r.status==='active'?`<button class="btn ghost" data-action="req-pause" data-id="${r.id}">⏸ Pause</button>`:r.status==='paused'?`<button class="btn ghost" data-action="req-resume" data-id="${r.id}">▶ Resume</button>`:''}
+        <button class="btn ghost" data-action="req-del" data-id="${r.id}" style="color:#b3421f">✕</button>
+      </div>
+    </div>`;
+  }).join(''):'<p class="note">No requirements yet — add your first client need.</p>';
+}
+function reqOpenModal(){
+  ['rm-client','rm-company','rm-timeline','rm-sfmin','rm-sfmax','rm-budget','rm-submarkets','rm-musts'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('rm-type').value='Warehouse / Distribution';
+  document.getElementById('req-modal').classList.add('show');
+}
+function reqSave(){
+  const g=id=>document.getElementById(id).value.trim();
+  if(!g('rm-client')&&!g('rm-company')){ toast('Enter a client or company'); return; }
+  requirements.unshift({id:requirements.reduce((m,r)=>Math.max(m,r.id),-1)+1,
+    client:g('rm-client')||'—', company:g('rm-company')||'—',
+    type:document.getElementById('rm-type').value,
+    sfMin:+g('rm-sfmin')||0, sfMax:+g('rm-sfmax')||0,
+    submarkets:g('rm-submarkets'), budget:g('rm-budget'),
+    timeline:g('rm-timeline'), musts:g('rm-musts'),
+    status:'active', added:'just now'});
+  document.getElementById('req-modal').classList.remove('show');
+  saveState(); renderDealBoard(); toast('Requirement added ✓');
+}
+function reqSetStatus(id,status){
+  const r=requirements.find(x=>x.id===id); if(!r) return;
+  r.status=status; saveState(); renderDealBoard();
+  toast(status==='fulfilled'?'🎉 Requirement fulfilled':'Requirement '+status);
+}
+function reqDelete(id){
+  const i=requirements.findIndex(x=>x.id===id); if(i<0) return;
+  if(!confirm('Delete this requirement?')) return;
+  requirements.splice(i,1); saveState(); renderDealBoard();
+}
+
+// =========================================================================
 // COMPS DB
 // =========================================================================
 function renderComps(){
@@ -3578,6 +3756,7 @@ function initParcelMap(){
   parcelMap.on('dblclick', e=>{
     if(parcelTool==='measure'){ measureFinish(); L.DomEvent.stop(e); }
   });
+  parcelMap.on('moveend', cagisOnMoveEnd);
   setTimeout(()=>parcelMap.invalidateSize(),150);
 }
 function renderParcelPolygons(){
@@ -3731,22 +3910,22 @@ function renderParcelCard(){
   const pi=document.getElementById('p-photo-input');
   if(pi) pi.addEventListener('change',e=>{
     const f=e.target.files[0]; if(!f) return;
-    const r=new FileReader(); r.onload=()=>{ p.photos=[{src:r.result,name:f.name}]; saveState(); parcelTabSwitch('edit'); toast('Photo added ✓'); }; r.readAsDataURL(f);
+    const r=new FileReader(); r.onload=()=>{ p.photos=[{src:r.result,name:f.name}]; markParcelDirty(p); saveState(); parcelTabSwitch('edit'); toast('Photo added ✓'); }; r.readAsDataURL(f);
   });
 }
 function addParcelNote(){
   const p=parcels.find(x=>x.id===selectedParcelId); if(!p) return;
   const t=document.getElementById('p-newnote').value.trim(); if(!t) return;
   (p.notes||(p.notes=[])).unshift({t,when:'just now'});
-  saveState(); parcelTabSwitch('notes'); toast('Note added ✓');
+  markParcelDirty(p); saveState(); parcelTabSwitch('notes'); toast('Note added ✓');
 }
 function delParcelNote(i){
   const p=parcels.find(x=>x.id===selectedParcelId); if(!p) return;
-  p.notes.splice(i,1); saveState(); parcelTabSwitch('notes');
+  p.notes.splice(i,1); markParcelDirty(p); saveState(); parcelTabSwitch('notes');
 }
 function delParcelContact(i){
   const p=parcels.find(x=>x.id===selectedParcelId); if(!p) return;
-  p.contacts.splice(i,1); saveState(); parcelTabSwitch('contacts');
+  p.contacts.splice(i,1); markParcelDirty(p); saveState(); parcelTabSwitch('contacts');
 }
 function saveParcelEdits(){
   const p=parcels.find(x=>x.id===selectedParcelId); if(!p) return;
@@ -3756,7 +3935,7 @@ function saveParcelEdits(){
   p.userSpecs=us;
   const tags=document.getElementById('p-tags').value.split(',').map(s=>s.trim()).filter(Boolean);
   p.tags=tags;
-  saveState();
+  markParcelDirty(p); saveState();
   document.getElementById('p-title').textContent=p.addr;
   document.getElementById('p-subtitle').textContent=`${p.city}, OH ${p.zip} · ${p.useCode} ${p.useDesc}`;
   parcelTabSwitch('overview');
@@ -3774,7 +3953,7 @@ function addParcelContact(){
   document.querySelectorAll('#p-body .pc').forEach(i=>c[i.dataset.k]=i.value.trim());
   if(!c.name){ toast('Enter a name'); return; }
   (p.contacts||(p.contacts=[])).unshift(c);
-  saveState(); parcelTabSwitch('contacts'); toast('Contact added ✓');
+  markParcelDirty(p); saveState(); parcelTabSwitch('contacts'); toast('Contact added ✓');
 }
 function showOwnerPortfolio(){
   const p=parcels.find(x=>x.id===selectedParcelId); if(!p) return;
@@ -4062,7 +4241,7 @@ function cagisUseDesc(cls){
 }
 function updateCagisBadge(live){
   const el=document.getElementById('p-datasrc'); if(!el) return;
-  if(live){ el.textContent='LIVE'; el.classList.remove('seed'); }
+  if(live){ el.textContent='LIVE · '+fmtNum(cagisLoadedAPNs.size); el.classList.remove('seed'); }
   else { el.textContent='SEED'; el.classList.add('seed'); }
 }
 function mapCagisFeature(f, i){
@@ -4096,52 +4275,67 @@ function mapCagisFeature(f, i){
   };
 }
 
-async function tryLoadCAGIS(){
-  toast('🔄 Pulling live CAGIS parcels…');
-  // 1) Try cache
-  try{
-    const cached=localStorage.getItem(CAGIS_CACHE_KEY);
-    if(cached){
-      const arr=JSON.parse(cached);
-      if(arr && arr.length){
-        parcels=[...arr, ...parcels.filter(p=>!p.__live)];
-        saveState(); updateCagisBadge(true); renderParcelPolygons();
-        if(parcelMap && arr[0]) parcelMap.setView([arr[0].lat, arr[0].lng], 12.5);
-        toast(`✅ Loaded ${arr.length} cached CAGIS parcels (${CAGIS_DISTRICTS.length} districts)`);
-        // refresh in background
-        setTimeout(()=>fetchCAGISFresh(true),400);
-        return;
-      }
-    }
-  }catch(e){/* fall through */}
-  await fetchCAGISFresh(false);
+// Viewport-based loader: fetches every commercial/industrial parcel inside the
+// current map bounds, paginating past ArcGIS's 1,000-record transfer limit.
+// Works county-wide — no district whitelist. Live parcels live in memory only
+// (refetched per session); user edits persist separately in parcelEdits by APN.
+let cagisLoading=false, cagisAuto=true, cagisSeq=0;
+const cagisLoadedAPNs=new Set();
+function applyParcelEdits(rec){
+  const e=parcelEdits[rec.apn];
+  if(e){ Object.assign(rec,structuredCloneSafe(e)); rec.__dirty=true; }
 }
-async function fetchCAGISFresh(silent){
-  let feats=[]; let failed=0;
-  for(const d of CAGIS_DISTRICTS){
-    try{
+function markParcelDirty(p){ if(p && p.__live) p.__dirty=true; }
+async function tryLoadCAGIS(){ await loadParcelsInView(true); }
+async function loadParcelsInView(manual){
+  if(!parcelMap || cagisLoading) return;
+  if(parcelMap.getZoom()<14){ if(manual) toast('Zoom in closer, then Load Area — county-wide is too many parcels at once'); return; }
+  const b=parcelMap.getBounds();
+  const env={xmin:b.getWest(),ymin:b.getSouth(),xmax:b.getEast(),ymax:b.getNorth(),spatialReference:{wkid:4326}};
+  cagisLoading=true;
+  const badge=document.getElementById('p-datasrc'); if(badge) badge.textContent='…';
+  let feats=[], offset=0, page=1000, more=true, guard=0;
+  try{
+    while(more && guard<6){
       const res=await arcgisQuery(CAGIS_PARCELS,{
-        where:`TAXDST_DIS LIKE '${d}%' AND CLASS>=300 AND CLASS<=499`,
+        geometry:JSON.stringify(env), geometryType:'esriGeometryEnvelope', inSR:4326,
+        spatialRel:'esriSpatialRelIntersects',
+        where:'CLASS>=300 AND CLASS<=499',
         outFields:CAGIS_PARCEL_FIELDS, returnGeometry:true, outSR:4326,
-        resultRecordCount:1000
+        resultOffset:offset, resultRecordCount:page
       });
-      if(res && res.features){
-        feats=feats.concat(res.features);
-        if(!silent) toast(`CAGIS · ${feats.length} parcels (${d})`);
-      } else failed++;
-    }catch(e){ failed++; console.warn('CAGIS district failed:',d,e); }
-  }
+      const f=(res&&res.features)||[];
+      feats=feats.concat(f);
+      more=!!(res&&res.exceededTransferLimit)&&f.length>0;
+      offset+=page; guard++;
+    }
+  }catch(e){ console.warn('CAGIS viewport load failed',e); }
+  cagisLoading=false;
   if(!feats.length){
-    if(!silent) toast('⚠ CAGIS unreachable from browser (CORS) — using seeded parcels. Deploy behind a domain to fix.');
+    updateCagisBadge(cagisLoadedAPNs.size>0);
+    if(manual) toast('⚠ CAGIS returned nothing — endpoint blocked (CORS) or no comm/ind parcels here');
+    cagisAuto=false; // stop hammering a blocked endpoint
     return;
   }
-  const live=feats.map(mapCagisFeature);
-  parcels=[...live, ...parcels.filter(p=>!p.__live)];
-  try{ localStorage.setItem(CAGIS_CACHE_KEY,JSON.stringify(live)); }catch(e){/* quota */}
-  saveState(); updateCagisBadge(true);
-  if(parcelMap) renderParcelPolygons();
-  if(parcelMap && live[0]) parcelMap.setView([live[0].lat, live[0].lng], 12);
-  toast(`✅ ${live.length} live CAGIS parcels loaded${failed?` (${failed}/${CAGIS_DISTRICTS.length} districts failed)`:''}`);
+  cagisAuto=true;
+  let added=0;
+  feats.forEach(f=>{
+    const apn=f.attributes&&f.attributes.PARCELID;
+    if(!apn || cagisLoadedAPNs.has(apn)) return;
+    cagisLoadedAPNs.add(apn);
+    const rec=mapCagisFeature(f, cagisSeq++);
+    applyParcelEdits(rec);
+    parcels.push(rec); added++;
+  });
+  updateCagisBadge(true);
+  renderParcelPolygons();
+  if(added||manual) toast(`✅ ${added} parcels loaded in view · ${fmtNum(cagisLoadedAPNs.size)} live total`);
+}
+let _cagisMoveT=null;
+function cagisOnMoveEnd(){
+  if(!cagisAuto) return;
+  clearTimeout(_cagisMoveT);
+  _cagisMoveT=setTimeout(()=>{ if(parcelMap && parcelMap.getZoom()>=14) loadParcelsInView(false); },700);
 }
 
 // Look up zoning for a single parcel (called on selection when zoning is blank)
@@ -4160,7 +4354,7 @@ async function cagisLookupZoning(p){
       p.zoning=[f.attributes.ZONING,f.attributes.JURISDICTION].filter(Boolean).join(' · ');
       if(f.attributes.ZONE_DESCRIPTION) p.userSpecs['Zone Desc']=f.attributes.ZONE_DESCRIPTION;
       if(selectedParcelId===p.id) parcelTabSwitch('overview');
-      saveState();
+      markParcelDirty(p); saveState();
     }
   }catch(e){ p._zoneChecked=true; }
 }
@@ -4293,6 +4487,14 @@ document.addEventListener('click', function(e){
     case 'loi-paste-cancel': document.getElementById('paste-loi-modal').classList.remove('show'); break;
     case 'loi-paste-extract': loiPasteExtract(); break;
     case 'loi-close-deal': loiCloseDeal(); break;
+    // Deal Board
+    case 'req-add': reqOpenModal(); break;
+    case 'req-cancel': document.getElementById('req-modal').classList.remove('show'); break;
+    case 'req-save': reqSave(); break;
+    case 'req-fulfill': reqSetStatus(+el.dataset.id,'fulfilled'); break;
+    case 'req-pause': reqSetStatus(+el.dataset.id,'paused'); break;
+    case 'req-resume': reqSetStatus(+el.dataset.id,'active'); break;
+    case 'req-del': reqDelete(+el.dataset.id); break;
     // Comps
     case 'comps-add': compOpenModal(); break;
     case 'comps-import': compsImport(); break;
@@ -4413,6 +4615,7 @@ function renderAll(){
   const el=document.getElementById(id); if(el) el.addEventListener(el.tagName==='SELECT'?'change':'input',()=>{ if(parcelLayer) renderParcelPolygons(); });
 });
 { const s=document.getElementById('pr-dist'); if(s) s.addEventListener('change',radiusRender); }
+{ const s=document.getElementById('db-q'); if(s) s.addEventListener('input',renderDealBoard); }
 
 loadState();
 renderDash();
