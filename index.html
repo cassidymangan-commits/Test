@@ -836,6 +836,7 @@
           <option value="410">410 · Commercial</option>
           <option value="500">500 · Vacant Land</option>
         </select>
+        <div id="p-districts" style="display:none;margin-bottom:6px;flex-wrap:wrap;gap:4px"></div>
         <div class="p-tools">
           <button data-action="p-tool" data-tool="select" class="on" title="Click parcels to select"><span class="ic3">👆</span>Select</button>
           <button data-action="p-tool" data-tool="measure" title="Measure distance / area"><span class="ic3">📐</span>Measure</button>
@@ -1598,7 +1599,12 @@ function go(v){
   if(v==='loi'){setTop('LOI Analyzer','Compare offers, track redlines, close → auto-comp');renderLOI();}
   if(v==='comps'){setTop('Comps Database','Self-building from closed deals + CoStar/RCA imports');renderComps();}
   if(v==='analytics'){setTop('Analytics','Portfolio performance + automated owner reports');renderAnalytics();}
-  if(v==='parcels'){setTop('Parcel Map','Hamilton Co OH parcels · owner search · measure · demographics · assemble'); initParcelMap();}
+  if(v==='parcels'){
+    setTop('Parcel Map','Hamilton Co OH parcels · owner search · measure · demographics · assemble');
+    initParcelMap();
+    // First visit → try live CAGIS silently (uses cache if present)
+    if(!window.__cagisTried){ window.__cagisTried=true; setTimeout(()=>tryLoadCAGIS(),300); }
+  }
   window.scrollTo(0,0);
 }
 function setTop(t,s){document.getElementById('ttl').textContent=t;document.getElementById('sub').textContent=s;}
@@ -3454,6 +3460,8 @@ function selectParcel(id){
   document.getElementById('p-title').textContent=p.addr;
   document.getElementById('p-subtitle').textContent=`${p.city}, OH ${p.zip} · ${p.useCode} ${p.useDesc}`;
   parcelTabSwitch('overview');
+  // Live CAGIS zoning lookup for live parcels without zoning
+  if(p.__live && !p.zoning && !p._zoneChecked) cagisLookupZoning(p);
 }
 function parcelInfoClose(){
   document.getElementById('p-info').classList.add('hide');
@@ -3841,37 +3849,146 @@ function parcelToBOV(){
   },200);
 }
 
-// --- Live CAGIS attempt ---
+// --- Live CAGIS integration (Hamilton County OH) ---
+// Mirrors the Broker OS field app: same endpoints, same districts,
+// same field list, fetch → JSONP fallback, localStorage cache.
+const CAGIS_PARCELS   = 'https://cagisonline.hamilton-co.org/arcgis/rest/services/HCE/Cadastral/MapServer/0/query';
+const CAGIS_BUILDINGS = 'https://services.arcgis.com/JyZag7oO4NteHGiq/arcgis/rest/services/Open_Data/FeatureServer/0/query';
+const CAGIS_ZONING    = 'https://services.arcgis.com/JyZag7oO4NteHGiq/arcgis/rest/services/Open_Data/FeatureServer/29/query';
+const CAGIS_DISTRICTS = ['SHARONVILLE','SPRINGDALE','EVENDALE','WOODLAWN','GLENDALE','FOREST PARK'];
+const CAGIS_PARCEL_FIELDS = ['PARCELID','OWNNM1','OWNNM2','ADDRNO','ADDRST','ADDRSF','EXLUCODE','TAXDST_DIS','CLASS',
+  'SALDAT','SALAMT','MKTLND','MKTIMP','MKT_TOTAL_VAL','ANNUAL_TAXES','DELQ_TAXES','FORECL_FLAG','ACREDEED',
+  'OWNAD1','OWNAD1A','OWNAD2','OWNADCITY','OWNADSTATE','OWNADZIP','MLADR1','MLNM1'].join(',');
+const CAGIS_CACHE_KEY = 'listingHub.cagis_v1';
+
+// fetch first, JSONP fallback for endpoints without CORS
+function arcgisQuery(url, params){
+  params = Object.assign({ f:'json' }, params);
+  const qs = new URLSearchParams(params).toString();
+  return fetch(url + '?' + qs).then(r => r.json())
+    .catch(() => new Promise((res, rej) => {
+      const cb = 'agcb' + Math.random().toString(36).slice(2);
+      window[cb] = d => { res(d); try{delete window[cb]}catch(e){window[cb]=undefined;} s.remove(); };
+      const s = document.createElement('script');
+      s.src = url + '?' + qs + '&callback=' + cb;
+      s.onerror = () => rej(new Error('ArcGIS unreachable'));
+      document.body.appendChild(s);
+    }));
+}
+function epochToISO(ms){ if(!ms) return ''; const d=new Date(ms); return isNaN(d)?'':d.toISOString().slice(0,10); }
+function cagisUseDesc(cls){
+  const c=+cls||0;
+  if(c>=310&&c<=399) return 'Industrial · Class '+c;
+  if(c>=300&&c<310) return 'Vacant Industrial Land';
+  if(c>=400&&c<=499) return 'Commercial · Class '+c;
+  if(c>=500&&c<=599) return 'Residential · Class '+c;
+  if(c>=600&&c<=699) return 'Agricultural · Class '+c;
+  if(c>=700&&c<=799) return 'Tax Exempt · Class '+c;
+  return 'Class '+c;
+}
+function updateCagisBadge(live){
+  const el=document.getElementById('p-datasrc'); if(!el) return;
+  if(live){ el.textContent='LIVE'; el.classList.remove('seed'); }
+  else { el.textContent='SEED'; el.classList.add('seed'); }
+}
+function mapCagisFeature(f, i){
+  const a=f.attributes||{};
+  const rings=f.geometry?.rings||[[]];
+  const flat=rings[0];
+  const lat=flat.reduce((s,c)=>s+c[1],0)/flat.length;
+  const lng=flat.reduce((s,c)=>s+c[0],0)/flat.length;
+  const landSF=Math.round((+a.ACREDEED||0)*43560);
+  const cls=+a.CLASS||0;
+  const useCode=cls>=310&&cls<=399?'401':cls>=400&&cls<=499?'410':cls>=300&&cls<310?'500':String(cls);
+  return {
+    id:10000+i, apn:a.PARCELID||('CAGIS-'+i),
+    addr:[a.ADDRNO,a.ADDRST,a.ADDRSF].filter(Boolean).join(' ').trim()||'(no address)',
+    city:(a.TAXDST_DIS||'').split('-')[0].trim()||'Hamilton Co',
+    zip:a.OWNADZIP||'',
+    ownerName:a.OWNNM1||'Unknown',
+    ownerAddress:[a.OWNAD1||a.MLADR1,a.OWNAD1A,a.OWNADCITY,a.OWNADSTATE,a.OWNADZIP].filter(Boolean).join(', '),
+    useCode, useDesc:cagisUseDesc(cls),
+    landSF, buildingSF:0, yearBuilt:0, stories:0,
+    landValue:+a.MKTLND||0, buildingValue:+a.MKTIMP||0, totalValue:+a.MKT_TOTAL_VAL||0,
+    lastSale:{date:epochToISO(a.SALDAT),price:+a.SALAMT||0,deed:'',grantor:'',grantee:''},
+    saleHistory: a.SALDAT?[{date:epochToISO(a.SALDAT),price:+a.SALAMT||0}]:[],
+    zoning:'', lat:+lat.toFixed(6), lng:+lng.toFixed(6),
+    geometry:{type:'Polygon',coordinates:rings},
+    notes:[],photos:[],contacts:[],userSpecs:{},
+    tags:['CAGIS Live', a.TAXDST_DIS||''].filter(Boolean),
+    __live:true, __district:a.TAXDST_DIS,
+    __annualTaxes:+a.ANNUAL_TAXES||0, __delinquent:+a.DELQ_TAXES||0,
+    __foreclosure:a.FORECL_FLAG||'', __classCode:cls
+  };
+}
+
 async function tryLoadCAGIS(){
-  const endpoints=[
-    // Hamilton County CAGIS Auditor parcels (well-known public REST)
-    'https://cagismaps.hamilton-co.org/arcgis/rest/services/Property/Property/MapServer/0/query?where=1%3D1&outFields=PARID,SITE_ADDR,OWN_NAME&f=geojson&geometry=-84.55,39.10,-84.51,39.16&geometryType=esriGeometryEnvelope&spatialRel=esriSpatialRelIntersects&outSR=4326&resultRecordCount=200',
-  ];
-  toast('🔄 Trying live CAGIS pull…');
-  for(const url of endpoints){
+  toast('🔄 Pulling live CAGIS parcels…');
+  // 1) Try cache
+  try{
+    const cached=localStorage.getItem(CAGIS_CACHE_KEY);
+    if(cached){
+      const arr=JSON.parse(cached);
+      if(arr && arr.length){
+        parcels=[...arr, ...parcels.filter(p=>!p.__live)];
+        saveState(); updateCagisBadge(true); renderParcelPolygons();
+        if(parcelMap && arr[0]) parcelMap.setView([arr[0].lat, arr[0].lng], 12.5);
+        toast(`✅ Loaded ${arr.length} cached CAGIS parcels (${CAGIS_DISTRICTS.length} districts)`);
+        // refresh in background
+        setTimeout(()=>fetchCAGISFresh(true),400);
+        return;
+      }
+    }
+  }catch(e){/* fall through */}
+  await fetchCAGISFresh(false);
+}
+async function fetchCAGISFresh(silent){
+  let feats=[]; let failed=0;
+  for(const d of CAGIS_DISTRICTS){
     try{
-      const r=await fetch(url,{mode:'cors'});
-      if(!r.ok) continue;
-      const j=await r.json();
-      if(!j.features||!j.features.length) continue;
-      // Map to our parcel shape
-      const newP=j.features.slice(0,60).map((f,i)=>({
-        id:1000+i, apn:f.properties?.PARID||('LIVE-'+i),
-        addr:f.properties?.SITE_ADDR||'Unknown address', city:'Cincinnati', zip:'',
-        ownerName:f.properties?.OWN_NAME||'Unknown owner', ownerAddress:'',
-        useCode:'',useDesc:'Live data',landSF:0,buildingSF:0,yearBuilt:0,stories:0,
-        landValue:0,buildingValue:0,totalValue:0,lastSale:{},saleHistory:[],zoning:'',
-        lat:f.geometry.coordinates[0][0][1],lng:f.geometry.coordinates[0][0][0],
-        geometry:f.geometry, notes:[],photos:[],contacts:[],userSpecs:{},tags:['Live CAGIS']
-      }));
-      parcels=[...newP,...parcels];
-      document.getElementById('p-datasrc').textContent='LIVE'; document.getElementById('p-datasrc').classList.remove('seed');
-      renderParcelPolygons(); saveState();
-      toast(`✅ Loaded ${newP.length} live CAGIS parcels`);
-      return;
-    }catch(e){/* try next */}
+      const res=await arcgisQuery(CAGIS_PARCELS,{
+        where:`TAXDST_DIS LIKE '${d}%' AND CLASS>=300 AND CLASS<=499`,
+        outFields:CAGIS_PARCEL_FIELDS, returnGeometry:true, outSR:4326,
+        resultRecordCount:1000
+      });
+      if(res && res.features){
+        feats=feats.concat(res.features);
+        if(!silent) toast(`CAGIS · ${feats.length} parcels (${d})`);
+      } else failed++;
+    }catch(e){ failed++; console.warn('CAGIS district failed:',d,e); }
   }
-  toast('⚠ CAGIS endpoint not reachable from browser (CORS) — running on seeded data');
+  if(!feats.length){
+    if(!silent) toast('⚠ CAGIS unreachable from browser (CORS) — using seeded parcels. Deploy behind a domain to fix.');
+    return;
+  }
+  const live=feats.map(mapCagisFeature);
+  parcels=[...live, ...parcels.filter(p=>!p.__live)];
+  try{ localStorage.setItem(CAGIS_CACHE_KEY,JSON.stringify(live)); }catch(e){/* quota */}
+  saveState(); updateCagisBadge(true);
+  if(parcelMap) renderParcelPolygons();
+  if(parcelMap && live[0]) parcelMap.setView([live[0].lat, live[0].lng], 12);
+  toast(`✅ ${live.length} live CAGIS parcels loaded${failed?` (${failed}/${CAGIS_DISTRICTS.length} districts failed)`:''}`);
+}
+
+// Look up zoning for a single parcel (called on selection when zoning is blank)
+async function cagisLookupZoning(p){
+  if(!p || p._zoneChecked) return;
+  try{
+    const res=await arcgisQuery(CAGIS_ZONING,{
+      geometry:JSON.stringify({x:p.lng,y:p.lat,spatialReference:{wkid:4326}}),
+      geometryType:'esriGeometryPoint', inSR:4326,
+      spatialRel:'esriSpatialRelIntersects',
+      outFields:'ZONING,ZONE_DESCRIPTION,JURISDICTION', returnGeometry:false
+    });
+    p._zoneChecked=true;
+    const f=(res.features||[])[0];
+    if(f){
+      p.zoning=[f.attributes.ZONING,f.attributes.JURISDICTION].filter(Boolean).join(' · ');
+      if(f.attributes.ZONE_DESCRIPTION) p.userSpecs['Zone Desc']=f.attributes.ZONE_DESCRIPTION;
+      if(selectedParcelId===p.id) parcelTabSwitch('overview');
+      saveState();
+    }
+  }catch(e){ p._zoneChecked=true; }
 }
 
 // =========================================================================
