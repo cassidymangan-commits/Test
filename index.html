@@ -1031,7 +1031,6 @@
         </div>
         <span class="p-divider"></span>
         <div class="p-toolgroup">
-          <button data-action="p-tryload" title="Load every commercial/industrial parcel in the current view">⟳ Load area</button>
           <button data-action="pl-show-saved" title="Your saved parcels">★ Saved <span id="pl-saved-count"></span></button>
           <button data-action="p-clear" title="Clear selection &amp; tools">✕ Clear</button>
         </div>
@@ -1047,6 +1046,7 @@
       </div>
       <div id="p-mapwrap">
         <div id="parcel-map"></div>
+        <div id="p-zoomhint" style="display:none;position:absolute;bottom:18px;left:50%;transform:translateX(-50%);z-index:1000;background:rgba(22,40,60,.85);color:#fff;font-size:12px;font-weight:600;padding:7px 14px;border-radius:16px;pointer-events:none">Zoom in to see parcel lines — then ◌ lasso to pull their data</div>
         <!-- Selected parcel: one scrollable card -->
         <div class="p-info hide" id="p-info">
           <div class="hd">
@@ -1882,8 +1882,6 @@ function go(v){
   if(v==='parcels'){
     setTop('Parcel Map','Hamilton Co OH parcels · owner search · measure · demographics · assemble');
     initParcelMap();
-    // First visit → try live CAGIS silently (uses cache if present)
-    if(!window.__cagisTried){ window.__cagisTried=true; setTimeout(()=>tryLoadCAGIS(),300); }
   }
   window.scrollTo(0,0);
 }
@@ -3772,7 +3770,19 @@ function initParcelMap(){
     'Terrain': L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}',{maxZoom:19,attribution:'© Esri'})
   };
   bases.Satellite.addTo(parcelMap);
-  L.control.layers(bases,null,{position:'bottomright',collapsed:true}).addTo(parcelMap);
+  // Every parcel boundary in Hamilton County, rendered server-side by CAGIS.
+  // Tiles request MapServer/export per 256px tile in EPSG:3857.
+  const cadastral=L.tileLayer('',{minZoom:15,maxZoom:20,opacity:.9,attribution:'Parcels © CAGIS / Hamilton Co'});
+  cadastral.getTileUrl=function(c){
+    const HALF=20037508.342789244, ts=HALF*2/Math.pow(2,c.z);
+    const xmin=-HALF+c.x*ts, xmax=xmin+ts, ymax=HALF-c.y*ts, ymin=ymax-ts;
+    return CAGIS_MAPSERVER+'/export?bbox='+xmin+','+ymin+','+xmax+','+ymax+
+      '&bboxSR=3857&imageSR=3857&size=256,256&dpi=96&format=png32&transparent=true&layers=show:0&f=image';
+  };
+  cadastral.addTo(parcelMap);
+  L.control.layers(bases,{'Parcel lines (county-wide)':cadastral},{position:'bottomright',collapsed:true}).addTo(parcelMap);
+  const zoomHint=()=>{ const el=document.getElementById('p-zoomhint'); if(el) el.style.display=parcelMap.getZoom()<15?'block':'none'; };
+  parcelMap.on('zoomend',zoomHint); setTimeout(zoomHint,300);
   L.control.scale({position:'bottomleft',imperial:true,metric:false}).addTo(parcelMap);
   // Camp Washington center
   parcelMap.setView([39.140,-84.531],14.5);
@@ -3786,11 +3796,11 @@ function initParcelMap(){
   parcelMap.on('click', e=>{
     if(parcelTool==='measure'){ measureAdd(e.latlng); }
     else if(parcelTool==='radius'){ radiusPlace(e.latlng); }
+    else if(parcelTool==='select'){ identifyParcelAt(e.latlng); }
   });
   parcelMap.on('dblclick', e=>{
     if(parcelTool==='measure'){ measureFinish(); L.DomEvent.stop(e); }
   });
-  parcelMap.on('moveend', cagisOnMoveEnd);
   setTimeout(()=>parcelMap.invalidateSize(),150);
 }
 function renderParcelPolygons(){
@@ -3800,6 +3810,7 @@ function renderParcelPolygons(){
   const q=(document.getElementById('p-search').value||'').toLowerCase().trim();
   const uc=document.getElementById('p-usecode').value;
   const visible=parcels.filter(p=>{
+    if(cagisOK===true && !p.__live) return false; // real county lines are up — drop demo shapes
     if(uc && p.useCode!==uc) return false;
     if(q && !(p.addr+' '+p.city+' '+p.ownerName+' '+p.apn).toLowerCase().includes(q)) return false;
     return true;
@@ -4217,13 +4228,24 @@ function lassoBind(){
     lassoPts.push(parcelMap.mouseEventToLatLng(e));
     if(lassoTrail) lassoTrail.setLatLngs(lassoPts);
   });
-  const finish=e=>{
+  const finish=async e=>{
     if(!lassoDrawing) return;
     lassoDrawing=false;
     if(lassoTrail){ lassoTrail.remove(); lassoTrail=null; }
     if(lassoPts.length<8){ toast('Draw a bigger circle around the parcels'); return; }
     lassoShape=L.polygon(lassoPts,{color:'#0e9384',weight:2.5,dashArray:'6,4',fillColor:'#0e9384',fillOpacity:.08}).addTo(parcelMap);
-    lassoHits=parcels.filter(p=>pointInPoly(p.lat,p.lng,lassoPts));
+    // Pull live county data for exactly what was circled
+    lassoHits=[];
+    renderLassoPanelLoading();
+    let feats=[];
+    try{ feats=await cagisPolygonQuery(lassoPts); }catch(err){ console.warn('lasso query failed',err); }
+    if(feats.length){
+      lassoHits=ingestCagisFeatures(feats);
+      renderParcelPolygons();
+    } else {
+      if(cagisOK===null) cagisOK=false;
+      lassoHits=parcels.filter(p=>pointInPoly(p.lat,p.lng,lassoPts)); // offline/demo fallback
+    }
     renderLassoPanel('lasso');
   };
   c.addEventListener('pointerup',finish);
@@ -4258,6 +4280,16 @@ function plRowHtml(p,fromSaved){
   </div>`;
 }
 let plMode='lasso';
+function renderLassoPanelLoading(){
+  const panel=document.getElementById('p-lasso');
+  document.getElementById('p-info').classList.add('hide');
+  panel.classList.remove('hide');
+  document.getElementById('pl-kicker').textContent='LASSO RESULTS';
+  document.getElementById('pl-title').textContent='Pulling county data…';
+  document.getElementById('pl-sub').textContent='Querying every parcel inside your circle from CAGIS.';
+  document.getElementById('pl-body').innerHTML='<p class="note" style="padding:14px 4px">⏳ Fetching owners, values &amp; sale history…</p>';
+  document.getElementById('pl-saveall-btn').style.display='none';
+}
 function renderLassoPanel(mode){
   plMode=mode||plMode;
   const panel=document.getElementById('p-lasso');
@@ -4277,7 +4309,7 @@ function renderLassoPanel(mode){
     document.getElementById('pl-sub').textContent='Save the ones worth chasing — they get a dot on the map.';
     document.getElementById('pl-body').innerHTML=lassoHits.length
       ? lassoHits.map(p=>plRowHtml(p,false)).join('')
-      : '<p class="note">No parcels inside that shape. If the area looks empty, hit ⟳ Load area first, then lasso again.</p>';
+      : '<p class="note">Nothing came back for that circle — draw over Hamilton County parcels, or check your connection to CAGIS.</p>';
     document.getElementById('pl-saveall-btn').style.display=lassoHits.length?'':'none';
   }
   updateSavedCount();
@@ -4383,14 +4415,13 @@ function parcelToBOV(){
 // --- Live CAGIS integration (Hamilton County OH) ---
 // Mirrors the Broker OS field app: same endpoints, same districts,
 // same field list, fetch → JSONP fallback, localStorage cache.
+const CAGIS_MAPSERVER = 'https://cagisonline.hamilton-co.org/arcgis/rest/services/HCE/Cadastral/MapServer';
 const CAGIS_PARCELS   = 'https://cagisonline.hamilton-co.org/arcgis/rest/services/HCE/Cadastral/MapServer/0/query';
 const CAGIS_BUILDINGS = 'https://services.arcgis.com/JyZag7oO4NteHGiq/arcgis/rest/services/Open_Data/FeatureServer/0/query';
 const CAGIS_ZONING    = 'https://services.arcgis.com/JyZag7oO4NteHGiq/arcgis/rest/services/Open_Data/FeatureServer/29/query';
-const CAGIS_DISTRICTS = ['SHARONVILLE','SPRINGDALE','EVENDALE','WOODLAWN','GLENDALE','FOREST PARK'];
 const CAGIS_PARCEL_FIELDS = ['PARCELID','OWNNM1','OWNNM2','ADDRNO','ADDRST','ADDRSF','EXLUCODE','TAXDST_DIS','CLASS',
   'SALDAT','SALAMT','MKTLND','MKTIMP','MKT_TOTAL_VAL','ANNUAL_TAXES','DELQ_TAXES','FORECL_FLAG','ACREDEED',
   'OWNAD1','OWNAD1A','OWNAD2','OWNADCITY','OWNADSTATE','OWNADZIP','MLADR1','MLNM1'].join(',');
-const CAGIS_CACHE_KEY = 'listingHub.cagis_v1';
 
 // fetch first, JSONP fallback for endpoints without CORS
 function arcgisQuery(url, params){
@@ -4453,68 +4484,70 @@ function mapCagisFeature(f, i){
   };
 }
 
-// Viewport-based loader: fetches every commercial/industrial parcel inside the
-// current map bounds, paginating past ArcGIS's 1,000-record transfer limit.
-// Works county-wide — no district whitelist. Live parcels live in memory only
-// (refetched per session); user edits persist separately in parcelEdits by APN.
-let cagisLoading=false, cagisAuto=true, cagisSeq=0;
+// On-demand data pulls. Every parcel BOUNDARY in Hamilton County renders as
+// raster tiles straight from the CAGIS map service (see initParcelMap), so the
+// whole county is always visible. Actual parcel DATA is fetched only when you
+// ask for it: lasso an area (polygon spatial query, all classes) or click a
+// parcel (point identify). User edits persist in parcelEdits keyed by APN.
+let cagisSeq=0, cagisOK=null;
 const cagisLoadedAPNs=new Set();
 function applyParcelEdits(rec){
   const e=parcelEdits[rec.apn];
   if(e){ Object.assign(rec,structuredCloneSafe(e)); rec.__dirty=true; }
 }
 function markParcelDirty(p){ if(p && p.__live) p.__dirty=true; }
-async function tryLoadCAGIS(){ await loadParcelsInView(true); }
-async function loadParcelsInView(manual){
-  if(!parcelMap || cagisLoading) return;
-  if(parcelMap.getZoom()<14){ if(manual) toast('Zoom in closer, then Load Area — county-wide is too many parcels at once'); return; }
-  const b=parcelMap.getBounds();
-  const env={xmin:b.getWest(),ymin:b.getSouth(),xmax:b.getEast(),ymax:b.getNorth(),spatialReference:{wkid:4326}};
-  cagisLoading=true;
-  const badge=document.getElementById('p-datasrc'); if(badge) badge.textContent='…';
-  let feats=[], offset=0, page=1000, more=true, guard=0;
-  try{
-    while(more && guard<6){
-      const res=await arcgisQuery(CAGIS_PARCELS,{
-        geometry:JSON.stringify(env), geometryType:'esriGeometryEnvelope', inSR:4326,
-        spatialRel:'esriSpatialRelIntersects',
-        where:'CLASS>=300 AND CLASS<=499',
-        outFields:CAGIS_PARCEL_FIELDS, returnGeometry:true, outSR:4326,
-        resultOffset:offset, resultRecordCount:page
-      });
-      const f=(res&&res.features)||[];
-      feats=feats.concat(f);
-      more=!!(res&&res.exceededTransferLimit)&&f.length>0;
-      offset+=page; guard++;
-    }
-  }catch(e){ console.warn('CAGIS viewport load failed',e); }
-  cagisLoading=false;
-  if(!feats.length){
-    updateCagisBadge(cagisLoadedAPNs.size>0);
-    if(manual) toast('⚠ CAGIS returned nothing — endpoint blocked (CORS) or no comm/ind parcels here');
-    cagisAuto=false; // stop hammering a blocked endpoint
-    return;
-  }
-  cagisAuto=true;
-  let added=0;
+function ingestCagisFeatures(feats){
+  const recs=[];
   feats.forEach(f=>{
-    const apn=f.attributes&&f.attributes.PARCELID;
-    if(!apn || cagisLoadedAPNs.has(apn)) return;
-    cagisLoadedAPNs.add(apn);
-    const rec=mapCagisFeature(f, cagisSeq++);
-    applyParcelEdits(rec);
-    parcels.push(rec); added++;
+    const apn=f.attributes&&f.attributes.PARCELID; if(!apn) return;
+    let rec=parcels.find(p=>p.__live&&p.apn===apn);
+    if(!rec){
+      rec=mapCagisFeature(f,cagisSeq++);
+      applyParcelEdits(rec);
+      parcels.push(rec);
+      cagisLoadedAPNs.add(apn);
+    }
+    recs.push(rec);
   });
-  updateCagisBadge(true);
-  renderParcelPolygons();
-  if(added||manual) toast(`✅ ${added} parcels loaded in view · ${fmtNum(cagisLoadedAPNs.size)} live total`);
+  if(recs.length){ cagisOK=true; updateCagisBadge(true); }
+  return recs;
 }
-let _cagisMoveT=null;
-function cagisOnMoveEnd(){
-  if(!cagisAuto) return;
-  clearTimeout(_cagisMoveT);
-  _cagisMoveT=setTimeout(()=>{ if(parcelMap && parcelMap.getZoom()>=14) loadParcelsInView(false); },700);
+async function cagisPolygonQuery(latlngs){
+  const ring=latlngs.map(p=>[p.lng,p.lat]); ring.push(ring[0]);
+  let feats=[], offset=0, more=true, guard=0;
+  while(more && guard<6){
+    const res=await arcgisQuery(CAGIS_PARCELS,{
+      geometry:JSON.stringify({rings:[ring],spatialReference:{wkid:4326}}),
+      geometryType:'esriGeometryPolygon', inSR:4326,
+      spatialRel:'esriSpatialRelIntersects',
+      outFields:CAGIS_PARCEL_FIELDS, returnGeometry:true, outSR:4326,
+      resultOffset:offset, resultRecordCount:1000
+    });
+    const f=(res&&res.features)||[];
+    feats=feats.concat(f);
+    more=!!(res&&res.exceededTransferLimit)&&f.length>0;
+    offset+=1000; guard++;
+  }
+  if(guard>=6 && more) toast('Big circle — showing the first 6,000 parcels');
+  return feats;
 }
+async function identifyParcelAt(latlng){
+  if(cagisOK===false) return;
+  try{
+    const res=await arcgisQuery(CAGIS_PARCELS,{
+      geometry:JSON.stringify({x:latlng.lng,y:latlng.lat,spatialReference:{wkid:4326}}),
+      geometryType:'esriGeometryPoint', inSR:4326,
+      spatialRel:'esriSpatialRelIntersects',
+      outFields:CAGIS_PARCEL_FIELDS, returnGeometry:true, outSR:4326,
+      resultRecordCount:1
+    });
+    const f=((res&&res.features)||[])[0];
+    if(!f){ if(cagisOK) toast('No parcel found at that point'); return; }
+    const rec=ingestCagisFeatures([f])[0];
+    if(rec){ renderParcelPolygons(); selectParcel(rec.id); }
+  }catch(e){ if(cagisOK===null){ cagisOK=false; } }
+}
+
 
 // Look up zoning for a single parcel (called on selection when zoning is blank)
 async function cagisLookupZoning(p){
@@ -4690,7 +4723,6 @@ document.addEventListener('click', function(e){
     }
     // Parcels
     case 'p-tool': setParcelTool(el.dataset.tool); break;
-    case 'p-tryload': tryLoadCAGIS(); break;
     case 'p-clear': pClear(); break;
     case 'p-info-close': parcelInfoClose(); break;
     case 'p-tab': parcelTabSwitch(el.dataset.tab); break;
