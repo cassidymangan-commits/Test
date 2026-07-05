@@ -400,6 +400,19 @@
   #p-topbar .p-legend{margin:0 0 0 auto;padding:0;border:none}
   #p-topbar .live{background:var(--active);color:#fff;font-size:10px;padding:3px 9px;border-radius:10px;font-weight:800;letter-spacing:.5px}
   #p-topbar .live.seed{background:var(--loi)}
+  .cursor-lasso #parcel-map{cursor:crosshair}
+  .pl-row{border:1px solid var(--line);border-radius:9px;padding:9px 11px;margin-bottom:8px;background:#fff}
+  .pl-row.saved{border-color:#bfe3cd;background:#f4fbf6}
+  .pl-row .plr-top{display:flex;justify-content:space-between;align-items:flex-start;gap:8px}
+  .pl-row .plr-addr{font-weight:700;font-size:13px;cursor:pointer}
+  .pl-row .plr-addr:hover{color:var(--brand)}
+  .pl-row .plr-owner{font-size:11.5px;color:var(--muted);margin-top:1px}
+  .pl-row .plr-meta{font-size:11.5px;color:var(--muted);margin-top:4px}
+  .pl-row .plr-meta b{color:var(--ink);font-weight:600}
+  .pl-row .plr-btns{display:flex;gap:5px;flex:none}
+  .pl-row .plr-btns button{padding:5px 10px;font-size:11.5px;border-radius:7px;font-weight:700;cursor:pointer;border:1px solid #d3dbe5;background:#fff;color:#33475b;font-family:inherit}
+  .pl-row .plr-btns button.sv{background:var(--brand);border-color:var(--brand);color:#fff}
+  .pl-row .plr-btns button.svd{background:#e2f3e8;border-color:#bfe3cd;color:#1e6b3c}
 
   /* === DEAL BOARD === */
   .dealboard{display:grid;grid-template-columns:1fr 1fr;gap:18px;align-items:start}
@@ -1011,6 +1024,7 @@
         <span class="p-divider"></span>
         <div class="p-toolgroup">
           <button data-action="p-tool" data-tool="select" class="on" title="Click parcels to select">👆 Select</button>
+          <button data-action="p-tool" data-tool="lasso" title="Draw a circle around parcels to pull their info">◌ Lasso</button>
           <button data-action="p-tool" data-tool="measure" title="Measure distance / area">📐 Measure</button>
           <button data-action="p-tool" data-tool="radius" title="Radius search + demographics">◉ Radius</button>
           <button data-action="p-tool" data-tool="assemble" title="Multi-select for assemblage">▦ Assemble</button>
@@ -1018,6 +1032,7 @@
         <span class="p-divider"></span>
         <div class="p-toolgroup">
           <button data-action="p-tryload" title="Load every commercial/industrial parcel in the current view">⟳ Load area</button>
+          <button data-action="pl-show-saved" title="Your saved parcels">★ Saved <span id="pl-saved-count"></span></button>
           <button data-action="p-clear" title="Clear selection &amp; tools">✕ Clear</button>
         </div>
         <span id="p-datasrc" class="live seed">SEED</span>
@@ -1046,6 +1061,20 @@
             <button data-action="p-prospect" class="g">🎯 Add to Prospects</button>
             <button data-action="p-listing" class="g">＋ Create listing</button>
             <button data-action="p-bov" class="g">💰 Draft BOV</button>
+          </div>
+        </div>
+        <!-- Lasso results / saved-parcels panel -->
+        <div class="p-info hide" id="p-lasso">
+          <div class="hd" style="background:linear-gradient(135deg,#0e9384,#0a6b60)">
+            <button class="close-x" data-action="pl-close">✕</button>
+            <div class="apn" id="pl-kicker">LASSO RESULTS</div>
+            <h3 id="pl-title">—</h3>
+            <div class="sub" id="pl-sub">Save the ones worth chasing — they get a dot on the map.</div>
+          </div>
+          <div class="p-body" id="pl-body"></div>
+          <div class="p-actions" style="grid-template-columns:1fr 1fr">
+            <button data-action="pl-save-all" id="pl-saveall-btn">💾 Save all</button>
+            <button class="g" data-action="pl-close">Done</button>
           </div>
         </div>
         <!-- Assemble panel -->
@@ -1711,7 +1740,7 @@ const SEED_REQUIREMENTS=[
 
 let listings=[], activity={}, goals=[], notes=[], quote='', followups=[], commissionGoal=0, templates=[], upcoming=[];
 let prospects=[], crmContacts=[], deals=[], comps=[], lois=[], bovs=[], mktReports={};
-let parcels=[], parcelEdits={}, requirements=[];
+let parcels=[], parcelEdits={}, requirements=[], savedParcels=[];
 
 const STORE_KEY='listingHub.v3';
 const STORE_KEY_LEGACY='listingHub.v1';
@@ -1727,7 +1756,7 @@ function saveState(){
     }
   });
   const persistParcels=parcels.filter(p=>!p.__live);
-  const payload={listings,activity,goals,notes,quote,followups,commissionGoal,templates,upcoming,prospects,crmContacts,deals,comps,lois,bovs,mktReports,parcels:persistParcels,parcelEdits,requirements};
+  const payload={listings,activity,goals,notes,quote,followups,commissionGoal,templates,upcoming,prospects,crmContacts,deals,comps,lois,bovs,mktReports,parcels:persistParcels,parcelEdits,requirements,savedParcels};
   const trySave=obj=>{ try{ localStorage.setItem(STORE_KEY,JSON.stringify(obj)); return true; }catch(e){ return false; } };
   if(trySave(payload)) return setSaveStatus('Saved locally ✓');
   const trimmed=JSON.parse(JSON.stringify(payload,(k,v)=>(typeof v==='string'&&v.length>50000&&v.startsWith('data:'))?null:v));
@@ -1754,6 +1783,7 @@ function loadState(){
     parcels=(s.parcels||structuredCloneSafe(SEED_PARCELS)).filter(p=>!p.__live);
     parcelEdits=s.parcelEdits||{};
     requirements=s.requirements||structuredCloneSafe(SEED_REQUIREMENTS);
+    savedParcels=s.savedParcels||[];
   }catch(e){ seed(); }
 }
 function structuredCloneSafe(v){ return JSON.parse(JSON.stringify(v)); }
@@ -1777,6 +1807,7 @@ function seed(){
   parcels=structuredCloneSafe(SEED_PARCELS);
   parcelEdits={};
   requirements=structuredCloneSafe(SEED_REQUIREMENTS);
+  savedParcels=[];
   listings.forEach(l=>{
     l.owner=OWNERS[l.id]||'';
     l.contacts=structuredCloneSafe(SEED_CONTACTS[l.id]||[]);
@@ -3747,6 +3778,9 @@ function initParcelMap(){
   parcelMap.setView([39.140,-84.531],14.5);
   parcelLayer=L.layerGroup().addTo(parcelMap);
   ownerHiLayer=L.layerGroup().addTo(parcelMap);
+  savedDotsLayer=L.layerGroup().addTo(parcelMap);
+  lassoBind();
+  renderSavedDots();
   renderParcelPolygons();
   // Map click handler for tools
   parcelMap.on('click', e=>{
@@ -3774,6 +3808,7 @@ function renderParcelPolygons(){
     const coords=p.geometry.coordinates[0].map(c=>[c[1],c[0]]); // GeoJSON is [lng,lat] → Leaflet [lat,lng]
     const poly=L.polygon(coords,parcelStyle(p));
     poly.on('click',ev=>{
+      if(parcelTool==='lasso') return;
       L.DomEvent.stop(ev);
       if(parcelTool==='assemble'){ toggleAssemble(p.id); }
       else { selectParcel(p.id); }
@@ -3976,10 +4011,12 @@ function showOwnerPortfolio(){
 function setParcelTool(t){
   parcelTool=t;
   document.querySelectorAll('#p-topbar button[data-tool]').forEach(b=>b.classList.toggle('on',b.dataset.tool===t));
-  document.body.classList.remove('cursor-measure','cursor-radius');
+  document.body.classList.remove('cursor-measure','cursor-radius','cursor-lasso');
   document.getElementById('p-measure').classList.add('hide');
   document.getElementById('p-radius').classList.add('hide');
   document.getElementById('p-assemble').classList.add('hide');
+  if(parcelMap){ if(t==='lasso') parcelMap.dragging.disable(); else parcelMap.dragging.enable(); }
+  if(t==='lasso'){ document.body.classList.add('cursor-lasso'); parcelInfoClose(); toast('◌ Draw a circle around parcels — release to pull their info'); }
   if(t==='measure'){ measurePts=[]; measureUpdate(); document.body.classList.add('cursor-measure'); document.getElementById('p-measure').classList.remove('hide'); }
   else if(t==='radius'){ document.body.classList.add('cursor-radius'); document.getElementById('p-radius').classList.remove('hide'); }
   else if(t==='assemble'){ document.getElementById('p-assemble').classList.remove('hide'); renderAssemble(); toast('Click parcels to add/remove from the assemblage'); }
@@ -3991,6 +4028,7 @@ function pClear(){
   ownerHiLayer.clearLayers();
   assembleSet.clear();
   parcelInfoClose();
+  plClose();
   setParcelTool('select');
   measureUpdate();
   toast('Cleared');
@@ -4149,6 +4187,146 @@ function assembleToProspect(){
     aiNote:'Multi-parcel assemblage — greatest complexity is coordinating unified purchase; use holdout risk to pace offers.'};
   prospects.unshift(np); saveState();
   toast('🎯 Assemblage → Prospect · view in Prospecting');
+}
+
+// --- Lasso: freehand-circle parcels -> review list -> save the keepers ---
+let lassoDrawing=false, lassoPts=[], lassoTrail=null, lassoShape=null, lassoHits=[];
+let savedDotsLayer=null;
+function pointInPoly(lat,lng,pts){
+  let inside=false;
+  for(let i=0,j=pts.length-1;i<pts.length;j=i++){
+    const yi=pts[i].lat, xi=pts[i].lng, yj=pts[j].lat, xj=pts[j].lng;
+    if(((yi>lat)!==(yj>lat)) && (lng < (xj-xi)*(lat-yi)/(yj-yi)+xi)) inside=!inside;
+  }
+  return inside;
+}
+function lassoBind(){
+  const c=parcelMap.getContainer();
+  c.addEventListener('pointerdown',e=>{
+    if(parcelTool!=='lasso'||e.button===2) return;
+    e.preventDefault();
+    lassoDrawing=true; lassoPts=[parcelMap.mouseEventToLatLng(e)];
+    if(lassoShape){ lassoShape.remove(); lassoShape=null; }
+    if(lassoTrail){ lassoTrail.remove(); }
+    lassoTrail=L.polyline(lassoPts,{color:'#0e9384',weight:3,dashArray:'5,5'}).addTo(parcelMap);
+    try{ c.setPointerCapture(e.pointerId); }catch(_){}
+  });
+  c.addEventListener('pointermove',e=>{
+    if(!lassoDrawing) return;
+    e.preventDefault();
+    lassoPts.push(parcelMap.mouseEventToLatLng(e));
+    if(lassoTrail) lassoTrail.setLatLngs(lassoPts);
+  });
+  const finish=e=>{
+    if(!lassoDrawing) return;
+    lassoDrawing=false;
+    if(lassoTrail){ lassoTrail.remove(); lassoTrail=null; }
+    if(lassoPts.length<8){ toast('Draw a bigger circle around the parcels'); return; }
+    lassoShape=L.polygon(lassoPts,{color:'#0e9384',weight:2.5,dashArray:'6,4',fillColor:'#0e9384',fillOpacity:.08}).addTo(parcelMap);
+    lassoHits=parcels.filter(p=>pointInPoly(p.lat,p.lng,lassoPts));
+    renderLassoPanel('lasso');
+  };
+  c.addEventListener('pointerup',finish);
+  c.addEventListener('pointercancel',finish);
+}
+function plSnapshot(p){
+  return {apn:p.apn, addr:p.addr, city:p.city, ownerName:p.ownerName, ownerAddress:p.ownerAddress,
+    lat:p.lat, lng:p.lng, landSF:p.landSF, buildingSF:p.buildingSF,
+    totalValue:p.totalValue, useDesc:p.useDesc, zoning:p.zoning,
+    lastSaleDate:(p.lastSale&&p.lastSale.date)||'', lastSalePrice:(p.lastSale&&p.lastSale.price)||0, savedAt:'saved'};
+}
+function isParcelSaved(apn){ return savedParcels.some(s=>s.apn===apn); }
+function plRowHtml(p,fromSaved){
+  const saved=isParcelSaved(p.apn);
+  const salePrice=p.lastSalePrice||(p.lastSale&&p.lastSale.price)||0;
+  const saleDate=p.lastSaleDate||(p.lastSale&&p.lastSale.date)||'';
+  return `<div class="pl-row ${saved?'saved':''}" data-apn="${escAttr(p.apn)}">
+    <div class="plr-top">
+      <div style="min-width:0">
+        <div class="plr-addr" data-action="pl-open" data-apn="${escAttr(p.apn)}">${esc(p.addr)}</div>
+        <div class="plr-owner">${esc(p.ownerName||'-')}</div>
+      </div>
+      <div class="plr-btns">
+        ${fromSaved
+          ?`<button data-action="pl-locate" data-apn="${escAttr(p.apn)}">📍</button><button data-action="pl-unsave" data-apn="${escAttr(p.apn)}" title="Remove">✕</button>`
+          :(saved
+            ?`<button class="svd" data-action="pl-unsave" data-apn="${escAttr(p.apn)}">✓ Saved</button>`
+            :`<button class="sv" data-action="pl-save" data-apn="${escAttr(p.apn)}">💾 Save</button>`)}
+      </div>
+    </div>
+    <div class="plr-meta"><b>${fmtAC(p.landSF)}</b>${p.buildingSF?` · <b>${fmtNum(p.buildingSF)}</b> SF bldg`:''} · assessed <b>${fmtMoney(p.totalValue)}</b>${salePrice?` · sold ${esc(saleDate)} for <b>${fmtMoney(salePrice)}</b>`:''}</div>
+  </div>`;
+}
+let plMode='lasso';
+function renderLassoPanel(mode){
+  plMode=mode||plMode;
+  const panel=document.getElementById('p-lasso');
+  document.getElementById('p-info').classList.add('hide');
+  panel.classList.remove('hide');
+  if(plMode==='saved'){
+    document.getElementById('pl-kicker').textContent='SAVED PARCELS';
+    document.getElementById('pl-title').textContent=savedParcels.length+' saved';
+    document.getElementById('pl-sub').textContent='Your working set — each one has a dot on the map.';
+    document.getElementById('pl-body').innerHTML=savedParcels.length
+      ? savedParcels.map(s=>plRowHtml(s,true)).join('')
+      : '<p class="note">Nothing saved yet — lasso an area and hit 💾 Save on the keepers.</p>';
+    document.getElementById('pl-saveall-btn').style.display='none';
+  } else {
+    document.getElementById('pl-kicker').textContent='LASSO RESULTS';
+    document.getElementById('pl-title').textContent=lassoHits.length+' parcels circled';
+    document.getElementById('pl-sub').textContent='Save the ones worth chasing — they get a dot on the map.';
+    document.getElementById('pl-body').innerHTML=lassoHits.length
+      ? lassoHits.map(p=>plRowHtml(p,false)).join('')
+      : '<p class="note">No parcels inside that shape. If the area looks empty, hit ⟳ Load area first, then lasso again.</p>';
+    document.getElementById('pl-saveall-btn').style.display=lassoHits.length?'':'none';
+  }
+  updateSavedCount();
+}
+function plSave(apn){
+  const p=lassoHits.find(x=>x.apn===apn)||parcels.find(x=>x.apn===apn);
+  if(!p||isParcelSaved(apn)) return;
+  savedParcels.unshift(plSnapshot(p));
+  saveState(); renderSavedDots(); renderLassoPanel();
+  toast('💾 Saved · dot added to map');
+}
+function plUnsave(apn){
+  const i=savedParcels.findIndex(s=>s.apn===apn); if(i<0) return;
+  savedParcels.splice(i,1);
+  saveState(); renderSavedDots(); renderLassoPanel();
+}
+function plSaveAll(){
+  let n=0;
+  lassoHits.forEach(p=>{ if(!isParcelSaved(p.apn)){ savedParcels.unshift(plSnapshot(p)); n++; } });
+  saveState(); renderSavedDots(); renderLassoPanel();
+  toast('💾 Saved '+n+' parcels');
+}
+function plOpen(apn){
+  const p=parcels.find(x=>x.apn===apn);
+  if(p){ document.getElementById('p-lasso').classList.add('hide'); selectParcel(p.id); }
+  else toast('Parcel not loaded in this view — pan there and Load area');
+}
+function plLocate(apn){
+  const s=savedParcels.find(x=>x.apn===apn); if(!s) return;
+  parcelMap.setView([s.lat,s.lng],17);
+}
+function plClose(){
+  document.getElementById('p-lasso').classList.add('hide');
+  if(lassoShape){ lassoShape.remove(); lassoShape=null; }
+}
+function updateSavedCount(){
+  const el=document.getElementById('pl-saved-count');
+  if(el) el.textContent=savedParcels.length?'('+savedParcels.length+')':'';
+}
+function renderSavedDots(){
+  if(!savedDotsLayer) return;
+  savedDotsLayer.clearLayers();
+  savedParcels.forEach(s=>{
+    const m=L.circleMarker([s.lat,s.lng],{radius:6,color:'#fff',weight:2,fillColor:'#ff7a1a',fillOpacity:1});
+    m.bindTooltip('⭐ <b>'+esc(s.addr)+'</b><br>'+esc(s.ownerName)+'<br>'+fmtAC(s.landSF)+' · '+fmtMoney(s.totalValue),{className:'parcel-tip',direction:'top'});
+    m.on('click',ev=>{ L.DomEvent.stop(ev); plOpen(s.apn); });
+    m.addTo(savedDotsLayer);
+  });
+  updateSavedCount();
 }
 
 // --- Parcel actions (right panel bottom) ---
@@ -4527,6 +4705,13 @@ document.addEventListener('click', function(e){
     case 'p-listing': parcelToListing(); break;
     case 'p-bov': parcelToBOV(); break;
     case 'p-radius-change': radiusRender(); break;
+    case 'pl-save': plSave(el.dataset.apn); break;
+    case 'pl-unsave': plUnsave(el.dataset.apn); break;
+    case 'pl-save-all': plSaveAll(); break;
+    case 'pl-open': plOpen(el.dataset.apn); break;
+    case 'pl-locate': plLocate(el.dataset.apn); break;
+    case 'pl-close': plClose(); break;
+    case 'pl-show-saved': { go('parcels'); setTimeout(()=>renderLassoPanel('saved'),150); break; }
     case 'p-radius-clear': radiusClear(); break;
     case 'p-measure-clear': measureClear(); break;
     case 'p-assemble-clear': assembleClear(); break;
