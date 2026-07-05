@@ -378,8 +378,27 @@
   .cta-generate:hover{filter:brightness(1.08)}
 
   /* === PARCELS module === */
-  #v-parcels{padding:0;max-width:none;position:relative;height:calc(100vh - 52px)}
-  #parcel-map{width:100%;height:100%}
+  #v-parcels{padding:0;max-width:none;height:calc(100vh - 57px);display:flex;flex-direction:column}
+  #p-topbar{display:flex;align-items:center;gap:8px;padding:9px 14px;background:#fff;border-bottom:1px solid var(--line);flex-wrap:wrap;position:relative;z-index:1001}
+  #p-topbar input{width:250px;padding:8px 11px;border:1px solid var(--line);border-radius:8px;font-size:13px;font-family:inherit}
+  #p-topbar select{padding:8px 10px;border:1px solid var(--line);border-radius:8px;font-size:12.5px;font-family:inherit;cursor:pointer}
+  .p-divider{width:1px;height:24px;background:var(--line)}
+  .p-toolgroup{display:flex;gap:4px}
+  .p-toolgroup button{background:#f2f5f9;border:1px solid #dde4ec;border-radius:8px;padding:8px 13px;font-size:12.5px;font-weight:600;color:#33475b;cursor:pointer;white-space:nowrap;font-family:inherit}
+  .p-toolgroup button:hover{background:#e8eef6}
+  .p-toolgroup button.on{background:var(--brand);color:#fff;border-color:var(--brand)}
+  #p-mapwrap{position:relative;flex:1;min-height:0}
+  #parcel-map{position:absolute;inset:0}
+  .psec{margin:18px 0 8px;font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);display:flex;align-items:center;gap:8px}
+  .psec::after{content:'';flex:1;height:1px;background:var(--line)}
+  .sv-wrap{border-radius:10px;overflow:hidden;border:1px solid var(--line);background:#eef1f5}
+  .sv-wrap iframe{width:100%;height:185px;border:none;display:block}
+  .sv-links{display:flex;gap:6px;margin-top:8px}
+  .sv-links a{flex:1;text-align:center;background:#fff;border:1px solid #d3dbe5;color:var(--brand);border-radius:8px;padding:7px 6px;font-size:12px;font-weight:600;text-decoration:none}
+  .sv-links a:hover{background:#f5f8fb}
+  #p-topbar .p-legend{margin:0 0 0 auto;padding:0;border:none}
+  #p-topbar .live{background:var(--active);color:#fff;font-size:10px;padding:3px 9px;border-radius:10px;font-weight:800;letter-spacing:.5px}
+  #p-topbar .live.seed{background:var(--loi)}
   .p-toolbar{position:absolute;top:14px;left:14px;background:#fff;border:1px solid var(--line);border-radius:10px;box-shadow:0 4px 14px rgba(20,40,60,.12);padding:10px 12px;z-index:1000;min-width:290px;max-width:320px}
   .p-toolbar h3{margin:0 0 6px;font-size:13px;color:var(--ink);display:flex;justify-content:space-between;align-items:center}
   .p-toolbar h3 .live{background:var(--active);color:#fff;font-size:9.5px;padding:2px 7px;border-radius:10px;font-weight:800;letter-spacing:.4px}
@@ -946,10 +965,8 @@
 
     <!-- PARCELS (map-based) -->
     <div class="view hide" id="v-parcels">
-      <div id="parcel-map"></div>
-      <!-- Floating toolbar -->
-      <div class="p-toolbar">
-        <h3>🗺️ Hamilton County Parcels <span id="p-datasrc" class="live seed">SEED</span></h3>
+      <!-- Horizontal tool bar across the top -->
+      <div id="p-topbar">
         <input id="p-search" placeholder="🔍 Address, owner, or APN…">
         <select id="p-usecode">
           <option value="">All Use Codes</option>
@@ -962,91 +979,89 @@
           <option value="410">410 · Commercial</option>
           <option value="500">500 · Vacant Land</option>
         </select>
-        <div id="p-districts" style="display:none;margin-bottom:6px;flex-wrap:wrap;gap:4px"></div>
-        <div class="p-tools">
-          <button data-action="p-tool" data-tool="select" class="on" title="Click parcels to select"><span class="ic3">👆</span>Select</button>
-          <button data-action="p-tool" data-tool="measure" title="Measure distance / area"><span class="ic3">📐</span>Measure</button>
-          <button data-action="p-tool" data-tool="radius" title="Radius search"><span class="ic3">◉</span>Radius</button>
-          <button data-action="p-tool" data-tool="assemble" title="Multi-select for assemblage"><span class="ic3">▦</span>Assemble</button>
+        <span class="p-divider"></span>
+        <div class="p-toolgroup">
+          <button data-action="p-tool" data-tool="select" class="on" title="Click parcels to select">👆 Select</button>
+          <button data-action="p-tool" data-tool="measure" title="Measure distance / area">📐 Measure</button>
+          <button data-action="p-tool" data-tool="radius" title="Radius search + demographics">◉ Radius</button>
+          <button data-action="p-tool" data-tool="assemble" title="Multi-select for assemblage">▦ Assemble</button>
         </div>
-        <div class="p-tools" style="margin-top:4px;grid-template-columns:1fr 1fr">
-          <button data-action="p-tryload" title="Attempt live CAGIS pull"><span class="ic3">🔄</span>Live CAGIS</button>
-          <button data-action="p-clear" title="Clear selection &amp; tools"><span class="ic3">✕</span>Clear</button>
+        <span class="p-divider"></span>
+        <div class="p-toolgroup">
+          <button data-action="p-tryload" title="Pull live Hamilton Co parcels">🔄 Live CAGIS</button>
+          <button data-action="p-clear" title="Clear selection &amp; tools">✕ Clear</button>
         </div>
+        <span id="p-datasrc" class="live seed">SEED</span>
         <div class="p-legend">
           <span><i style="background:#c0392b"></i>Manuf.</span>
           <span><i style="background:#e08a2b"></i>Warehouse</span>
           <span><i style="background:#7a4fb5"></i>Flex</span>
-          <span><i style="background:#586676"></i>IOS/Yard</span>
-          <span><i style="background:#2f9e6b"></i>Commercial</span>
+          <span><i style="background:#586676"></i>IOS</span>
+          <span><i style="background:#2f9e6b"></i>Comm.</span>
           <span><i style="background:#a0a7b1"></i>Vacant</span>
         </div>
       </div>
-      <!-- Selected parcel info panel -->
-      <div class="p-info hide" id="p-info">
-        <div class="hd">
-          <button class="close-x" data-action="p-info-close">✕</button>
-          <div class="apn" id="p-apn">APN —</div>
-          <h3 id="p-title">—</h3>
-          <div class="sub" id="p-subtitle">—</div>
+      <div id="p-mapwrap">
+        <div id="parcel-map"></div>
+        <!-- Selected parcel: one scrollable card -->
+        <div class="p-info hide" id="p-info">
+          <div class="hd">
+            <button class="close-x" data-action="p-info-close">✕</button>
+            <div class="apn" id="p-apn">APN —</div>
+            <h3 id="p-title">—</h3>
+            <div class="sub" id="p-subtitle">—</div>
+          </div>
+          <div class="p-body" id="p-body"></div>
+          <div class="p-actions">
+            <button data-action="p-owner-portfolio">🏢 Show owner's other parcels</button>
+            <button data-action="p-prospect" class="g">🎯 Add to Prospects</button>
+            <button data-action="p-listing" class="g">＋ Create listing</button>
+            <button data-action="p-bov" class="g">💰 Draft BOV</button>
+          </div>
         </div>
-        <div class="p-tabs">
-          <button class="on" data-action="p-tab" data-tab="overview">Overview</button>
-          <button data-action="p-tab" data-tab="sales">Sales</button>
-          <button data-action="p-tab" data-tab="edit">Edit</button>
-          <button data-action="p-tab" data-tab="notes">Notes</button>
-          <button data-action="p-tab" data-tab="contacts">Contacts</button>
+        <!-- Assemble panel -->
+        <div class="p-assemble-panel hide" id="p-assemble">
+          <h4>Assemblage</h4>
+          <div style="font-size:11.5px;opacity:.85">Click parcels to add/remove. Contiguous ones can be assembled.</div>
+          <div class="stats">
+            <div><b id="pa-count">0</b><span>Parcels</span></div>
+            <div><b id="pa-land">—</b><span>Total AC</span></div>
+            <div><b id="pa-value">—</b><span>Assessed $</span></div>
+          </div>
+          <div class="a-actions">
+            <button data-action="p-assemble-report">📄 Assemblage report</button>
+            <button data-action="p-assemble-prospect" class="dim">🎯 As prospect</button>
+            <button data-action="p-assemble-clear" class="dim">✕ Clear</button>
+          </div>
         </div>
-        <div class="p-body" id="p-body"></div>
-        <div class="p-actions">
-          <button data-action="p-owner-portfolio">🏢 Show owner's other parcels</button>
-          <button data-action="p-prospect" class="g">🎯 Add to Prospects</button>
-          <button data-action="p-listing" class="g">＋ Create listing</button>
-          <button data-action="p-bov" class="g">💰 Draft BOV</button>
+        <!-- Measure panel -->
+        <div class="p-measure-panel hide" id="p-measure">
+          <h4>📐 Measure Tool</h4>
+          <div style="font-size:11.5px;color:var(--muted)">Click on the map to add points. Double-click to finish.</div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:8px">
+            <div><div style="font-size:10.5px;color:var(--muted);font-weight:700;text-transform:uppercase">Distance</div><div class="mv" id="pm-dist">—</div></div>
+            <div><div style="font-size:10.5px;color:var(--muted);font-weight:700;text-transform:uppercase">Area</div><div class="mv" id="pm-area">—</div></div>
+          </div>
+          <div style="text-align:right;margin-top:4px"><button class="btn ghost" style="padding:4px 10px;font-size:11px" data-action="p-measure-clear">Clear</button></div>
         </div>
-      </div>
-      <!-- Assemble panel -->
-      <div class="p-assemble-panel hide" id="p-assemble">
-        <h4>Assemblage</h4>
-        <div style="font-size:11.5px;opacity:.85">Click parcels to add/remove. Contiguous ones can be assembled.</div>
-        <div class="stats">
-          <div><b id="pa-count">0</b><span>Parcels</span></div>
-          <div><b id="pa-land">—</b><span>Total AC</span></div>
-          <div><b id="pa-value">—</b><span>Assessed $</span></div>
+        <!-- Radius panel -->
+        <div class="p-radius-panel hide" id="p-radius">
+          <h4>◉ Radius Search &amp; Demographics</h4>
+          <div style="font-size:11.5px;color:var(--muted)">Click on the map to drop the center.</div>
+          <div style="margin-top:6px">
+            <select id="pr-dist" data-action="p-radius-change">
+              <option value="0.25">0.25 mi</option>
+              <option value="0.5" selected>0.5 mi</option>
+              <option value="1">1 mi</option>
+              <option value="2">2 mi</option>
+              <option value="3">3 mi</option>
+            </select>
+            <span style="font-size:11px;color:var(--muted)">Center: <span id="pr-center">—</span></span>
+          </div>
+          <div style="font-size:12px;margin-top:8px"><b id="pr-count">0</b> parcels in range · <b id="pr-land">—</b> AC total</div>
+          <div class="demo-grid" id="pr-demo"></div>
+          <div style="text-align:right;margin-top:8px"><button class="btn ghost" style="padding:4px 10px;font-size:11px" data-action="p-radius-clear">Clear</button></div>
         </div>
-        <div class="a-actions">
-          <button data-action="p-assemble-report">📄 Assemblage report</button>
-          <button data-action="p-assemble-prospect" class="dim">🎯 As prospect</button>
-          <button data-action="p-assemble-clear" class="dim">✕ Clear</button>
-        </div>
-      </div>
-      <!-- Measure panel -->
-      <div class="p-measure-panel hide" id="p-measure">
-        <h4>📐 Measure Tool</h4>
-        <div style="font-size:11.5px;color:var(--muted)">Click on the map to add points. Double-click to finish.</div>
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:8px">
-          <div><div style="font-size:10.5px;color:var(--muted);font-weight:700;text-transform:uppercase">Distance</div><div class="mv" id="pm-dist">—</div></div>
-          <div><div style="font-size:10.5px;color:var(--muted);font-weight:700;text-transform:uppercase">Area</div><div class="mv" id="pm-area">—</div></div>
-        </div>
-        <div style="text-align:right;margin-top:4px"><button class="btn ghost" style="padding:4px 10px;font-size:11px" data-action="p-measure-clear">Clear</button></div>
-      </div>
-      <!-- Radius panel -->
-      <div class="p-radius-panel hide" id="p-radius">
-        <h4>◉ Radius Search &amp; Demographics</h4>
-        <div style="font-size:11.5px;color:var(--muted)">Click on the map to drop the center.</div>
-        <div style="margin-top:6px">
-          <select id="pr-dist" data-action="p-radius-change">
-            <option value="0.25">0.25 mi</option>
-            <option value="0.5" selected>0.5 mi</option>
-            <option value="1">1 mi</option>
-            <option value="2">2 mi</option>
-            <option value="3">3 mi</option>
-          </select>
-          <span style="font-size:11px;color:var(--muted)">Center: <span id="pr-center">—</span></span>
-        </div>
-        <div style="font-size:12px;margin-top:8px"><b id="pr-count">0</b> parcels in range · <b id="pr-land">—</b> AC total</div>
-        <div class="demo-grid" id="pr-demo"></div>
-        <div style="text-align:right;margin-top:8px"><button class="btn ghost" style="padding:4px 10px;font-size:11px" data-action="p-radius-clear">Clear</button></div>
       </div>
     </div>
 
@@ -3616,95 +3631,108 @@ function parcelInfoClose(){
     const pp=parcels.find(x=>x.id===+pid); if(pp) poly.setStyle(parcelStyle(pp));
   });
 }
-function parcelTabSwitch(t){
-  document.querySelectorAll('#p-info .p-tabs button').forEach(b=>b.classList.toggle('on',b.dataset.tab===t));
+// Single scrollable card — Street View hero, then every section in one scroll.
+// parcelTabSwitch(section) kept as the entry point: re-renders, then jumps to the section.
+function svPanoUrl(p){ return `https://www.google.com/maps/@?api=1&map_action=pano&viewpoint=${p.lat},${p.lng}`; }
+function svEmbedUrl(p){ return `https://maps.google.com/maps?layer=c&cbll=${p.lat},${p.lng}&cbp=11,0,0,0,0&output=svembed`; }
+function gmapsUrl(p){ return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(p.addr+', '+p.city+' OH')}`; }
+function parcelTabSwitch(section){
+  renderParcelCard();
+  if(section && section!=='overview'){
+    const el=document.getElementById('psec-'+section);
+    if(el) el.scrollIntoView({block:'start'});
+  } else {
+    const body=document.getElementById('p-body'); if(body) body.scrollTop=0;
+  }
+}
+function renderParcelCard(){
   const p=parcels.find(x=>x.id===selectedParcelId); if(!p) return;
   const body=document.getElementById('p-body');
-  if(t==='overview'){
-    const photo=(p.photos||[])[0];
-    const photoBg=photo?`style="background-image:url('${photo.src}')"`:'';
-    body.innerHTML=`
-      <div class="parcel-photo" ${photoBg}>${photo?'':'📷 No photo yet · use the Edit tab to add'}</div>
-      <div class="p-value">
-        <div class="vlab">Total Assessed Value</div>
-        <div class="vv">${fmtMoney(p.totalValue)}</div>
-        <div style="font-size:11.5px;color:var(--muted);margin-top:2px">Land ${fmtMoney(p.landValue)} · Bldg ${fmtMoney(p.buildingValue)}</div>
-      </div>
-      <h4>Owner</h4>
-      <div style="font-size:13px"><b>${esc(p.ownerName)}</b></div>
-      <div style="font-size:12px;color:var(--muted);margin-top:2px">${esc(p.ownerAddress||'—')}</div>
-      <h4>Property</h4>
-      <div class="p-kv">
-        <div><span>Land</span><b>${fmtAC(p.landSF)}${p.landSF?' ('+fmtSF(p.landSF)+')':''}</b></div>
-        <div><span>Building SF</span><b>${fmtSF(p.buildingSF)}</b></div>
-        <div><span>Year Built</span><b>${p.yearBuilt||'—'}</b></div>
-        <div><span>Stories</span><b>${p.stories||'—'}</b></div>
-        <div><span>Use Code</span><b>${p.useCode} · ${esc(p.useDesc)}</b></div>
-        <div><span>Zoning</span><b>${esc(p.zoning||'—')}</b></div>
-      </div>
-      ${Object.keys(p.userSpecs||{}).length?`<h4>Broker-Added Specs</h4><div class="p-kv">${Object.entries(p.userSpecs).map(([k,v])=>`<div><span>${esc(k)}</span><b>${esc(v)}</b></div>`).join('')}</div>`:''}
-      ${p.tags?.length?`<h4>Tags</h4><div>${p.tags.map(t=>`<span class="signal motiv" style="margin:2px 4px 2px 0">${esc(t)}</span>`).join('')}</div>`:''}`;
-  } else if(t==='sales'){
-    const last=p.lastSale||{};
-    body.innerHTML=`
-      <h4>Most Recent Sale</h4>
-      <div class="sale-row"><span>📅 ${esc(last.date||'—')}</span><span><b>${fmtMoney(last.price)}</b>${last.deed?' · '+esc(last.deed):''}</span><span></span></div>
-      <div style="font-size:12px;color:var(--muted);margin:4px 0 12px"><b>Grantor:</b> ${esc(last.grantor||'—')}<br><b>Grantee:</b> ${esc(last.grantee||'—')}</div>
-      <h4>Full Sale History</h4>
-      ${(p.saleHistory||[]).length?p.saleHistory.map(s=>`<div class="sale-row"><span>📅 ${esc(s.date)}</span><span><b>${fmtMoney(s.price)}</b>${s.note?' · <span style="color:var(--muted);font-size:11px">'+esc(s.note)+'</span>':''}</span></div>`).join(''):'<p class="note">No sale history on file.</p>'}
-      <h4>Value Delta (Assessed vs Last Sale)</h4>
-      <div class="p-value" style="background:linear-gradient(135deg,#dcf1e6,#c0e5cf);border-color:#7ec9a4">
-        <div class="vlab">Est. Appreciation</div>
-        <div class="vv">${last.price?fmtMoney(p.totalValue-last.price):'—'}</div>
-        <div style="font-size:11.5px;color:var(--muted);margin-top:2px">${last.price?((p.totalValue/last.price-1)*100).toFixed(0)+'% over last basis':''}</div>
-      </div>`;
-  } else if(t==='edit'){
-    body.innerHTML=`
-      <h4>Broker Property Info</h4>
-      <div class="p-edit-row">
-        <label>Address<input class="pe" data-k="addr" value="${escAttr(p.addr)}"></label>
-        <label>City<input class="pe" data-k="city" value="${escAttr(p.city)}"></label>
-      </div>
-      <div class="p-edit-row">
-        <label>Use Code<input class="pe" data-k="useCode" value="${escAttr(p.useCode)}"></label>
-        <label>Use Desc<input class="pe" data-k="useDesc" value="${escAttr(p.useDesc)}"></label>
-      </div>
-      <div class="p-edit-row">
-        <label>Building SF<input class="pe" data-k="buildingSF" type="number" value="${p.buildingSF||''}"></label>
-        <label>Year Built<input class="pe" data-k="yearBuilt" type="number" value="${p.yearBuilt||''}"></label>
-      </div>
-      <h4>Building Info (add anything)</h4>
-      <div id="p-userspecs">${Object.entries(p.userSpecs||{}).map(([k,v])=>`<div class="p-edit-row" data-us><label>Label<input class="us-k" value="${escAttr(k)}"></label><label>Value<input class="us-v" value="${escAttr(v)}"></label></div>`).join('')}</div>
-      <button class="btn ghost" data-action="p-addspec" style="padding:5px 10px;font-size:11px;margin:6px 0">＋ Add spec</button>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:6px">
-        ${['Clear Height','Dock Doors','Drive Ins','Power','Sprinklers','Rail Served'].map(l=>`<button class="btn ghost" data-action="p-addspec" data-label="${escAttr(l)}" style="padding:4px 8px;font-size:10.5px">＋ ${esc(l)}</button>`).join('')}
-      </div>
-      <h4>Tags</h4>
-      <input class="p-edit-input" id="p-tags" value="${escAttr((p.tags||[]).join(', '))}" placeholder="comma-separated (e.g. Vacant, Owner Motivated)">
-      <h4>Photo</h4>
-      <input type="file" accept="image/*" id="p-photo-input">
-      <div style="text-align:right;margin-top:10px"><button class="btn" data-action="p-savep">Save changes</button></div>`;
-    document.getElementById('p-photo-input').addEventListener('change',e=>{
-      const f=e.target.files[0]; if(!f) return;
-      const r=new FileReader(); r.onload=()=>{ p.photos=[{src:r.result,name:f.name}]; saveState(); parcelTabSwitch('edit'); toast('Photo added ✓'); }; r.readAsDataURL(f);
-    });
-  } else if(t==='notes'){
-    body.innerHTML=`
-      <h4>Notes (${(p.notes||[]).length})</h4>
-      <div class="p-notes-list">${(p.notes||[]).map((n,i)=>`<div class="pnote">${esc(n.t)}<div class="who">${esc(n.when||'—')} <span style="cursor:pointer;color:#c0392b;float:right" data-action="p-delnote" data-i="${i}">✕</span></div></div>`).join('')||'<p class="note">No notes yet.</p>'}</div>
-      <input class="p-edit-input" id="p-newnote" placeholder="Add a note — e.g. 'Owner returning call Thu'">
-      <button class="btn" data-action="p-addnote" style="padding:6px 12px;font-size:12px;width:100%">＋ Add note</button>`;
-    document.getElementById('p-newnote').addEventListener('keydown',e=>{ if(e.key==='Enter') addParcelNote(); });
-  } else if(t==='contacts'){
-    body.innerHTML=`
-      <h4>Contacts tied to this parcel (${(p.contacts||[]).length})</h4>
-      <div style="display:grid;gap:6px">${(p.contacts||[]).map((c,i)=>`<div style="background:var(--soft);padding:8px 10px;border-radius:6px;font-size:12.5px"><b>${esc(c.name)}</b> · ${esc(c.role||'')} <span style="cursor:pointer;color:#c0392b;float:right" data-action="p-delcontact" data-i="${i}">✕</span><div style="color:var(--muted);font-size:11.5px">${esc(c.company||'')} · ${esc(c.phone||'')} · ${esc(c.email||'')}</div></div>`).join('')||'<p class="note">No contacts.</p>'}</div>
-      <h4>Add Contact</h4>
-      <div class="p-edit-row"><label>Name<input class="pc" data-k="name"></label><label>Company<input class="pc" data-k="company"></label></div>
-      <div class="p-edit-row"><label>Role<select class="pc" data-k="role"><option>Owner</option><option>Prospect</option><option>Attorney</option><option>Property Mgr</option><option>Tenant</option><option>Co-op Broker</option></select></label><label>Phone<input class="pc" data-k="phone"></label></div>
-      <input class="p-edit-input pc" data-k="email" placeholder="Email">
-      <div style="text-align:right"><button class="btn" data-action="p-addcontact" style="padding:6px 12px;font-size:12px">＋ Add</button></div>`;
-  }
+  const photo=(p.photos||[])[0];
+  const last=p.lastSale||{};
+  body.innerHTML=`
+    <div class="sv-wrap"><iframe loading="lazy" referrerpolicy="no-referrer-when-downgrade" src="${svEmbedUrl(p)}" title="Google Street View"></iframe></div>
+    <div class="sv-links">
+      <a href="${svPanoUrl(p)}" target="_blank" rel="noopener">🧍 Street View ↗</a>
+      <a href="${gmapsUrl(p)}" target="_blank" rel="noopener">🗺 Google Maps ↗</a>
+    </div>
+    ${photo?`<div class="parcel-photo" style="background-image:url('${photo.src}');margin-top:10px"></div>`:''}
+
+    <div class="psec">Snapshot</div>
+    <div class="p-value">
+      <div class="vlab">Total Assessed Value</div>
+      <div class="vv">${fmtMoney(p.totalValue)}</div>
+      <div style="font-size:11.5px;color:var(--muted);margin-top:2px">Land ${fmtMoney(p.landValue)} · Bldg ${fmtMoney(p.buildingValue)}</div>
+    </div>
+    <div style="font-size:13px;margin-bottom:2px"><b>${esc(p.ownerName)}</b></div>
+    <div style="font-size:12px;color:var(--muted);margin-bottom:10px">${esc(p.ownerAddress||'—')}</div>
+    <div class="p-kv">
+      <div><span>Land</span><b>${fmtAC(p.landSF)}${p.landSF?' ('+fmtSF(p.landSF)+')':''}</b></div>
+      <div><span>Building SF</span><b>${fmtSF(p.buildingSF)}</b></div>
+      <div><span>Year Built</span><b>${p.yearBuilt||'—'}</b></div>
+      <div><span>Stories</span><b>${p.stories||'—'}</b></div>
+      <div><span>Use Code</span><b>${p.useCode} · ${esc(p.useDesc)}</b></div>
+      <div><span>Zoning</span><b>${esc(p.zoning||'—')}</b></div>
+    </div>
+    ${Object.keys(p.userSpecs||{}).length?`<div class="psec">Broker Specs</div><div class="p-kv">${Object.entries(p.userSpecs).map(([k,v])=>`<div><span>${esc(k)}</span><b>${esc(v)}</b></div>`).join('')}</div>`:''}
+    ${p.tags?.length?`<div style="margin-top:8px">${p.tags.map(t=>`<span class="signal motiv" style="margin:2px 4px 2px 0">${esc(t)}</span>`).join('')}</div>`:''}
+
+    <div class="psec" id="psec-sales">Sale History</div>
+    <div class="sale-row"><span>📅 ${esc(last.date||'—')}</span><span><b>${fmtMoney(last.price)}</b>${last.deed?' · '+esc(last.deed):''}</span><span></span></div>
+    ${last.grantor||last.grantee?`<div style="font-size:12px;color:var(--muted);margin:4px 0 8px"><b>Grantor:</b> ${esc(last.grantor||'—')} · <b>Grantee:</b> ${esc(last.grantee||'—')}</div>`:''}
+    ${(p.saleHistory||[]).slice(1).map(s=>`<div class="sale-row"><span>📅 ${esc(s.date)}</span><span><b>${fmtMoney(s.price)}</b>${s.note?' · <span style="color:var(--muted);font-size:11px">'+esc(s.note)+'</span>':''}</span></div>`).join('')}
+    ${last.price?(()=>{const d=p.totalValue-last.price;const up=d>=0;
+      return `<div class="p-value" style="background:${up?'#e9f7ee':'#fdeee8'};border-color:${up?'#bfe3cd':'#f4c4b3'};margin-top:8px">
+      <div class="vlab">Assessed vs Last Basis</div>
+      <div class="vv" style="color:${up?'#1e6b3c':'#b3421f'}">${up?'+':'−'}${fmtMoney(Math.abs(d))}</div>
+      <div style="font-size:11.5px;color:var(--muted);margin-top:2px">${up?'+':''}${((p.totalValue/last.price-1)*100).toFixed(0)}% vs last sale</div>
+    </div>`;})():''}
+
+    <div class="psec" id="psec-notes">Notes (${(p.notes||[]).length})</div>
+    <div class="p-notes-list">${(p.notes||[]).map((n,i)=>`<div class="pnote">${esc(n.t)}<div class="who">${esc(n.when||'—')} <span style="cursor:pointer;color:#c0392b;float:right" data-action="p-delnote" data-i="${i}">✕</span></div></div>`).join('')||'<p class="note" style="margin:0 0 8px">No notes yet.</p>'}</div>
+    <div style="display:flex;gap:6px">
+      <input class="p-edit-input" id="p-newnote" placeholder="Add a note — e.g. 'Owner returning call Thu'" style="margin:0;flex:1">
+      <button class="btn" data-action="p-addnote" style="padding:6px 14px;font-size:12px">＋</button>
+    </div>
+
+    <div class="psec" id="psec-contacts">Contacts (${(p.contacts||[]).length})</div>
+    <div style="display:grid;gap:6px;margin-bottom:8px">${(p.contacts||[]).map((c,i)=>`<div style="background:var(--soft);padding:8px 10px;border-radius:6px;font-size:12.5px"><b>${esc(c.name)}</b> · ${esc(c.role||'')} <span style="cursor:pointer;color:#c0392b;float:right" data-action="p-delcontact" data-i="${i}">✕</span><div style="color:var(--muted);font-size:11.5px">${esc(c.company||'')} · ${esc(c.phone||'')} · ${esc(c.email||'')}</div></div>`).join('')||'<p class="note" style="margin:0">No contacts.</p>'}</div>
+    <div class="p-edit-row"><label>Name<input class="pc" data-k="name"></label><label>Company<input class="pc" data-k="company"></label></div>
+    <div class="p-edit-row"><label>Role<select class="pc" data-k="role"><option>Owner</option><option>Prospect</option><option>Attorney</option><option>Property Mgr</option><option>Tenant</option><option>Co-op Broker</option></select></label><label>Phone<input class="pc" data-k="phone"></label></div>
+    <input class="p-edit-input pc" data-k="email" placeholder="Email">
+    <div style="text-align:right"><button class="btn ghost" data-action="p-addcontact" style="padding:6px 12px;font-size:12px">＋ Add contact</button></div>
+
+    <div class="psec" id="psec-edit">Edit Property</div>
+    <div class="p-edit-row">
+      <label>Address<input class="pe" data-k="addr" value="${escAttr(p.addr)}"></label>
+      <label>City<input class="pe" data-k="city" value="${escAttr(p.city)}"></label>
+    </div>
+    <div class="p-edit-row">
+      <label>Use Code<input class="pe" data-k="useCode" value="${escAttr(p.useCode)}"></label>
+      <label>Use Desc<input class="pe" data-k="useDesc" value="${escAttr(p.useDesc)}"></label>
+    </div>
+    <div class="p-edit-row">
+      <label>Building SF<input class="pe" data-k="buildingSF" type="number" value="${p.buildingSF||''}"></label>
+      <label>Year Built<input class="pe" data-k="yearBuilt" type="number" value="${p.yearBuilt||''}"></label>
+    </div>
+    <div style="font-size:11px;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:.04em;margin:10px 0 4px">Building specs</div>
+    <div id="p-userspecs">${Object.entries(p.userSpecs||{}).map(([k,v])=>`<div class="p-edit-row" data-us><label>Label<input class="us-k" value="${escAttr(k)}"></label><label>Value<input class="us-v" value="${escAttr(v)}"></label></div>`).join('')}</div>
+    <div style="display:flex;flex-wrap:wrap;gap:5px;margin:6px 0">
+      ${['Clear Height','Dock Doors','Drive Ins','Power','Sprinklers','Rail Served'].map(l=>`<button class="btn ghost" data-action="p-addspec" data-label="${escAttr(l)}" style="padding:4px 9px;font-size:10.5px">＋ ${esc(l)}</button>`).join('')}
+      <button class="btn ghost" data-action="p-addspec" style="padding:4px 9px;font-size:10.5px">＋ Custom</button>
+    </div>
+    <div style="font-size:11px;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:.04em;margin:10px 0 4px">Tags</div>
+    <input class="p-edit-input" id="p-tags" value="${escAttr((p.tags||[]).join(', '))}" placeholder="comma-separated (e.g. Vacant, Owner Motivated)">
+    <div style="font-size:11px;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:.04em;margin:10px 0 4px">Photo</div>
+    <input type="file" accept="image/*" id="p-photo-input">
+    <div style="text-align:right;margin-top:12px"><button class="btn" data-action="p-savep">Save changes</button></div>`;
+  const ni=document.getElementById('p-newnote');
+  if(ni) ni.addEventListener('keydown',e=>{ if(e.key==='Enter') addParcelNote(); });
+  const pi=document.getElementById('p-photo-input');
+  if(pi) pi.addEventListener('change',e=>{
+    const f=e.target.files[0]; if(!f) return;
+    const r=new FileReader(); r.onload=()=>{ p.photos=[{src:r.result,name:f.name}]; saveState(); parcelTabSwitch('edit'); toast('Photo added ✓'); }; r.readAsDataURL(f);
+  });
 }
 function addParcelNote(){
   const p=parcels.find(x=>x.id===selectedParcelId); if(!p) return;
@@ -3768,7 +3796,7 @@ function showOwnerPortfolio(){
 }
 function setParcelTool(t){
   parcelTool=t;
-  document.querySelectorAll('.p-toolbar .p-tools button[data-tool]').forEach(b=>b.classList.toggle('on',b.dataset.tool===t));
+  document.querySelectorAll('#p-topbar button[data-tool]').forEach(b=>b.classList.toggle('on',b.dataset.tool===t));
   document.body.classList.remove('cursor-measure','cursor-radius');
   document.getElementById('p-measure').classList.add('hide');
   document.getElementById('p-radius').classList.add('hide');
