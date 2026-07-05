@@ -6,14 +6,17 @@
 <title>Listing Hub — Prototype</title>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.css">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700&family=Barlow+Condensed:wght@600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
   :root{
-    --bg:#eef1f5; --panel:#ffffff; --ink:#2b3440; --muted:#697586;
-    --line:#e2e6ec; --brand:#235a93; --brand2:#2b7fd4; --accent:#2f6fb0;
-    --active:#2f9e6b; --loi:#e08a2b; --closed:#8a93a0; --soft:#eef3fb;
+    --bg:#12161c; --panel:#1b222c; --ink:#e8edf2; --text:#e8edf2; --muted:#93a3b3;
+    --line:#2c3947; --brand:#ff7a1a; --brand2:#ff7a1a; --accent:#4f8fc0;
+    --active:#3fae6d; --loi:#e0a83f; --closed:#5d6d7d; --soft:#232c38;
+    --mono:'IBM Plex Mono',ui-monospace,monospace; --cond:'Barlow Condensed',sans-serif;
   }
   *{box-sizing:border-box}
-  body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;background:var(--bg);color:var(--ink);font-size:14px;line-height:1.45}
+  body{margin:0;font-family:'Barlow',-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;background:var(--bg);color:var(--ink);font-size:14px;line-height:1.45}
   .app{display:flex;min-height:100vh}
   .side{width:218px;background:#586676;color:#e3e8ef;flex-shrink:0;display:flex;flex-direction:column;position:sticky;top:0;height:100vh}
   .logo{padding:20px 20px 16px;font-weight:700;font-size:17px;color:#fff;letter-spacing:.3px;border-bottom:1px solid rgba(255,255,255,.14)}
@@ -441,28 +444,142 @@
   .parcel-tip{background:rgba(35,90,147,.95);color:#fff;padding:6px 10px;border-radius:6px;font-size:11.5px;pointer-events:none}
   .cursor-measure #parcel-map{cursor:crosshair}
   .cursor-radius #parcel-map{cursor:crosshair}
+
+  /* =====================================================================
+     DARK SKIN — Broker OS design language.
+     Sits last in the cascade to retire every hardcoded light color above.
+     ===================================================================== */
+  ::-webkit-scrollbar{width:10px;height:10px}
+  ::-webkit-scrollbar-thumb{background:#31404f;border-radius:5px}
+  ::-webkit-scrollbar-track{background:transparent}
+
+  /* chrome */
+  .side{background:#161b23;color:var(--muted);border-right:1px solid var(--line);width:212px}
+  .logo{font-family:var(--cond);font-size:20px;letter-spacing:.07em;color:var(--ink);border-bottom:1px solid var(--line)}
+  .logo span{color:var(--brand)}
+  .nav a{color:var(--muted);font-weight:600;font-size:13.5px}
+  .nav a:hover{background:rgba(255,255,255,.05);color:var(--ink)}
+  .nav a.on{background:rgba(255,122,26,.14);color:var(--brand)}
+  .side .foot{color:var(--muted);border-top:1px solid var(--line)}
+  .side .foot a{color:var(--accent)}
+  .top{justify-content:flex-start;gap:16px}
+  .top h1{font-family:var(--cond);text-transform:uppercase;letter-spacing:.05em;font-size:20px}
+  .hubtabs{display:flex;gap:3px;background:var(--bg);border:1px solid var(--line);border-radius:9px;padding:3px}
+  .hubtabs button{background:none;border:none;color:var(--muted);font-weight:700;font-size:12.5px;padding:6px 14px;border-radius:6px;cursor:pointer;font-family:inherit}
+  .hubtabs button.on{background:var(--brand);color:#181008}
+
+  /* type system */
+  .panel h2,.bov-panel h3,.pcard h3,.p-info .hd h3,.gen .tile h3{font-family:var(--cond);text-transform:uppercase;letter-spacing:.06em}
+  .card .v,.metric .mv,.kv div b,.p-kv div b,.p-value .vv,.valuebox .vamt,.approach div .vl,
+  .pcard .metabox b,.funnel div b,.kcard .kfoot b,.card .d{font-family:var(--mono)}
+
+  /* buttons */
+  .btn{background:var(--brand);color:#181008}
+  .btn:hover{background:#ff8c3a}
+  .btn.ghost{background:var(--soft);color:var(--ink);border:1px solid var(--line)}
+  .btn.ghost:hover{background:#2b3644}
+  .cta-generate{background:var(--brand);color:#181008}
+  .iconbtn{background:var(--soft);color:var(--ink)}
+  .iconbtn:hover{background:#2b3644}
+
+  /* inputs — kill every hardcoded white input incl. inline styles */
+  input,select,textarea{background:#141a22 !important;color:var(--ink) !important;border-color:var(--line) !important}
+  ::placeholder{color:#5d6d7d}
+  input[type=checkbox]{background:none !important}
+
+  /* generic surfaces */
+  .dropdown{background:var(--panel)}
+  .dropdown a:hover{background:var(--soft)}
+  .qa .box{background:var(--panel);box-shadow:0 12px 40px rgba(0,0,0,.55)}
+  .modal .mbar{background:#0d1117;color:var(--ink)}
+  .modal .stage{background:#0d1117}
+  .toast{background:var(--soft);color:var(--ink);border:1px solid var(--brand)}
+  .pillbar{background:var(--soft);border-color:var(--line);color:var(--muted)}
+  .achip{background:rgba(63,174,109,.12);border-color:rgba(63,174,109,.4)}
+  .chip{background:var(--soft);border-color:var(--line);color:var(--muted)}
+  .chip:hover{background:var(--brand);color:#181008}
+  .bar .track{background:var(--soft)}
+  .ev:before{border-color:var(--panel)}
+  .tnote{color:var(--muted)}
+  .listing .ph{background:linear-gradient(135deg,#242c37,#1a212b)}
+  .b-loi{color:#181008}
+  .tag.email,.badge{letter-spacing:.02em}
+
+  /* tables */
+  .contact-tbl,.comps-tbl{background:var(--panel)}
+  .contact-tbl th,.comps-tbl th{background:var(--soft);color:var(--muted);border-color:var(--line)}
+  .contact-tbl tr:hover td,.comps-tbl tr:hover td{background:rgba(255,255,255,.03)}
+  .comps-tbl tr.selected td{background:rgba(79,143,192,.14)}
+  .comps-tbl .txtag.lease{background:rgba(63,174,109,.15);color:#5fcd8c}
+  .comps-tbl .txtag.sale{background:rgba(224,90,79,.15);color:#e88a7f}
+  .comps-tbl .own{background:rgba(79,143,192,.18);color:#7ab3dd}
+  table th{background:var(--soft);color:var(--muted)}
+
+  /* kanban */
+  .kcol{background:#171c24;border-color:var(--line)}
+  .kcol h4 .cnt{background:var(--panel);color:var(--brand);border-color:var(--line)}
+  .kcard{background:var(--panel)}
+  .kcard .knext{background:rgba(224,168,63,.12);color:var(--loi)}
+  .funnel div{background:var(--soft);color:var(--muted)}
+  .funnel div b{color:var(--brand)}
+  .stagerow .step.on{color:#181008}
+
+  /* prospecting cards */
+  .pcard{background:var(--panel)}
+  .pcard .signal{background:rgba(224,168,63,.12);color:var(--loi);border-color:rgba(224,168,63,.35)}
+  .pcard .signal.hot{background:rgba(224,90,79,.14);color:#e88a7f;border-color:rgba(224,90,79,.4)}
+  .pcard .signal.motiv,.signal.motiv{background:rgba(63,174,109,.12);color:#5fcd8c;border-color:rgba(63,174,109,.35)}
+  .pill.new{background:rgba(79,143,192,.16);color:#7ab3dd}
+  .pill.contacted{background:rgba(224,168,63,.14);color:var(--loi)}
+  .pill.meeting{background:rgba(63,174,109,.14);color:#5fcd8c}
+  .pill.lost{background:var(--soft);color:var(--muted)}
+
+  /* CRM / panels */
+  .cadd-panel,.bov-panel,.metric,.chartwrap,.rep-list .repcard,.phcard{background:var(--panel)}
+
+  /* LOI grid */
+  .loi-grid{background:var(--panel)}
+  .loi-grid .lh{background:var(--soft);color:var(--muted);border-color:var(--line)}
+  .loi-grid .lc{border-color:var(--line)}
+  .loi-grid .lh.name{background:#252f3c;color:var(--ink)}
+  .loi-grid .lc.best{background:rgba(63,174,109,.13)}
+  .loi-grid .lc.worst{background:rgba(224,90,79,.12)}
+
+  /* BOV */
+  .p-value{background:rgba(79,143,192,.10);border-color:rgba(79,143,192,.3)}
+  .p-value .vv{color:#7ab3dd}
+
+  /* parcel map panels */
+  .p-toolbar,.p-info{background:var(--panel);border-color:var(--line)}
+  .p-info .hd{background:linear-gradient(135deg,#22384e,#1a2a3c);border-bottom:1px solid var(--line)}
+  .p-info .p-tabs{background:#171c24}
+  .p-actions{background:#171c24;border-color:var(--line)}
+  .p-actions button{background:var(--brand);color:#181008}
+  .p-actions button.g{background:var(--soft);color:var(--ink);border:1px solid var(--line)}
+  .p-tools button{background:var(--soft);color:var(--ink)}
+  .p-tools button:hover{background:#2b3644}
+  .p-tools button.on{background:var(--brand);color:#181008;border-color:var(--brand)}
+  .p-notes-list .pnote{background:rgba(224,168,63,.10);color:var(--ink)}
+  .p-measure-panel,.p-radius-panel{background:var(--panel);border-color:var(--line)}
+  .p-measure-panel .mv,.p-radius-panel .rv{font-family:var(--mono)}
+  .demo-grid div b{color:#7ab3dd;font-family:var(--mono)}
+
+  /* LinkedIn preview mock stays light on purpose */
+  .li-preview{color:#181c22}
 </style>
 </head>
 <body>
 <div class="app">
   <aside class="side">
-    <div class="logo">Listing<span>Hub</span></div>
+    <div class="logo">BROKER<span> OS</span></div>
     <nav class="nav">
       <a data-action="nav" data-view="dashboard" class="on"><span class="ic">▦</span> Dashboard</a>
-      <div class="sect">Deal Flow</div>
-      <a data-action="nav" data-view="parcels"><span class="ic">🗺️</span> Parcel Map</a>
-      <a data-action="nav" data-view="prospecting"><span class="ic">🎯</span> Prospecting</a>
-      <a data-action="nav" data-view="crm"><span class="ic">👥</span> CRM</a>
+      <a data-action="nav" data-view="parcels"><span class="ic">◎</span> Prospecting</a>
+      <a data-action="nav" data-view="crm"><span class="ic">◫</span> CRM</a>
       <a data-action="nav" data-view="pipeline"><span class="ic">▤</span> Pipeline</a>
-      <div class="sect">Deals &amp; Analysis</div>
       <a data-action="nav" data-view="listings"><span class="ic">⌂</span> Listings</a>
-      <a data-action="nav" data-view="bov"><span class="ic">💰</span> BOV Builder</a>
-      <a data-action="nav" data-view="loi"><span class="ic">📝</span> LOI Analyzer</a>
-      <a data-action="nav" data-view="comps"><span class="ic">📈</span> Comps DB</a>
-      <div class="sect">Marketing</div>
-      <a data-action="nav" data-view="marketing"><span class="ic">✦</span> Generate</a>
-      <a data-action="nav" data-view="analytics"><span class="ic">📊</span> Analytics</a>
-      <a data-action="nav" data-view="templates"><span class="ic">▣</span> Templates</a>
+      <a data-action="nav" data-view="bov"><span class="ic">Σ</span> Valuation</a>
+      <a data-action="nav" data-view="marketing"><span class="ic">✦</span> Marketing</a>
     </nav>
     <div class="foot">
       <div id="save-status">Saved locally ✓</div>
@@ -476,7 +593,8 @@
         <h1 id="ttl">Dashboard</h1>
         <div class="sub" id="sub">Your week at a glance</div>
       </div>
-      <div style="position:relative">
+      <div id="hubtabs" class="hubtabs" style="display:none"></div>
+      <div style="position:relative;margin-left:auto">
         <button class="btn" id="newbtn" data-action="new" style="display:none">＋ New Listing</button>
         <button class="btn" id="dashadd" data-action="dashmenu">＋ Add ▾</button>
         <div id="dashmenu" class="dropdown hide">
@@ -485,50 +603,34 @@
           <a data-action="qadd" data-kind="tournote">🗒️ Tour Note</a>
           <a data-action="addfu">✅ Follow-up</a>
           <a data-action="qadd" data-kind="goal">🎯 Goal</a>
-          <a data-action="qadd" data-kind="quote">💬 Motivational Quote</a>
         </div>
       </div>
     </div>
 
     <!-- DASHBOARD -->
     <div class="wrap view" id="v-dashboard">
-      <div id="dash-quote" class="quote hide"></div>
+      <div id="dash-quote" class="quote hide" style="display:none"></div>
       <div class="cards" id="dash-cards"></div>
-      <div class="panel">
-        <h2>Portfolio Map <span class="small">— click a pin to open · switch map type (top-right)</span></h2>
-        <div class="map" id="map-board"><div class="bay"></div><div class="mcap">Schematic view · production uses live Google/Mapbox tiles</div></div>
-        <div class="maplegend">
-          <span><i style="background:var(--active)"></i> Active</span>
-          <span><i style="background:var(--loi)"></i> Pending</span>
-          <span><i style="background:var(--closed)"></i> Closed / Leased</span>
+      <div class="row">
+        <div class="panel">
+          <h2>Action Queue</h2>
+          <div id="dash-followups"></div>
+          <div id="dash-needing" style="margin-top:14px"></div>
+        </div>
+        <div class="panel">
+          <h2>Upcoming</h2>
+          <div class="timeline" id="dash-upcoming"></div>
         </div>
       </div>
       <div class="row">
-        <div class="panel"><h2>Goals</h2><div id="dash-goals"></div></div>
-        <div class="panel"><h2>Notes</h2><div id="dash-notes"></div></div>
-      </div>
-      <div class="row">
-        <div>
-          <div class="panel">
-            <h2>Upcoming Activity</h2>
-            <div class="timeline" id="dash-upcoming"></div>
-          </div>
-          <div class="panel">
-            <h2>Recent Activity</h2>
-            <div class="timeline" id="dash-timeline"></div>
-          </div>
+        <div class="panel">
+          <h2>Recent Activity</h2>
+          <div class="timeline" id="dash-timeline"></div>
         </div>
-        <div>
-          <div class="panel">
-            <h2>Follow-ups Needing Attention</h2>
-            <div id="dash-followups"></div>
-          </div>
-          <div class="panel">
-            <h2>Listings Needing Attention</h2>
-            <div id="dash-needing"></div>
-            <p class="note">Open a listing to see its tours, outreach, and reports.</p>
-            <button class="btn ghost" data-action="nav" data-view="listings">Go to listings →</button>
-          </div>
+        <div class="panel">
+          <h2>Goals &amp; Notes</h2>
+          <div id="dash-goals"></div>
+          <div id="dash-notes" style="margin-top:6px"></div>
         </div>
       </div>
     </div>
@@ -752,13 +854,13 @@
             <button class="btn" data-action="genx" data-kind="agreement">Generate</button>
             <div class="genstat" id="gs-agreement"></div>
           </div>
-          <div class="tile" style="background:linear-gradient(135deg,#eef4fb,#dbe8f6)">
+          <div class="tile">
             <div class="ic2">💼</div><h3>LinkedIn Post</h3>
             <p>Ready-to-post LinkedIn update with hashtags, image, and CTA.</p>
             <button class="btn" data-action="genx" data-kind="linkedin">Generate</button>
             <div class="genstat" id="gs-linkedin"></div>
           </div>
-          <div class="tile" style="background:linear-gradient(135deg,#f7f0ff,#ecdcff)">
+          <div class="tile">
             <div class="ic2">📊</div><h3>Owner Report (Monthly)</h3>
             <p>Auto-generate this month's marketing report for the owner.</p>
             <button class="btn" data-action="owner-rep" data-id="from-mkt">Generate</button>
@@ -778,7 +880,7 @@
             </div>
             <iframe id="gen-frame" title="preview" style="width:100%;height:540px;border:1px solid var(--line);border-radius:8px;background:#fff"></iframe>
             <div id="gen-analytics" class="hide" style="margin-top:14px">
-              <div class="pillbar" style="background:#eef2f7;border-color:#cfe0f0;color:var(--brand);margin:0 0 12px">📊 Live page analytics (sample) — this is the data a hosted web brochure captures that a PDF can't.</div>
+              <div class="pillbar" style="margin:0 0 12px">📊 Live page analytics (sample) — this is the data a hosted web brochure captures that a PDF can't.</div>
               <div id="gen-analytics-body"></div>
             </div>
           </div>
@@ -796,9 +898,9 @@
         <p class="note">Recommended: <b>.pptx</b> (editable source). Also accepts .docx and .html. Drop a <b>.pdf</b> and Claude rebuilds it into an editable template.</p>
       </div>
 
-      <div class="panel" style="background:#fffaf0;border-color:#f0e2c0">
-        <h2 style="color:#8a6a1f">Why PowerPoint, not PDF?</h2>
-        <p style="margin:0;color:#6f5a22;font-size:13px">A PDF is finished and flattened — perfect for printing and sending, but hard to edit or restyle reliably. PowerPoint (.pptx) is structured: every text box, placeholder, and image is addressable, so Claude can change the layout and your listing data drops cleanly into the placeholders. <b>Upload .pptx as your editable source; the finished material exports to PDF.</b></p>
+      <div class="panel" style="border-left:3px solid var(--loi)">
+        <h2 style="color:var(--loi)">Why PowerPoint, not PDF?</h2>
+        <p style="margin:0;color:var(--muted);font-size:13px">A PDF is finished and flattened — perfect for printing and sending, but hard to edit or restyle reliably. PowerPoint (.pptx) is structured: every text box, placeholder, and image is addressable, so Claude can change the layout and your listing data drops cleanly into the placeholders. <b>Upload .pptx as your editable source; the finished material exports to PDF.</b></p>
       </div>
 
       <div class="panel">
@@ -926,7 +1028,7 @@
 
     <!-- PROSPECTING -->
     <div class="wrap view hide" id="v-prospecting">
-      <div class="panel" style="background:linear-gradient(135deg,#eaf3fc,#dce9f7);border-color:#c5d9ee">
+      <div class="panel" style="border-left:3px solid var(--brand)">
         <div style="display:flex;justify-content:space-between;align-items:center">
           <div>
             <h2 style="margin-bottom:2px">🎯 Property Prospecting</h2>
@@ -1581,14 +1683,32 @@ function flatActivity(){
 }
 function findListing(id){ return listings.find(l=>l.id===id); }
 
+const HUB_OF={parcels:'prospect',prospecting:'prospect',pipeline:'deals',loi:'deals',bov:'val',comps:'val',marketing:'mkt',analytics:'mkt',templates:'mkt'};
+const HUB_TABS={
+  prospect:[['parcels','Map'],['prospecting','Leads']],
+  deals:[['pipeline','Deals'],['loi','LOI Analyzer']],
+  val:[['bov','BOV Builder'],['comps','Comps DB']],
+  mkt:[['marketing','Generate'],['analytics','Analytics'],['templates','Templates']]
+};
+function renderHubTabs(v){
+  const el=document.getElementById('hubtabs'); if(!el) return;
+  const hub=HUB_OF[v];
+  if(!hub){ el.style.display='none'; el.innerHTML=''; return; }
+  el.style.display='flex';
+  el.innerHTML=HUB_TABS[hub].map(([view,label])=>`<button class="${view===v?'on':''}" data-action="nav" data-view="${view}">${label}</button>`).join('');
+}
 function go(v){
   document.querySelectorAll('.view').forEach(x=>x.classList.add('hide'));
   const target=document.getElementById('v-'+v); if(target) target.classList.remove('hide');
-  document.querySelectorAll('.nav a').forEach(a=>a.classList.toggle('on',a.dataset.view===v));
+  document.querySelectorAll('.nav a').forEach(a=>{
+    const av=a.dataset.view;
+    a.classList.toggle('on', av===v || (!!HUB_OF[av] && HUB_OF[av]===HUB_OF[v]));
+  });
+  renderHubTabs(v);
   document.getElementById('newbtn').style.display = (v==='listings')?'':'none';
   document.getElementById('dashadd').style.display = (v==='dashboard')?'':'none';
   document.getElementById('dashmenu').classList.add('hide');
-  if(v==='dashboard'){setTop('Dashboard','Your week at a glance');renderDash();renderMap();}
+  if(v==='dashboard'){setTop('Dashboard','Your week at a glance');renderDash();}
   if(v==='listings')subTab('all');
   if(v==='marketing'){setTop('Marketing','Generate brochures, emails, LinkedIn posts & signage');openMarketing();}
   if(v==='templates'){setTop('Templates','Your branded templates — Claude can read and edit them');renderTpl();}
@@ -1661,6 +1781,7 @@ function openDetail(id){
   cur=id;
   document.querySelectorAll('.view').forEach(x=>x.classList.add('hide'));
   document.getElementById('v-detail').classList.remove('hide');
+  renderHubTabs('detail');
   document.querySelectorAll('.nav a').forEach(a=>a.classList.toggle('on',a.dataset.view==='listings'));
   document.getElementById('newbtn').style.display='none';
   document.getElementById('dashadd').style.display='none';
@@ -2344,6 +2465,7 @@ let leafMap=null, markerLayer=null;
 function statusColor(s){ return s==='active'?'#2f9e6b':s==='loi'?'#e08a2b':'#8a8f98'; }
 function renderMap(){
   const el=document.getElementById('map-board');
+  if(!el) return; // dashboard schematic map removed — Parcel Map is the map surface now
   if(typeof L==='undefined'){ setTimeout(renderMap,200); return; }
   if(el.offsetHeight<40){ setTimeout(renderMap,100); return; }
   if(!leafMap){
@@ -2560,7 +2682,7 @@ function prospectCard(p){
       <div><span>Last Sale</span><b>${p.lastSalePrice?fmtMoney(p.lastSalePrice):'—'}</b></div>
     </div>
     <div class="signals">${signals}${tags}</div>
-    <div style="background:#eaf3fc;color:var(--brand);font-size:12px;padding:8px 10px;border-radius:8px;border-left:3px solid var(--brand2);margin:6px 0"><b>🤖 Claude:</b> ${esc(p.aiNote||'')}</div>
+    <div style="background:rgba(79,143,192,.10);color:var(--ink);font-size:12px;padding:8px 10px;border-radius:8px;border-left:3px solid var(--accent);margin:6px 0"><b style="color:var(--accent)">🤖 Claude:</b> ${esc(p.aiNote||'')}</div>
     <div class="owner">
       <b>${esc(p.ownerName||'—')}</b>
       <div class="subo">${esc(p.ownerLLC||'')} · ${esc(p.ownerPhone||'')}</div>
