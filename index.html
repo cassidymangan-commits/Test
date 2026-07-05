@@ -371,6 +371,76 @@
   .checkbox-list label{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--ink);cursor:pointer}
   .cta-generate{background:linear-gradient(135deg,#2f6fb0,#235a93);color:#fff;border:none;padding:10px 16px;border-radius:8px;font-weight:700;cursor:pointer;font-size:13px}
   .cta-generate:hover{filter:brightness(1.08)}
+
+  /* === PARCELS module === */
+  #v-parcels{padding:0;max-width:none;position:relative;height:calc(100vh - 52px)}
+  #parcel-map{width:100%;height:100%}
+  .p-toolbar{position:absolute;top:14px;left:14px;background:#fff;border:1px solid var(--line);border-radius:10px;box-shadow:0 4px 14px rgba(20,40,60,.12);padding:10px 12px;z-index:1000;min-width:290px;max-width:320px}
+  .p-toolbar h3{margin:0 0 6px;font-size:13px;color:var(--ink);display:flex;justify-content:space-between;align-items:center}
+  .p-toolbar h3 .live{background:var(--active);color:#fff;font-size:9.5px;padding:2px 7px;border-radius:10px;font-weight:800;letter-spacing:.4px}
+  .p-toolbar h3 .live.seed{background:var(--loi)}
+  .p-toolbar input,.p-toolbar select{width:100%;padding:7px 10px;border:1px solid var(--line);border-radius:6px;font-size:12.5px;font-family:inherit;background:#fff;margin-bottom:6px}
+  .p-tools{display:grid;grid-template-columns:repeat(4,1fr);gap:4px;margin-top:8px}
+  .p-tools button{background:var(--soft);border:1px solid var(--line);border-radius:6px;padding:8px 4px;font-size:11px;font-weight:700;cursor:pointer;color:var(--ink);display:flex;flex-direction:column;align-items:center;gap:2px}
+  .p-tools button:hover{background:#dbe6f0}
+  .p-tools button.on{background:var(--brand2);color:#fff;border-color:var(--brand2)}
+  .p-tools button .ic3{font-size:16px}
+  .p-legend{margin-top:10px;padding-top:8px;border-top:1px solid var(--line);font-size:11px;color:var(--muted);display:flex;flex-wrap:wrap;gap:8px}
+  .p-legend span{display:flex;align-items:center;gap:4px}
+  .p-legend i{width:12px;height:12px;border-radius:2px;display:inline-block;border:1.5px solid rgba(0,0,0,.2)}
+  .p-info{position:absolute;top:14px;right:14px;bottom:14px;width:400px;background:#fff;border:1px solid var(--line);border-radius:10px;box-shadow:0 4px 20px rgba(20,40,60,.15);z-index:1000;display:flex;flex-direction:column;overflow:hidden}
+  .p-info .hd{padding:14px 16px;border-bottom:1px solid var(--line);background:linear-gradient(135deg,#2f6fb0,#235a93);color:#fff}
+  .p-info .hd .apn{font-size:11px;letter-spacing:1px;font-weight:700;opacity:.85}
+  .p-info .hd h3{margin:2px 0 3px;font-size:15px}
+  .p-info .hd .sub{font-size:12px;opacity:.9}
+  .p-info .close-x{position:absolute;top:12px;right:12px;background:rgba(255,255,255,.2);border:none;color:#fff;font-size:14px;cursor:pointer;border-radius:50%;width:22px;height:22px;display:flex;align-items:center;justify-content:center}
+  .p-info .close-x:hover{background:rgba(255,255,255,.35)}
+  .p-info .p-tabs{display:flex;gap:2px;padding:0 8px;border-bottom:1px solid var(--line);background:#f9fafc}
+  .p-info .p-tabs button{background:none;border:none;padding:9px 10px;font-size:11.5px;font-weight:700;color:var(--muted);cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-1px;text-transform:uppercase;letter-spacing:.3px}
+  .p-info .p-tabs button.on{color:var(--brand);border-bottom-color:var(--brand)}
+  .p-info .p-body{flex:1;overflow-y:auto;padding:14px 16px;font-size:13px}
+  .p-info .p-body h4{margin:14px 0 6px;font-size:11px;text-transform:uppercase;letter-spacing:.4px;color:var(--muted);font-weight:700}
+  .p-info .p-body h4:first-child{margin-top:0}
+  .p-kv{display:grid;grid-template-columns:1fr 1fr;gap:6px 14px;font-size:12.5px;margin-bottom:8px}
+  .p-kv div span{display:block;font-size:10.5px;color:var(--muted);text-transform:uppercase;letter-spacing:.3px;font-weight:700}
+  .p-kv div b{font-weight:600;color:var(--ink);font-size:13px}
+  .p-value{background:linear-gradient(135deg,#eef4fb,#dbe8f6);border:1px solid #c5d9ee;border-radius:8px;padding:12px;margin-bottom:10px}
+  .p-value .vlab{font-size:10.5px;text-transform:uppercase;letter-spacing:.4px;color:var(--muted);font-weight:700}
+  .p-value .vv{font-size:20px;font-weight:800;color:var(--brand);margin-top:2px}
+  .sale-row{background:var(--soft);padding:8px 10px;border-radius:6px;margin-bottom:6px;font-size:12px;display:grid;grid-template-columns:auto 1fr auto;gap:10px;align-items:center}
+  .sale-row b{color:var(--ink);font-weight:700}
+  .p-actions{padding:10px 16px;border-top:1px solid var(--line);background:#f9fafc;display:grid;grid-template-columns:1fr 1fr;gap:6px}
+  .p-actions button{padding:8px;font-size:12px;font-weight:700;border:none;border-radius:6px;cursor:pointer;background:var(--brand2);color:#fff}
+  .p-actions button.g{background:#fff;color:var(--brand);border:1px solid var(--line)}
+  .p-actions button:hover{filter:brightness(1.1)}
+  .parcel-photo{width:100%;height:120px;background:var(--soft);border:1px dashed var(--line);border-radius:8px;display:flex;align-items:center;justify-content:center;color:var(--muted);font-size:12px;margin-bottom:10px;background-size:cover;background-position:center}
+  .p-notes-list{display:grid;gap:6px;margin-bottom:8px}
+  .p-notes-list .pnote{background:#fff8e6;border-left:3px solid var(--loi);padding:6px 8px;font-size:12px;border-radius:4px}
+  .p-notes-list .pnote .who{font-size:10.5px;color:var(--muted);margin-top:2px;font-weight:600}
+  .p-edit-input{width:100%;padding:6px 8px;border:1px solid var(--line);border-radius:6px;font-size:12.5px;font-family:inherit;margin-bottom:5px;background:#fff}
+  .p-edit-row{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:5px}
+  .p-edit-row label{display:flex;flex-direction:column;font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.3px;font-weight:700;gap:3px}
+  .p-edit-row label input,.p-edit-row label select{padding:5px 8px;border:1px solid var(--line);border-radius:5px;font-size:12px;font-family:inherit;background:#fff;font-weight:600;color:var(--ink);text-transform:none;letter-spacing:0}
+  .p-assemble-panel{position:absolute;bottom:14px;left:14px;background:linear-gradient(135deg,#3a2c00,#4a3800);color:#fff;border-radius:10px;box-shadow:0 4px 18px rgba(0,0,0,.35);padding:12px 16px;z-index:1000;font-size:12.5px;min-width:320px}
+  .p-assemble-panel h4{margin:0 0 4px;font-size:12px;text-transform:uppercase;letter-spacing:.5px;color:#f0d891}
+  .p-assemble-panel .stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:8px 0}
+  .p-assemble-panel .stats div b{display:block;font-size:16px;font-weight:800}
+  .p-assemble-panel .stats div span{font-size:10px;text-transform:uppercase;letter-spacing:.3px;opacity:.75}
+  .p-assemble-panel .a-actions{display:flex;gap:6px;margin-top:6px}
+  .p-assemble-panel .a-actions button{background:#fff;color:#3a2c00;border:none;padding:6px 12px;border-radius:6px;font-size:12px;font-weight:700;cursor:pointer;flex:1}
+  .p-assemble-panel .a-actions button.dim{background:rgba(255,255,255,.2);color:#fff}
+  .p-info.hide,.p-assemble-panel.hide,.p-measure-panel.hide,.p-radius-panel.hide{display:none}
+  .p-measure-panel,.p-radius-panel{position:absolute;bottom:14px;left:14px;background:#fff;border:1px solid var(--line);border-radius:10px;box-shadow:0 4px 18px rgba(20,40,60,.15);padding:12px 16px;z-index:1000;font-size:12.5px;min-width:280px}
+  .p-measure-panel h4,.p-radius-panel h4{margin:0 0 6px;font-size:12px;text-transform:uppercase;letter-spacing:.5px;color:var(--brand)}
+  .p-measure-panel .mv,.p-radius-panel .rv{font-size:20px;font-weight:800;color:var(--ink);margin:2px 0}
+  .p-radius-panel select{padding:5px 8px;border:1px solid var(--line);border-radius:6px;font-size:12px;margin-right:6px}
+  .demo-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:6px}
+  .demo-grid div{background:var(--soft);padding:8px;border-radius:6px}
+  .demo-grid div b{font-size:14px;color:var(--brand);display:block}
+  .demo-grid div span{font-size:10.5px;color:var(--muted);text-transform:uppercase;letter-spacing:.3px;font-weight:700}
+  .parcel-tip{background:rgba(35,90,147,.95);color:#fff;padding:6px 10px;border-radius:6px;font-size:11.5px;pointer-events:none}
+  .cursor-measure #parcel-map{cursor:crosshair}
+  .cursor-radius #parcel-map{cursor:crosshair}
 </style>
 </head>
 <body>
@@ -380,6 +450,7 @@
     <nav class="nav">
       <a data-action="nav" data-view="dashboard" class="on"><span class="ic">▦</span> Dashboard</a>
       <div class="sect">Deal Flow</div>
+      <a data-action="nav" data-view="parcels"><span class="ic">🗺️</span> Parcel Map</a>
       <a data-action="nav" data-view="prospecting"><span class="ic">🎯</span> Prospecting</a>
       <a data-action="nav" data-view="crm"><span class="ic">👥</span> CRM</a>
       <a data-action="nav" data-view="pipeline"><span class="ic">▤</span> Pipeline</a>
@@ -744,6 +815,111 @@
           <button class="btn" data-action="tplsend">Send</button>
         </div>
         <p class="note">Claude edits the .pptx directly and regenerates previews for every listing that uses this template.</p>
+      </div>
+    </div>
+
+    <!-- PARCELS (map-based) -->
+    <div class="view hide" id="v-parcels">
+      <div id="parcel-map"></div>
+      <!-- Floating toolbar -->
+      <div class="p-toolbar">
+        <h3>🗺️ Hamilton County Parcels <span id="p-datasrc" class="live seed">SEED</span></h3>
+        <input id="p-search" placeholder="🔍 Address, owner, or APN…">
+        <select id="p-usecode">
+          <option value="">All Use Codes</option>
+          <option value="400">400 · Industrial</option>
+          <option value="401">401 · Manufacturing</option>
+          <option value="402">402 · Warehouse</option>
+          <option value="403">403 · Truck Terminal</option>
+          <option value="404">404 · IOS / Yard</option>
+          <option value="405">405 · Flex / R&amp;D</option>
+          <option value="410">410 · Commercial</option>
+          <option value="500">500 · Vacant Land</option>
+        </select>
+        <div class="p-tools">
+          <button data-action="p-tool" data-tool="select" class="on" title="Click parcels to select"><span class="ic3">👆</span>Select</button>
+          <button data-action="p-tool" data-tool="measure" title="Measure distance / area"><span class="ic3">📐</span>Measure</button>
+          <button data-action="p-tool" data-tool="radius" title="Radius search"><span class="ic3">◉</span>Radius</button>
+          <button data-action="p-tool" data-tool="assemble" title="Multi-select for assemblage"><span class="ic3">▦</span>Assemble</button>
+        </div>
+        <div class="p-tools" style="margin-top:4px;grid-template-columns:1fr 1fr">
+          <button data-action="p-tryload" title="Attempt live CAGIS pull"><span class="ic3">🔄</span>Live CAGIS</button>
+          <button data-action="p-clear" title="Clear selection &amp; tools"><span class="ic3">✕</span>Clear</button>
+        </div>
+        <div class="p-legend">
+          <span><i style="background:#c0392b"></i>Manuf.</span>
+          <span><i style="background:#e08a2b"></i>Warehouse</span>
+          <span><i style="background:#7a4fb5"></i>Flex</span>
+          <span><i style="background:#586676"></i>IOS/Yard</span>
+          <span><i style="background:#2f9e6b"></i>Commercial</span>
+          <span><i style="background:#a0a7b1"></i>Vacant</span>
+        </div>
+      </div>
+      <!-- Selected parcel info panel -->
+      <div class="p-info hide" id="p-info">
+        <div class="hd">
+          <button class="close-x" data-action="p-info-close">✕</button>
+          <div class="apn" id="p-apn">APN —</div>
+          <h3 id="p-title">—</h3>
+          <div class="sub" id="p-subtitle">—</div>
+        </div>
+        <div class="p-tabs">
+          <button class="on" data-action="p-tab" data-tab="overview">Overview</button>
+          <button data-action="p-tab" data-tab="sales">Sales</button>
+          <button data-action="p-tab" data-tab="edit">Edit</button>
+          <button data-action="p-tab" data-tab="notes">Notes</button>
+          <button data-action="p-tab" data-tab="contacts">Contacts</button>
+        </div>
+        <div class="p-body" id="p-body"></div>
+        <div class="p-actions">
+          <button data-action="p-owner-portfolio">🏢 Show owner's other parcels</button>
+          <button data-action="p-prospect" class="g">🎯 Add to Prospects</button>
+          <button data-action="p-listing" class="g">＋ Create listing</button>
+          <button data-action="p-bov" class="g">💰 Draft BOV</button>
+        </div>
+      </div>
+      <!-- Assemble panel -->
+      <div class="p-assemble-panel hide" id="p-assemble">
+        <h4>Assemblage</h4>
+        <div style="font-size:11.5px;opacity:.85">Click parcels to add/remove. Contiguous ones can be assembled.</div>
+        <div class="stats">
+          <div><b id="pa-count">0</b><span>Parcels</span></div>
+          <div><b id="pa-land">—</b><span>Total AC</span></div>
+          <div><b id="pa-value">—</b><span>Assessed $</span></div>
+        </div>
+        <div class="a-actions">
+          <button data-action="p-assemble-report">📄 Assemblage report</button>
+          <button data-action="p-assemble-prospect" class="dim">🎯 As prospect</button>
+          <button data-action="p-assemble-clear" class="dim">✕ Clear</button>
+        </div>
+      </div>
+      <!-- Measure panel -->
+      <div class="p-measure-panel hide" id="p-measure">
+        <h4>📐 Measure Tool</h4>
+        <div style="font-size:11.5px;color:var(--muted)">Click on the map to add points. Double-click to finish.</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:8px">
+          <div><div style="font-size:10.5px;color:var(--muted);font-weight:700;text-transform:uppercase">Distance</div><div class="mv" id="pm-dist">—</div></div>
+          <div><div style="font-size:10.5px;color:var(--muted);font-weight:700;text-transform:uppercase">Area</div><div class="mv" id="pm-area">—</div></div>
+        </div>
+        <div style="text-align:right;margin-top:4px"><button class="btn ghost" style="padding:4px 10px;font-size:11px" data-action="p-measure-clear">Clear</button></div>
+      </div>
+      <!-- Radius panel -->
+      <div class="p-radius-panel hide" id="p-radius">
+        <h4>◉ Radius Search &amp; Demographics</h4>
+        <div style="font-size:11.5px;color:var(--muted)">Click on the map to drop the center.</div>
+        <div style="margin-top:6px">
+          <select id="pr-dist" data-action="p-radius-change">
+            <option value="0.25">0.25 mi</option>
+            <option value="0.5" selected>0.5 mi</option>
+            <option value="1">1 mi</option>
+            <option value="2">2 mi</option>
+            <option value="3">3 mi</option>
+          </select>
+          <span style="font-size:11px;color:var(--muted)">Center: <span id="pr-center">—</span></span>
+        </div>
+        <div style="font-size:12px;margin-top:8px"><b id="pr-count">0</b> parcels in range · <b id="pr-land">—</b> AC total</div>
+        <div class="demo-grid" id="pr-demo"></div>
+        <div style="text-align:right;margin-top:8px"><button class="btn ghost" style="padding:4px 10px;font-size:11px" data-action="p-radius-clear">Clear</button></div>
       </div>
     </div>
 
@@ -1257,13 +1433,74 @@ const SEED_MKTREPORTS={
   4:{monthly:[{m:'Mar',views:410,tours:0,inquiries:11,emails:1,linkedin:1},{m:'Apr',views:520,tours:1,inquiries:14,emails:1,linkedin:2},{m:'May',views:640,tours:1,inquiries:18,emails:1,linkedin:3},{m:'Jun',views:735,tours:2,inquiries:22,emails:1,linkedin:3}], campaigns:[]},
 };
 
+// === PARCELS (Hamilton County OH — seeded Camp Washington/Queensgate industrial) ===
+// Rectangle helper: center [lat,lng] + w/h in feet → GeoJSON polygon coordinates (lng,lat)
+function _rect(lat,lng,wFt,hFt){
+  const dLat=hFt*(1/364000), dLng=wFt*(1/(279000*Math.cos(lat*Math.PI/180)));
+  return [[[lng-dLng/2,lat-dLat/2],[lng+dLng/2,lat-dLat/2],[lng+dLng/2,lat+dLat/2],[lng-dLng/2,lat+dLat/2],[lng-dLng/2,lat-dLat/2]]];
+}
+const _P=(id,apn,addr,city,zip,owner,ownerAddr,useCode,useDesc,landSF,bldgSF,yb,stories,landVal,bldgVal,lastSale,history,zoning,lat,lng,wFt,hFt)=>({
+  id,apn,addr,city,zip,ownerName:owner,ownerAddress:ownerAddr,useCode,useDesc,landSF,buildingSF:bldgSF,yearBuilt:yb,stories,landValue:landVal,buildingValue:bldgVal,totalValue:landVal+bldgVal,lastSale,saleHistory:history,zoning,lat,lng,
+  geometry:{type:'Polygon',coordinates:_rect(lat,lng,wFt,hFt)},
+  notes:[],photos:[],contacts:[],userSpecs:{},tags:[]
+});
+const SEED_PARCELS=[
+  // === Camp Washington cluster (industrial) — shared owner: "Queensgate Industrial Partners LLC"
+  _P(0,'100-0004-0125','2801 Colerain Ave','Cincinnati','45225','Queensgate Industrial Partners LLC','4400 Vine St, Cincinnati OH 45217','402','Warehouse/Distribution',108900,72000,1968,1,485000,1420000,{date:'2019-08-14',price:2900000,deed:'GD',grantor:'CW Realty LLC',grantee:'Queensgate Industrial Partners LLC'},[{date:'2019-08-14',price:2900000},{date:'2001-03-22',price:1150000}],'M-2 Heavy Industrial',39.1391,-84.5312,340,320),
+  _P(1,'100-0004-0140','2825 Colerain Ave','Cincinnati','45225','Queensgate Industrial Partners LLC','4400 Vine St, Cincinnati OH 45217','402','Warehouse/Distribution',84600,54000,1972,1,378000,1080000,{date:'2019-08-14',price:2900000,deed:'GD',grantor:'CW Realty LLC',grantee:'Queensgate Industrial Partners LLC'},[{date:'2019-08-14',price:2900000,note:'Portfolio purchase with 2801 Colerain'}],'M-2 Heavy Industrial',39.1398,-84.5313,265,320),
+  _P(2,'100-0004-0155','2900 Spring Grove Ave','Cincinnati','45225','Queensgate Industrial Partners LLC','4400 Vine St, Cincinnati OH 45217','404','Industrial Outdoor Storage',143700,3200,1955,1,612000,145000,{date:'2019-08-14',price:2900000,deed:'GD',grantor:'CW Realty LLC',grantee:'Queensgate Industrial Partners LLC'},[{date:'2019-08-14',price:2900000,note:'Portfolio purchase'}],'M-2 Heavy Industrial',39.1385,-84.5296,410,350),
+  _P(3,'100-0004-0170','2820 Este Ave','Cincinnati','45232','Queensgate Industrial Partners LLC','4400 Vine St, Cincinnati OH 45217','401','Manufacturing',96800,68500,1962,2,432000,1180000,{date:'2019-08-14',price:2900000,deed:'GD',grantor:'CW Realty LLC',grantee:'Queensgate Industrial Partners LLC'},[{date:'2019-08-14',price:2900000,note:'Portfolio purchase'}],'M-2 Heavy Industrial',39.1408,-84.5285,310,315),
+  // === Standalone owners in Camp Washington
+  _P(4,'100-0004-0190','3020 Central Pkwy','Cincinnati','45225','Kettering Trust','P.O. Box 22910, Cincinnati OH 45222','402','Warehouse/Distribution',235400,145000,1953,1,890000,2340000,{date:'1998-06-30',price:2100000,deed:'GD',grantor:'Kettering Family Partnership',grantee:'Kettering Trust'},[{date:'1998-06-30',price:2100000}],'M-2 Heavy Industrial',39.1421,-84.5343,540,440),
+  _P(5,'100-0005-0032','3200 Central Pkwy','Cincinnati','45225','Baldwin Industries Ohio Inc','3200 Central Pkwy, Cincinnati OH 45225','401','Manufacturing',324500,215000,1948,3,1150000,3620000,{date:'2016-11-08',price:6800000,deed:'GD',grantor:'Baldwin Piano Co',grantee:'Baldwin Industries Ohio Inc'},[{date:'2016-11-08',price:6800000}],'M-2 Heavy Industrial',39.1436,-84.5321,680,480),
+  _P(6,'100-0005-0055','2955 Beekman St','Cincinnati','45225','Beekman St Holdings LLC','c/o Marcus Reyes, 1200 Broadway Oakland CA','404','Industrial Outdoor Storage',172800,4200,1961,1,738000,132000,{date:'2023-01-12',price:2450000,deed:'GD',grantor:'Beekman Industries',grantee:'Beekman St Holdings LLC'},[{date:'2023-01-12',price:2450000}],'M-2 Heavy Industrial',39.1428,-84.5289,432,400),
+  _P(7,'100-0005-0072','2410 Massachusetts Ave','Cincinnati','45225','Estate of William Voigt','c/o Ellen Park Esq., Perkins Coie, Cincinnati OH','402','Warehouse/Distribution',68500,48000,1959,1,301000,842000,{date:'1984-09-04',price:340000,deed:'GD',grantor:'Voigt Cooperage Co',grantee:'William Voigt'},[{date:'1984-09-04',price:340000}],'M-2 Heavy Industrial',39.1372,-84.5327,250,275),
+  _P(8,'100-0005-0080','2450 Massachusetts Ave','Cincinnati','45225','VACANT','—','500','Vacant Industrial Land',54200,0,0,0,178000,0,{date:'2010-05-15',price:145000,deed:'FF',grantor:'Cincinnati Land Bank',grantee:'Massachusetts Ave LLC'},[{date:'2010-05-15',price:145000}],'M-2 Heavy Industrial',39.1370,-84.5314,240,225),
+  // === Queensgate cluster (owned by "West End Rail Holdings LP" — 3 parcels)
+  _P(9,'098-0001-0022','1055 W 6th St','Cincinnati','45203','West End Rail Holdings LP','200 W 4th St #900, Cincinnati OH 45202','403','Truck Terminal',287400,58000,1969,1,1080000,890000,{date:'2018-04-11',price:5200000,deed:'GD',grantor:'CSX Real Estate',grantee:'West End Rail Holdings LP'},[{date:'2018-04-11',price:5200000},{date:'1972-06-18',price:410000}],'M-2 Heavy Industrial',39.1080,-84.5335,520,540),
+  _P(10,'098-0001-0038','1201 W 6th St','Cincinnati','45203','West End Rail Holdings LP','200 W 4th St #900, Cincinnati OH 45202','404','Industrial Outdoor Storage',198400,3600,1971,1,724000,98000,{date:'2018-04-11',price:5200000,deed:'GD',grantor:'CSX Real Estate',grantee:'West End Rail Holdings LP'},[{date:'2018-04-11',price:5200000}],'M-2 Heavy Industrial',39.1075,-84.5354,468,420),
+  _P(11,'098-0001-0045','710 Freeman Ave','Cincinnati','45203','West End Rail Holdings LP','200 W 4th St #900, Cincinnati OH 45202','402','Warehouse/Distribution',96500,68000,1968,1,395000,1240000,{date:'2018-04-11',price:5200000,deed:'GD',grantor:'CSX Real Estate',grantee:'West End Rail Holdings LP'},[{date:'2018-04-11',price:5200000}],'M-2 Heavy Industrial',39.1082,-84.5372,310,315),
+  // === Queensgate standalones
+  _P(12,'098-0001-0058','950 Bank St','Cincinnati','45203','Bank St Property Co','950 Bank St, Cincinnati OH 45203','405','Flex / R&D',48200,32500,1985,2,215000,782000,{date:'2007-02-14',price:1980000,deed:'GD',grantor:'Bank St Realty Trust',grantee:'Bank St Property Co'},[{date:'2007-02-14',price:1980000}],'M-1 Light Industrial',39.1091,-84.5330,235,205),
+  _P(13,'098-0001-0060','1010 Bank St','Cincinnati','45203','Cincinnati Terminal Warehouse Co','1010 Bank St, Cincinnati OH 45203','402','Warehouse/Distribution',185600,124000,1948,4,672000,2840000,{date:'1962-10-30',price:820000,deed:'GD',grantor:'C&O Railway',grantee:'Cincinnati Terminal Warehouse Co'},[{date:'1962-10-30',price:820000}],'M-2 Heavy Industrial',39.1097,-84.5320,405,458),
+  _P(14,'098-0001-0075','625 Court St','Cincinnati','45203','Court St Realty LLC','c/o Frank DiSanto, 2200 Doolittle Dr','410','Commercial Office/Retail',24600,18500,1902,3,120000,415000,{date:'2020-07-19',price:685000,deed:'GD',grantor:'Court St Family Trust',grantee:'Court St Realty LLC'},[{date:'2020-07-19',price:685000},{date:'1968-03-02',price:52000}],'CBD',39.1099,-84.5290,158,155),
+  // === Norwood cluster — owned by "Norwood Yard Assemblage LLC" (potential redevelopment)
+  _P(15,'620-0002-0110','3800 Montgomery Rd','Norwood','45212','Norwood Yard Assemblage LLC','c/o Deepa Rangan, 450 Cypress Ct','404','Industrial Outdoor Storage',196200,8400,1975,1,1350000,285000,{date:'2022-03-08',price:4200000,deed:'GD',grantor:'Norwood Metal Works',grantee:'Norwood Yard Assemblage LLC'},[{date:'2022-03-08',price:4200000}],'M-1 Light Industrial',39.1601,-84.4602,465,422),
+  _P(16,'620-0002-0125','3830 Montgomery Rd','Norwood','45212','Norwood Yard Assemblage LLC','c/o Deepa Rangan, 450 Cypress Ct','404','Industrial Outdoor Storage',128000,0,0,0,880000,0,{date:'2022-03-08',price:4200000,deed:'GD',grantor:'Norwood Metal Works',grantee:'Norwood Yard Assemblage LLC'},[{date:'2022-03-08',price:4200000,note:'Assemblage — Norwood plant redev'}],'M-1 Light Industrial',39.1607,-84.4593,355,360),
+  _P(17,'620-0002-0140','3910 Montgomery Rd','Norwood','45212','Norwood Yard Assemblage LLC','c/o Deepa Rangan, 450 Cypress Ct','500','Vacant Industrial Land',72800,0,0,0,540000,0,{date:'2022-08-15',price:1150000,deed:'GD',grantor:'Norwood Recycling',grantee:'Norwood Yard Assemblage LLC'},[{date:'2022-08-15',price:1150000,note:'Fills the assemblage'}],'M-1 Light Industrial',39.1613,-84.4586,268,270),
+  // === Standalone Norwood industrial
+  _P(18,'620-0002-0165','4050 Smith Rd','Norwood','45212','Smith Rd Industrial LP','4050 Smith Rd, Norwood OH 45212','401','Manufacturing',162400,98500,1958,2,690000,1780000,{date:'2011-11-22',price:3300000,deed:'GD',grantor:'GM Norwood Assembly Trust',grantee:'Smith Rd Industrial LP'},[{date:'2011-11-22',price:3300000},{date:'1998-01-15',price:2100000}],'M-1 Light Industrial',39.1621,-84.4571,420,388),
+  _P(19,'620-0002-0180','4200 Montgomery Rd','Norwood','45212','Rangan Family Trust','450 Cypress Ct, Milpitas CA 95035','405','Flex / R&D',34200,22800,1988,1,215000,548000,{date:'2015-06-04',price:1450000,deed:'GD',grantor:'Rangan Enterprises',grantee:'Rangan Family Trust'},[{date:'2015-06-04',price:1450000}],'M-1 Light Industrial',39.1628,-84.4558,215,160),
+  // === Sharonville industrial cluster
+  _P(20,'620-0004-0230','11500 Reading Rd','Sharonville','45241','Prologis Cincinnati LLC','1800 Wazee St, Denver CO 80202','402','Warehouse/Distribution',548600,325000,2002,1,2450000,8940000,{date:'2019-12-10',price:22400000,deed:'GD',grantor:'Duke Realty',grantee:'Prologis Cincinnati LLC'},[{date:'2019-12-10',price:22400000}],'M-1 Light Industrial',39.2745,-84.4132,760,720),
+  _P(21,'620-0004-0245','11600 Reading Rd','Sharonville','45241','Prologis Cincinnati LLC','1800 Wazee St, Denver CO 80202','402','Warehouse/Distribution',412000,285000,2004,1,1980000,7820000,{date:'2019-12-10',price:22400000,deed:'GD',grantor:'Duke Realty',grantee:'Prologis Cincinnati LLC'},[{date:'2019-12-10',price:22400000,note:'Portfolio purchase'}],'M-1 Light Industrial',39.2758,-84.4128,660,620),
+  _P(22,'620-0004-0250','11750 Chester Rd','Sharonville','45241','Chester Rd Industrial LLC','—','402','Warehouse/Distribution',148600,102000,1998,1,650000,2820000,{date:'2013-04-18',price:6100000,deed:'GD',grantor:'Chester Development Co',grantee:'Chester Rd Industrial LLC'},[{date:'2013-04-18',price:6100000}],'M-1 Light Industrial',39.2762,-84.4152,385,388),
+  // === Northern Ky-facing Riverfront (potential IOS play)
+  _P(23,'098-0002-0022','1450 River Rd','Cincinnati','45204','Riverfront IOS LLC','c/o Robert Kwan, 7150 Nimitz Fwy Oakland CA','404','Industrial Outdoor Storage',285400,4800,1955,1,1420000,145000,{date:'2021-09-24',price:4850000,deed:'GD',grantor:'River Terminal Co',grantee:'Riverfront IOS LLC'},[{date:'2021-09-24',price:4850000}],'M-2 Heavy Industrial',39.1039,-84.5555,585,490),
+  _P(24,'098-0002-0038','1500 River Rd','Cincinnati','45204','Riverfront IOS LLC','c/o Robert Kwan, 7150 Nimitz Fwy Oakland CA','404','Industrial Outdoor Storage',196800,3200,1961,1,986000,98000,{date:'2021-09-24',price:4850000,deed:'GD',grantor:'River Terminal Co',grantee:'Riverfront IOS LLC'},[{date:'2021-09-24',price:4850000,note:'Portfolio'}],'M-2 Heavy Industrial',39.1046,-84.5570,450,435),
+  _P(25,'098-0002-0055','1620 River Rd','Cincinnati','45204','VACANT','—','500','Vacant Industrial Land',89600,0,0,0,412000,0,{date:'2005-08-10',price:245000,deed:'FF',grantor:'City of Cincinnati',grantee:'River Rd Holdings LLC'},[{date:'2005-08-10',price:245000}],'M-2 Heavy Industrial',39.1054,-84.5585,335,265),
+  // === Small flex / commercial infill (mixed)
+  _P(26,'100-0006-0090','1420 Findlay St','Cincinnati','45214','Findlay Market Realty','1420 Findlay St, Cincinnati OH 45214','410','Commercial Retail',12800,9600,1911,3,68000,285000,{date:'1998-05-22',price:118000,deed:'GD',grantor:'Findlay Family LP',grantee:'Findlay Market Realty'},[{date:'1998-05-22',price:118000}],'CBD',39.1180,-84.5178,128,100),
+  _P(27,'100-0006-0102','1500 Elm St','Cincinnati','45214','OTR Investors LLC','1500 Elm St, Cincinnati OH 45214','410','Commercial Mixed-Use',9200,7400,1898,4,62000,224000,{date:'2019-11-14',price:850000,deed:'GD',grantor:'Elm St Partners',grantee:'OTR Investors LLC'},[{date:'2019-11-14',price:850000},{date:'1971-02-04',price:22000}],'OTR-1',39.1185,-84.5182,92,100),
+  _P(28,'100-0006-0125','1345 Elm St','Cincinnati','45214','Kettering Trust','P.O. Box 22910, Cincinnati OH 45222','405','Flex / R&D',22400,18000,1972,2,105000,342000,{date:'1996-08-20',price:245000,deed:'GD',grantor:'Kettering Family Partnership',grantee:'Kettering Trust'},[{date:'1996-08-20',price:245000}],'M-1 Light Industrial',39.1194,-84.5188,160,140),
+];
+
+// Simple demographic dataset by rough census tract centers
+const DEMO_ZONES=[
+  {lat:39.135,lng:-84.53,r:2,pop:8420,mhi:34200,mha:36,hhu:3120,daytime:12400,label:'Camp Washington / Millvale'},
+  {lat:39.108,lng:-84.53,r:2,pop:6820,mhi:29800,mha:34,hhu:2410,daytime:19600,label:'Queensgate / West End'},
+  {lat:39.161,lng:-84.458,r:2,pop:19200,mhi:52400,mha:38,hhu:8900,daytime:24800,label:'Norwood'},
+  {lat:39.275,lng:-84.413,r:3,pop:14100,mhi:71800,mha:41,hhu:6100,daytime:32400,label:'Sharonville'},
+];
+
 let listings=[], activity={}, goals=[], notes=[], quote='', followups=[], commissionGoal=0, templates=[], upcoming=[];
 let prospects=[], crmContacts=[], deals=[], comps=[], lois=[], bovs=[], mktReports={};
+let parcels=[];
 
-const STORE_KEY='listingHub.v2';
+const STORE_KEY='listingHub.v3';
 const STORE_KEY_LEGACY='listingHub.v1';
 function saveState(){
-  const payload={listings,activity,goals,notes,quote,followups,commissionGoal,templates,upcoming,prospects,crmContacts,deals,comps,lois,bovs,mktReports};
+  const payload={listings,activity,goals,notes,quote,followups,commissionGoal,templates,upcoming,prospects,crmContacts,deals,comps,lois,bovs,mktReports,parcels};
   const trySave=obj=>{ try{ localStorage.setItem(STORE_KEY,JSON.stringify(obj)); return true; }catch(e){ return false; } };
   if(trySave(payload)) return setSaveStatus('Saved locally ✓');
   const trimmed=JSON.parse(JSON.stringify(payload,(k,v)=>(typeof v==='string'&&v.length>50000&&v.startsWith('data:'))?null:v));
@@ -1287,6 +1524,7 @@ function loadState(){
     lois=s.lois||structuredCloneSafe(SEED_LOIS);
     bovs=s.bovs||[];
     mktReports=s.mktReports||structuredCloneSafe(SEED_MKTREPORTS);
+    parcels=s.parcels||structuredCloneSafe(SEED_PARCELS);
   }catch(e){ seed(); }
 }
 function structuredCloneSafe(v){ return JSON.parse(JSON.stringify(v)); }
@@ -1307,6 +1545,7 @@ function seed(){
   lois=structuredCloneSafe(SEED_LOIS);
   bovs=[];
   mktReports=structuredCloneSafe(SEED_MKTREPORTS);
+  parcels=structuredCloneSafe(SEED_PARCELS);
   listings.forEach(l=>{
     l.owner=OWNERS[l.id]||'';
     l.contacts=structuredCloneSafe(SEED_CONTACTS[l.id]||[]);
@@ -1359,6 +1598,7 @@ function go(v){
   if(v==='loi'){setTop('LOI Analyzer','Compare offers, track redlines, close → auto-comp');renderLOI();}
   if(v==='comps'){setTop('Comps Database','Self-building from closed deals + CoStar/RCA imports');renderComps();}
   if(v==='analytics'){setTop('Analytics','Portfolio performance + automated owner reports');renderAnalytics();}
+  if(v==='parcels'){setTop('Parcel Map','Hamilton Co OH parcels · owner search · measure · demographics · assemble'); initParcelMap();}
   window.scrollTo(0,0);
 }
 function setTop(t,s){document.getElementById('ttl').textContent=t;document.getElementById('sub').textContent=s;}
@@ -3119,6 +3359,522 @@ function openOwnerReport(id){
 }
 
 // =========================================================================
+// PARCELS — Leaflet-based parcel map with Hamilton County data
+// =========================================================================
+let parcelMap=null, parcelLayer=null, ownerHiLayer=null;
+let selectedParcelId=null, parcelTool='select', assembleSet=new Set();
+let measurePts=[], measureLayer=null, radiusCenter=null, radiusLayer=null, radiusMi=0.5;
+let parcelPolyById={};
+const USE_COLOR={
+  '400':'#c0392b','401':'#c0392b','402':'#e08a2b','403':'#586676','404':'#586676',
+  '405':'#7a4fb5','410':'#2f9e6b','500':'#a0a7b1'
+};
+function useColor(code){ return USE_COLOR[code]||'#586676'; }
+function parcelStyle(p,opts){
+  const isSelected=(p.id===selectedParcelId);
+  const isAssemble=assembleSet.has(p.id);
+  return {
+    color: isSelected?'#111':(isAssemble?'#8a6a1f':'#1a2530'),
+    weight: isSelected?3:(isAssemble?2.5:1),
+    fillColor: useColor(p.useCode),
+    fillOpacity: isSelected?0.75:(isAssemble?0.65:0.42),
+    opacity: 0.95
+  };
+}
+function fmtSF(n){ return n?fmtNum(n)+' SF':'—'; }
+function fmtAC(sf){ return sf?(sf/43560).toFixed(2)+' AC':'—'; }
+function initParcelMap(){
+  const el=document.getElementById('parcel-map');
+  if(!el) return;
+  if(typeof L==='undefined'){ setTimeout(initParcelMap,180); return; }
+  if(parcelMap){ setTimeout(()=>parcelMap.invalidateSize(),80); return; }
+  parcelMap=L.map(el,{scrollWheelZoom:true, zoomControl:true, zoomSnap:0.5});
+  const bases={
+    'Satellite': L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',{maxZoom:20,attribution:'Imagery © Esri'}),
+    'Street': L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19,attribution:'© OpenStreetMap'}),
+    'Light': L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png',{maxZoom:19,attribution:'© OpenStreetMap, © CARTO'}),
+    'Terrain': L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}',{maxZoom:19,attribution:'© Esri'})
+  };
+  bases.Satellite.addTo(parcelMap);
+  L.control.layers(bases,null,{position:'bottomright',collapsed:true}).addTo(parcelMap);
+  L.control.scale({position:'bottomleft',imperial:true,metric:false}).addTo(parcelMap);
+  // Camp Washington center
+  parcelMap.setView([39.140,-84.531],14.5);
+  parcelLayer=L.layerGroup().addTo(parcelMap);
+  ownerHiLayer=L.layerGroup().addTo(parcelMap);
+  renderParcelPolygons();
+  // Map click handler for tools
+  parcelMap.on('click', e=>{
+    if(parcelTool==='measure'){ measureAdd(e.latlng); }
+    else if(parcelTool==='radius'){ radiusPlace(e.latlng); }
+  });
+  parcelMap.on('dblclick', e=>{
+    if(parcelTool==='measure'){ measureFinish(); L.DomEvent.stop(e); }
+  });
+  setTimeout(()=>parcelMap.invalidateSize(),150);
+}
+function renderParcelPolygons(){
+  if(!parcelLayer) return;
+  parcelLayer.clearLayers();
+  parcelPolyById={};
+  const q=(document.getElementById('p-search').value||'').toLowerCase().trim();
+  const uc=document.getElementById('p-usecode').value;
+  const visible=parcels.filter(p=>{
+    if(uc && p.useCode!==uc) return false;
+    if(q && !(p.addr+' '+p.city+' '+p.ownerName+' '+p.apn).toLowerCase().includes(q)) return false;
+    return true;
+  });
+  visible.forEach(p=>{
+    const coords=p.geometry.coordinates[0].map(c=>[c[1],c[0]]); // GeoJSON is [lng,lat] → Leaflet [lat,lng]
+    const poly=L.polygon(coords,parcelStyle(p));
+    poly.on('click',ev=>{
+      L.DomEvent.stop(ev);
+      if(parcelTool==='assemble'){ toggleAssemble(p.id); }
+      else { selectParcel(p.id); }
+    });
+    poly.on('mouseover',()=>poly.setStyle({weight:Math.max(2,parcelStyle(p).weight),fillOpacity:0.62}));
+    poly.on('mouseout',()=>poly.setStyle(parcelStyle(p)));
+    poly.bindTooltip(`<b>${esc(p.addr)}</b><br><span style="opacity:.85">${esc(p.ownerName)}</span><br>${esc(p.useDesc)} · ${fmtAC(p.landSF)}`,{sticky:true,className:'parcel-tip',opacity:.95});
+    parcelPolyById[p.id]=poly;
+    poly.addTo(parcelLayer);
+  });
+}
+function selectParcel(id){
+  selectedParcelId=id;
+  // Update styles
+  Object.entries(parcelPolyById).forEach(([pid,poly])=>{
+    const pp=parcels.find(x=>x.id===+pid); if(pp) poly.setStyle(parcelStyle(pp));
+  });
+  const p=parcels.find(x=>x.id===id); if(!p) return;
+  // Zoom in a bit if far
+  const bounds=parcelPolyById[id].getBounds();
+  if(parcelMap.getZoom()<15) parcelMap.fitBounds(bounds.pad(2));
+  document.getElementById('p-info').classList.remove('hide');
+  document.getElementById('p-apn').textContent='APN '+p.apn+' · '+p.zoning;
+  document.getElementById('p-title').textContent=p.addr;
+  document.getElementById('p-subtitle').textContent=`${p.city}, OH ${p.zip} · ${p.useCode} ${p.useDesc}`;
+  parcelTabSwitch('overview');
+}
+function parcelInfoClose(){
+  document.getElementById('p-info').classList.add('hide');
+  selectedParcelId=null;
+  Object.entries(parcelPolyById).forEach(([pid,poly])=>{
+    const pp=parcels.find(x=>x.id===+pid); if(pp) poly.setStyle(parcelStyle(pp));
+  });
+}
+function parcelTabSwitch(t){
+  document.querySelectorAll('#p-info .p-tabs button').forEach(b=>b.classList.toggle('on',b.dataset.tab===t));
+  const p=parcels.find(x=>x.id===selectedParcelId); if(!p) return;
+  const body=document.getElementById('p-body');
+  if(t==='overview'){
+    const photo=(p.photos||[])[0];
+    const photoBg=photo?`style="background-image:url('${photo.src}')"`:'';
+    body.innerHTML=`
+      <div class="parcel-photo" ${photoBg}>${photo?'':'📷 No photo yet · use the Edit tab to add'}</div>
+      <div class="p-value">
+        <div class="vlab">Total Assessed Value</div>
+        <div class="vv">${fmtMoney(p.totalValue)}</div>
+        <div style="font-size:11.5px;color:var(--muted);margin-top:2px">Land ${fmtMoney(p.landValue)} · Bldg ${fmtMoney(p.buildingValue)}</div>
+      </div>
+      <h4>Owner</h4>
+      <div style="font-size:13px"><b>${esc(p.ownerName)}</b></div>
+      <div style="font-size:12px;color:var(--muted);margin-top:2px">${esc(p.ownerAddress||'—')}</div>
+      <h4>Property</h4>
+      <div class="p-kv">
+        <div><span>Land</span><b>${fmtAC(p.landSF)}${p.landSF?' ('+fmtSF(p.landSF)+')':''}</b></div>
+        <div><span>Building SF</span><b>${fmtSF(p.buildingSF)}</b></div>
+        <div><span>Year Built</span><b>${p.yearBuilt||'—'}</b></div>
+        <div><span>Stories</span><b>${p.stories||'—'}</b></div>
+        <div><span>Use Code</span><b>${p.useCode} · ${esc(p.useDesc)}</b></div>
+        <div><span>Zoning</span><b>${esc(p.zoning||'—')}</b></div>
+      </div>
+      ${Object.keys(p.userSpecs||{}).length?`<h4>Broker-Added Specs</h4><div class="p-kv">${Object.entries(p.userSpecs).map(([k,v])=>`<div><span>${esc(k)}</span><b>${esc(v)}</b></div>`).join('')}</div>`:''}
+      ${p.tags?.length?`<h4>Tags</h4><div>${p.tags.map(t=>`<span class="signal motiv" style="margin:2px 4px 2px 0">${esc(t)}</span>`).join('')}</div>`:''}`;
+  } else if(t==='sales'){
+    const last=p.lastSale||{};
+    body.innerHTML=`
+      <h4>Most Recent Sale</h4>
+      <div class="sale-row"><span>📅 ${esc(last.date||'—')}</span><span><b>${fmtMoney(last.price)}</b>${last.deed?' · '+esc(last.deed):''}</span><span></span></div>
+      <div style="font-size:12px;color:var(--muted);margin:4px 0 12px"><b>Grantor:</b> ${esc(last.grantor||'—')}<br><b>Grantee:</b> ${esc(last.grantee||'—')}</div>
+      <h4>Full Sale History</h4>
+      ${(p.saleHistory||[]).length?p.saleHistory.map(s=>`<div class="sale-row"><span>📅 ${esc(s.date)}</span><span><b>${fmtMoney(s.price)}</b>${s.note?' · <span style="color:var(--muted);font-size:11px">'+esc(s.note)+'</span>':''}</span></div>`).join(''):'<p class="note">No sale history on file.</p>'}
+      <h4>Value Delta (Assessed vs Last Sale)</h4>
+      <div class="p-value" style="background:linear-gradient(135deg,#dcf1e6,#c0e5cf);border-color:#7ec9a4">
+        <div class="vlab">Est. Appreciation</div>
+        <div class="vv">${last.price?fmtMoney(p.totalValue-last.price):'—'}</div>
+        <div style="font-size:11.5px;color:var(--muted);margin-top:2px">${last.price?((p.totalValue/last.price-1)*100).toFixed(0)+'% over last basis':''}</div>
+      </div>`;
+  } else if(t==='edit'){
+    body.innerHTML=`
+      <h4>Broker Property Info</h4>
+      <div class="p-edit-row">
+        <label>Address<input class="pe" data-k="addr" value="${escAttr(p.addr)}"></label>
+        <label>City<input class="pe" data-k="city" value="${escAttr(p.city)}"></label>
+      </div>
+      <div class="p-edit-row">
+        <label>Use Code<input class="pe" data-k="useCode" value="${escAttr(p.useCode)}"></label>
+        <label>Use Desc<input class="pe" data-k="useDesc" value="${escAttr(p.useDesc)}"></label>
+      </div>
+      <div class="p-edit-row">
+        <label>Building SF<input class="pe" data-k="buildingSF" type="number" value="${p.buildingSF||''}"></label>
+        <label>Year Built<input class="pe" data-k="yearBuilt" type="number" value="${p.yearBuilt||''}"></label>
+      </div>
+      <h4>Building Info (add anything)</h4>
+      <div id="p-userspecs">${Object.entries(p.userSpecs||{}).map(([k,v])=>`<div class="p-edit-row" data-us><label>Label<input class="us-k" value="${escAttr(k)}"></label><label>Value<input class="us-v" value="${escAttr(v)}"></label></div>`).join('')}</div>
+      <button class="btn ghost" data-action="p-addspec" style="padding:5px 10px;font-size:11px;margin:6px 0">＋ Add spec</button>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:6px">
+        ${['Clear Height','Dock Doors','Drive Ins','Power','Sprinklers','Rail Served'].map(l=>`<button class="btn ghost" data-action="p-addspec" data-label="${escAttr(l)}" style="padding:4px 8px;font-size:10.5px">＋ ${esc(l)}</button>`).join('')}
+      </div>
+      <h4>Tags</h4>
+      <input class="p-edit-input" id="p-tags" value="${escAttr((p.tags||[]).join(', '))}" placeholder="comma-separated (e.g. Vacant, Owner Motivated)">
+      <h4>Photo</h4>
+      <input type="file" accept="image/*" id="p-photo-input">
+      <div style="text-align:right;margin-top:10px"><button class="btn" data-action="p-savep">Save changes</button></div>`;
+    document.getElementById('p-photo-input').addEventListener('change',e=>{
+      const f=e.target.files[0]; if(!f) return;
+      const r=new FileReader(); r.onload=()=>{ p.photos=[{src:r.result,name:f.name}]; saveState(); parcelTabSwitch('edit'); toast('Photo added ✓'); }; r.readAsDataURL(f);
+    });
+  } else if(t==='notes'){
+    body.innerHTML=`
+      <h4>Notes (${(p.notes||[]).length})</h4>
+      <div class="p-notes-list">${(p.notes||[]).map((n,i)=>`<div class="pnote">${esc(n.t)}<div class="who">${esc(n.when||'—')} <span style="cursor:pointer;color:#c0392b;float:right" data-action="p-delnote" data-i="${i}">✕</span></div></div>`).join('')||'<p class="note">No notes yet.</p>'}</div>
+      <input class="p-edit-input" id="p-newnote" placeholder="Add a note — e.g. 'Owner returning call Thu'">
+      <button class="btn" data-action="p-addnote" style="padding:6px 12px;font-size:12px;width:100%">＋ Add note</button>`;
+    document.getElementById('p-newnote').addEventListener('keydown',e=>{ if(e.key==='Enter') addParcelNote(); });
+  } else if(t==='contacts'){
+    body.innerHTML=`
+      <h4>Contacts tied to this parcel (${(p.contacts||[]).length})</h4>
+      <div style="display:grid;gap:6px">${(p.contacts||[]).map((c,i)=>`<div style="background:var(--soft);padding:8px 10px;border-radius:6px;font-size:12.5px"><b>${esc(c.name)}</b> · ${esc(c.role||'')} <span style="cursor:pointer;color:#c0392b;float:right" data-action="p-delcontact" data-i="${i}">✕</span><div style="color:var(--muted);font-size:11.5px">${esc(c.company||'')} · ${esc(c.phone||'')} · ${esc(c.email||'')}</div></div>`).join('')||'<p class="note">No contacts.</p>'}</div>
+      <h4>Add Contact</h4>
+      <div class="p-edit-row"><label>Name<input class="pc" data-k="name"></label><label>Company<input class="pc" data-k="company"></label></div>
+      <div class="p-edit-row"><label>Role<select class="pc" data-k="role"><option>Owner</option><option>Prospect</option><option>Attorney</option><option>Property Mgr</option><option>Tenant</option><option>Co-op Broker</option></select></label><label>Phone<input class="pc" data-k="phone"></label></div>
+      <input class="p-edit-input pc" data-k="email" placeholder="Email">
+      <div style="text-align:right"><button class="btn" data-action="p-addcontact" style="padding:6px 12px;font-size:12px">＋ Add</button></div>`;
+  }
+}
+function addParcelNote(){
+  const p=parcels.find(x=>x.id===selectedParcelId); if(!p) return;
+  const t=document.getElementById('p-newnote').value.trim(); if(!t) return;
+  (p.notes||(p.notes=[])).unshift({t,when:'just now'});
+  saveState(); parcelTabSwitch('notes'); toast('Note added ✓');
+}
+function delParcelNote(i){
+  const p=parcels.find(x=>x.id===selectedParcelId); if(!p) return;
+  p.notes.splice(i,1); saveState(); parcelTabSwitch('notes');
+}
+function delParcelContact(i){
+  const p=parcels.find(x=>x.id===selectedParcelId); if(!p) return;
+  p.contacts.splice(i,1); saveState(); parcelTabSwitch('contacts');
+}
+function saveParcelEdits(){
+  const p=parcels.find(x=>x.id===selectedParcelId); if(!p) return;
+  document.querySelectorAll('#p-body .pe').forEach(i=>{ const k=i.dataset.k, v=i.value.trim(); if(k) p[k]=(i.type==='number')?(+v||0):v; });
+  const us={};
+  document.querySelectorAll('#p-body [data-us]').forEach(row=>{ const k=row.querySelector('.us-k').value.trim(); const v=row.querySelector('.us-v').value.trim(); if(k) us[k]=v; });
+  p.userSpecs=us;
+  const tags=document.getElementById('p-tags').value.split(',').map(s=>s.trim()).filter(Boolean);
+  p.tags=tags;
+  saveState();
+  document.getElementById('p-title').textContent=p.addr;
+  document.getElementById('p-subtitle').textContent=`${p.city}, OH ${p.zip} · ${p.useCode} ${p.useDesc}`;
+  parcelTabSwitch('overview');
+  toast('Parcel updated ✓');
+}
+function addParcelSpec(label){
+  const wrap=document.getElementById('p-userspecs');
+  wrap.insertAdjacentHTML('beforeend', `<div class="p-edit-row" data-us><label>Label<input class="us-k" value="${escAttr(label||'')}"></label><label>Value<input class="us-v" value=""></label></div>`);
+  const rows=wrap.querySelectorAll('.p-edit-row'); const last=rows[rows.length-1];
+  (label?last.querySelector('.us-v'):last.querySelector('.us-k')).focus();
+}
+function addParcelContact(){
+  const p=parcels.find(x=>x.id===selectedParcelId); if(!p) return;
+  const c={};
+  document.querySelectorAll('#p-body .pc').forEach(i=>c[i.dataset.k]=i.value.trim());
+  if(!c.name){ toast('Enter a name'); return; }
+  (p.contacts||(p.contacts=[])).unshift(c);
+  saveState(); parcelTabSwitch('contacts'); toast('Contact added ✓');
+}
+function showOwnerPortfolio(){
+  const p=parcels.find(x=>x.id===selectedParcelId); if(!p) return;
+  const others=parcels.filter(x=>x.ownerName===p.ownerName && x.id!==p.id);
+  ownerHiLayer.clearLayers();
+  if(!others.length){ toast('This owner has no other parcels in the dataset'); return; }
+  const grp=[parcelPolyById[p.id].getBounds()];
+  others.forEach(o=>{
+    const coords=o.geometry.coordinates[0].map(c=>[c[1],c[0]]);
+    const poly=L.polygon(coords,{color:'#e08a2b',weight:3,fillColor:'#f0d891',fillOpacity:0.65,dashArray:'6,4'});
+    poly.bindTooltip(`<b>Same owner:</b> ${esc(o.addr)}<br>${esc(o.city)} · ${fmtAC(o.landSF)}`,{sticky:true,className:'parcel-tip'});
+    poly.on('click',ev=>{ L.DomEvent.stop(ev); selectParcel(o.id); });
+    poly.addTo(ownerHiLayer);
+    grp.push(poly.getBounds());
+  });
+  const all=grp.reduce((a,b)=>a.extend(b),L.latLngBounds(grp[0].getSouthWest(),grp[0].getNorthEast()));
+  parcelMap.fitBounds(all.pad(0.35),{maxZoom:15});
+  toast(`🏢 ${esc(p.ownerName)} owns ${others.length+1} parcels — highlighted in orange`);
+}
+function setParcelTool(t){
+  parcelTool=t;
+  document.querySelectorAll('.p-toolbar .p-tools button[data-tool]').forEach(b=>b.classList.toggle('on',b.dataset.tool===t));
+  document.body.classList.remove('cursor-measure','cursor-radius');
+  document.getElementById('p-measure').classList.add('hide');
+  document.getElementById('p-radius').classList.add('hide');
+  document.getElementById('p-assemble').classList.add('hide');
+  if(t==='measure'){ measurePts=[]; measureUpdate(); document.body.classList.add('cursor-measure'); document.getElementById('p-measure').classList.remove('hide'); }
+  else if(t==='radius'){ document.body.classList.add('cursor-radius'); document.getElementById('p-radius').classList.remove('hide'); }
+  else if(t==='assemble'){ document.getElementById('p-assemble').classList.remove('hide'); renderAssemble(); toast('Click parcels to add/remove from the assemblage'); }
+  else if(t==='select'){ /* default */ }
+}
+function pClear(){
+  measurePts=[]; if(measureLayer){ measureLayer.remove(); measureLayer=null; }
+  if(radiusLayer){ radiusLayer.remove(); radiusLayer=null; }
+  ownerHiLayer.clearLayers();
+  assembleSet.clear();
+  parcelInfoClose();
+  setParcelTool('select');
+  measureUpdate();
+  toast('Cleared');
+}
+
+// --- Measure ---
+function haversineFt(a,b){
+  const R=20903520; // ft
+  const dLat=(b.lat-a.lat)*Math.PI/180, dLng=(b.lng-a.lng)*Math.PI/180;
+  const s=Math.sin(dLat/2)**2 + Math.cos(a.lat*Math.PI/180)*Math.cos(b.lat*Math.PI/180)*Math.sin(dLng/2)**2;
+  return 2*R*Math.asin(Math.sqrt(s));
+}
+function polyAreaSF(pts){
+  // Shoelace on projected small area (planar approximation in ft)
+  if(pts.length<3) return 0;
+  const p0=pts[0];
+  const proj=p=>({x:haversineFt({lat:p0.lat,lng:p.lng},{lat:p0.lat,lng:p0.lng})*(p.lng>=p0.lng?1:-1), y:haversineFt(p0,{lat:p.lat,lng:p0.lng})*(p.lat>=p0.lat?1:-1)});
+  const P=pts.map(proj);
+  let a=0;
+  for(let i=0;i<P.length;i++){ const j=(i+1)%P.length; a+=P[i].x*P[j].y-P[j].x*P[i].y; }
+  return Math.abs(a/2);
+}
+function measureAdd(latlng){
+  measurePts.push(latlng);
+  measureUpdate();
+}
+function measureFinish(){
+  // On dbl-click, treat as closed polygon for area if 3+ pts
+  measureUpdate(true);
+}
+function measureUpdate(closed){
+  if(measureLayer){ measureLayer.remove(); measureLayer=null; }
+  if(!measurePts.length){ document.getElementById('pm-dist').textContent='—'; document.getElementById('pm-area').textContent='—'; return; }
+  measureLayer=L.layerGroup().addTo(parcelMap);
+  const line=L.polyline(measurePts,{color:'#e08a2b',weight:3,dashArray:'6,4'}).addTo(measureLayer);
+  measurePts.forEach((pt,i)=>L.circleMarker(pt,{radius:5,color:'#fff',weight:2,fillColor:'#e08a2b',fillOpacity:1}).bindTooltip(String(i+1),{permanent:true,direction:'top',className:'parcel-tip'}).addTo(measureLayer));
+  let dist=0;
+  for(let i=1;i<measurePts.length;i++) dist+=haversineFt(measurePts[i-1],measurePts[i]);
+  document.getElementById('pm-dist').textContent = dist>=5280?(dist/5280).toFixed(2)+' mi':Math.round(dist)+' ft';
+  if(measurePts.length>=3){
+    const area=polyAreaSF(measurePts);
+    document.getElementById('pm-area').textContent = area>=43560?(area/43560).toFixed(2)+' AC':Math.round(area)+' sq ft';
+    if(closed){ L.polygon(measurePts,{color:'#e08a2b',weight:2,fillColor:'#f0d891',fillOpacity:0.35,dashArray:'6,4'}).addTo(measureLayer); }
+  } else { document.getElementById('pm-area').textContent='need 3+ pts'; }
+}
+function measureClear(){ measurePts=[]; measureUpdate(); }
+
+// --- Radius ---
+function radiusPlace(latlng){
+  radiusCenter=latlng;
+  radiusRender();
+}
+function radiusRender(){
+  if(radiusLayer){ radiusLayer.remove(); radiusLayer=null; }
+  if(!radiusCenter){ document.getElementById('pr-count').textContent='0'; document.getElementById('pr-land').textContent='—'; document.getElementById('pr-center').textContent='—'; document.getElementById('pr-demo').innerHTML=''; return; }
+  radiusLayer=L.layerGroup().addTo(parcelMap);
+  const mi=+document.getElementById('pr-dist').value||0.5;
+  radiusMi=mi;
+  L.circle(radiusCenter,{radius:mi*1609.34,color:'#2b7fd4',fillColor:'#2b7fd4',fillOpacity:0.10,weight:2,dashArray:'6,4'}).addTo(radiusLayer);
+  L.circleMarker(radiusCenter,{radius:6,color:'#fff',weight:2,fillColor:'#2b7fd4',fillOpacity:1}).addTo(radiusLayer);
+  document.getElementById('pr-center').textContent=`${radiusCenter.lat.toFixed(4)}, ${radiusCenter.lng.toFixed(4)}`;
+  // parcels in range
+  const rFt=mi*5280;
+  const inRange=parcels.filter(p=>haversineFt({lat:p.lat,lng:p.lng},radiusCenter)<rFt);
+  const totalAC=inRange.reduce((s,p)=>s+p.landSF,0)/43560;
+  document.getElementById('pr-count').textContent=inRange.length;
+  document.getElementById('pr-land').textContent=totalAC.toFixed(1)+' AC';
+  // find closest demo zone
+  const z=DEMO_ZONES.reduce((best,d)=>{const dd=haversineFt({lat:d.lat,lng:d.lng},radiusCenter); return dd<best.d?{d:dd,z:d}:best;},{d:Infinity,z:null}).z;
+  if(z){
+    // Scale populations by radius proportion (demo)
+    const scale=mi/2;
+    document.getElementById('pr-demo').innerHTML=`
+      <div><span>Est. Pop.</span><b>${fmtNum(Math.round(z.pop*scale))}</b></div>
+      <div><span>Median HH Income</span><b>$${fmtNum(z.mhi)}</b></div>
+      <div><span>Median Age</span><b>${z.mha}</b></div>
+      <div><span>Housing Units</span><b>${fmtNum(Math.round(z.hhu*scale))}</b></div>
+      <div><span>Daytime Pop.</span><b>${fmtNum(Math.round(z.daytime*scale))}</b></div>
+      <div><span>Zone</span><b style="font-size:11.5px">${esc(z.label)}</b></div>`;
+  }
+  // Highlight in-range parcels briefly
+  Object.entries(parcelPolyById).forEach(([pid,poly])=>{
+    const pp=parcels.find(x=>x.id===+pid); if(!pp) return;
+    if(inRange.some(ir=>ir.id===pp.id)) poly.setStyle({weight:2.5,color:'#2b7fd4',fillOpacity:0.55});
+    else poly.setStyle(parcelStyle(pp));
+  });
+}
+function radiusChange(){ radiusRender(); }
+function radiusClear(){ radiusCenter=null; radiusRender(); Object.entries(parcelPolyById).forEach(([pid,poly])=>{ const pp=parcels.find(x=>x.id===+pid); if(pp) poly.setStyle(parcelStyle(pp)); }); }
+
+// --- Assemble ---
+function toggleAssemble(id){
+  if(assembleSet.has(id)) assembleSet.delete(id); else assembleSet.add(id);
+  const p=parcels.find(x=>x.id===id); if(p) parcelPolyById[id].setStyle(parcelStyle(p));
+  renderAssemble();
+}
+function renderAssemble(){
+  const arr=[...assembleSet].map(id=>parcels.find(p=>p.id===id)).filter(Boolean);
+  document.getElementById('pa-count').textContent=arr.length;
+  const totalSF=arr.reduce((s,p)=>s+p.landSF,0);
+  const totalVal=arr.reduce((s,p)=>s+p.totalValue,0);
+  document.getElementById('pa-land').textContent=(totalSF/43560).toFixed(2);
+  document.getElementById('pa-value').textContent=fmtMoney(totalVal);
+}
+function assembleClear(){ [...assembleSet].forEach(id=>{ const p=parcels.find(x=>x.id===id); if(p) parcelPolyById[id]?.setStyle(parcelStyle(p)); }); assembleSet.clear(); renderAssemble(); }
+function assembleReport(){
+  const arr=[...assembleSet].map(id=>parcels.find(p=>p.id===id)).filter(Boolean);
+  if(!arr.length){ toast('Select parcels first'); return; }
+  const totSF=arr.reduce((s,p)=>s+p.landSF,0);
+  const totVal=arr.reduce((s,p)=>s+p.totalValue,0);
+  const owners=[...new Set(arr.map(p=>p.ownerName))];
+  const html=`<!doctype html><html><head><title>Assemblage Report</title>
+  <style>body{font-family:-apple-system,Segoe UI,sans-serif;margin:0;background:#f4f6f9;color:#20242a}
+  .page{background:#fff;max-width:820px;margin:24px auto;padding:40px 46px;border-radius:6px;box-shadow:0 2px 20px rgba(0,0,0,.08)}
+  .cover{background:linear-gradient(135deg,#3a2c00,#4a3800);color:#fff;padding:44px 46px;border-radius:6px 6px 0 0;margin:-40px -46px 26px}
+  h1{margin:0;font-size:26px} h2{color:#3a2c00;font-size:15px;border-bottom:2px solid #f0e2c0;padding-bottom:6px;margin-top:22px}
+  .kv{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:14px} .kv div{background:#fffbf0;padding:14px;border-radius:6px;text-align:center;border:1px solid #f0e2c0}
+  .kv b{display:block;font-size:22px;font-weight:800;color:#3a2c00} .kv span{font-size:11px;color:#8a6a1f;font-weight:700;text-transform:uppercase;letter-spacing:.3px}
+  table{width:100%;border-collapse:collapse;margin-top:12px;font-size:12.5px} th,td{padding:8px 10px;text-align:left;border-bottom:1px solid #e2e6ec} th{background:#fffbf0;font-size:11px;text-transform:uppercase}
+  </style></head><body><div class="page">
+  <div class="cover"><div style="font-size:11px;letter-spacing:2px;opacity:.85;font-weight:700">ASSEMBLAGE OPPORTUNITY</div>
+    <h1>${arr.length}-Parcel Assemblage · ${esc(arr[0].city)}</h1>
+    <div style="opacity:.9;margin-top:4px">Prepared ${new Date().toLocaleDateString()}</div></div>
+  <h2>Consolidated Totals</h2>
+  <div class="kv">
+    <div><span>Parcels</span><b>${arr.length}</b></div>
+    <div><span>Total Land</span><b>${(totSF/43560).toFixed(2)} AC</b></div>
+    <div><span>Total Land SF</span><b>${fmtNum(totSF)}</b></div>
+    <div><span>Assessed Value</span><b>${fmtMoney(totVal)}</b></div>
+  </div>
+  <h2>Ownership (${owners.length} unique)</h2>
+  <div style="font-size:13px">${owners.map(o=>`<div>• ${esc(o)}</div>`).join('')}</div>
+  <h2>Parcels Included</h2>
+  <table><tr><th>APN</th><th>Address</th><th>Owner</th><th>Use</th><th>Land AC</th><th>Assessed $</th></tr>
+    ${arr.map(p=>`<tr><td>${esc(p.apn)}</td><td>${esc(p.addr)}</td><td>${esc(p.ownerName)}</td><td>${esc(p.useDesc)}</td><td>${(p.landSF/43560).toFixed(2)}</td><td>${fmtMoney(p.totalValue)}</td></tr>`).join('')}
+  </table>
+  <h2>Broker Notes</h2>
+  <p>This assemblage represents ${(totSF/43560).toFixed(1)} acres of contiguous industrial-zoned land in ${esc(arr[0].city)} · Hamilton Co OH. Combined basis of ${fmtMoney(totVal)} implies $${Math.round(totVal/(totSF/43560)).toLocaleString()}/land AC. Reach out to ${esc(owners[0])}${owners.length>1?` and ${owners.length-1} other owner(s)`:''} to structure a unified deal.</p>
+  </div></body></html>`;
+  const w=window.open('','_blank'); if(w){ w.document.write(html); w.document.close(); }
+  toast('📄 Assemblage report opened');
+}
+function assembleToProspect(){
+  const arr=[...assembleSet].map(id=>parcels.find(p=>p.id===id)).filter(Boolean);
+  if(!arr.length){ toast('Select parcels first'); return; }
+  const totSF=arr.reduce((s,p)=>s+p.landSF,0);
+  const totVal=arr.reduce((s,p)=>s+p.totalValue,0);
+  const owners=[...new Set(arr.map(p=>p.ownerName))];
+  const np={id:prospects.reduce((m,p)=>Math.max(m,p.id),-1)+1,
+    addr:`${arr.length}-parcel assemblage · ${arr[0].addr} et al`,
+    city:arr[0].city+', OH', type:'Industrial Outdoor Storage', sizeSF:0, lotAC:+(totSF/43560).toFixed(2), yearBuilt:0,
+    clearHt:'—', dockDoors:0, ownerLLC:owners.join(' · '), ownerName:'Multiple', ownerPhone:'—',
+    lastSaleDate:'—', lastSalePrice:totVal, currentTenant:'—',
+    score:85, tags:['Assemblage','Multi-Parcel'], addedAt:'just now', status:'new',
+    signals:[`${arr.length} contiguous parcels`, `${(totSF/43560).toFixed(1)} AC total`, `${owners.length} owner(s)`],
+    aiNote:'Multi-parcel assemblage — greatest complexity is coordinating unified purchase; use holdout risk to pace offers.'};
+  prospects.unshift(np); saveState();
+  toast('🎯 Assemblage → Prospect · view in Prospecting');
+}
+
+// --- Parcel actions (right panel bottom) ---
+function parcelToProspect(){
+  const p=parcels.find(x=>x.id===selectedParcelId); if(!p) return;
+  const np={id:prospects.reduce((m,x)=>Math.max(m,x.id),-1)+1,
+    addr:p.addr, city:p.city+', OH', type:p.useDesc, sizeSF:p.buildingSF, lotAC:+(p.landSF/43560).toFixed(2), yearBuilt:p.yearBuilt,
+    clearHt:p.userSpecs?.['Clear Height']||"—", dockDoors:p.userSpecs?.['Dock Doors']||0,
+    ownerLLC:p.ownerName, ownerName:p.ownerName, ownerPhone:'—',
+    lastSaleDate:p.lastSale?.date||'—', lastSalePrice:p.lastSale?.price||0, currentTenant:'—',
+    score:75, tags:p.tags?.length?p.tags:['From Parcel Map'], addedAt:'just now', status:'new',
+    signals:['Sourced from Hamilton Co parcel search', `Last sale ${fmtMoney(p.lastSale?.price)} (${p.lastSale?.date||'—'})`, `Assessed ${fmtMoney(p.totalValue)}`],
+    aiNote:`Basis at ${fmtMoney(p.lastSale?.price)} vs assessed ${fmtMoney(p.totalValue)} — appreciation potential + owner is ${esc(p.ownerName)}.`};
+  prospects.unshift(np); saveState(); toast('🎯 Added to Prospecting · click Prospecting to see');
+}
+function parcelToListing(){
+  const p=parcels.find(x=>x.id===selectedParcelId); if(!p) return;
+  const id=(listings.reduce((m,l)=>Math.max(m,l.id),-1))+1;
+  const specs={};
+  if(p.landSF) specs['Land AC']=(p.landSF/43560).toFixed(2)+' AC';
+  if(p.buildingSF) specs['Building SF']=fmtNum(p.buildingSF);
+  if(p.buildingSF) specs['Available SF']=fmtNum(p.buildingSF);
+  Object.entries(p.userSpecs||{}).forEach(([k,v])=>specs[k]=v);
+  listings.push({id, addr:p.addr, city:p.city+', OH', owner:p.ownerName, type:p.useDesc.includes('Warehouse')?'Warehouse / Distribution':(p.useDesc.includes('Manuf')?'Manufacturing':(p.useDesc.includes('Flex')?'Flex / R&D':(p.useDesc.includes('Storage')?'Industrial Outdoor Storage':'Warehouse / Distribution'))),
+    status:'active', size:p.buildingSF?fmtNum(p.buildingSF)+' SF':(p.landSF/43560).toFixed(2)+' AC',
+    sf:p.buildingSF||p.landSF, commission:0, rate:'', price:'—', dom:0, views:0, tours:0,
+    specs, custom:[], photos:p.photos||[], contacts:p.contacts||[], lat:p.lat, lng:p.lng});
+  saveState(); toast('＋ Listing created from parcel · opening detail');
+  setTimeout(()=>openDetail(id),200);
+}
+function parcelToBOV(){
+  const p=parcels.find(x=>x.id===selectedParcelId); if(!p) return;
+  // Create a temporary "prospect-like" for BOV subject
+  go('bov');
+  setTimeout(()=>{
+    const sel=document.getElementById('bov-subject');
+    const optId='parcel-'+p.id;
+    if(!Array.from(sel.options).some(o=>o.value===optId)){
+      const opt=document.createElement('option'); opt.value=optId; opt.textContent=`[Parcel] ${p.addr} — ${p.city}`;
+      sel.appendChild(opt);
+    }
+    sel.value=optId;
+    // Custom subject build
+    bovSubject={addr:p.addr,city:p.city+', OH',type:p.useDesc,sizeSF:p.buildingSF,lotAC:+(p.landSF/43560).toFixed(2),yearBuilt:p.yearBuilt,clearHt:p.userSpecs?.['Clear Height']||'',dockDoors:p.userSpecs?.['Dock Doors']||0,isProspect:true};
+    // Auto pick comps
+    const eligible=comps.filter(c=>c.txType==='lease' && c.sizeSF && p.buildingSF ? (c.sizeSF/p.buildingSF>=0.55 && c.sizeSF/p.buildingSF<=1.55):true).slice(0,6);
+    bovSelectedComps=eligible.map(c=>c.id);
+    document.getElementById('bov-body').classList.remove('hide');
+    renderBOVBody();
+    toast(`✨ BOV subject set from parcel · ${eligible.length} comps pulled`);
+  },200);
+}
+
+// --- Live CAGIS attempt ---
+async function tryLoadCAGIS(){
+  const endpoints=[
+    // Hamilton County CAGIS Auditor parcels (well-known public REST)
+    'https://cagismaps.hamilton-co.org/arcgis/rest/services/Property/Property/MapServer/0/query?where=1%3D1&outFields=PARID,SITE_ADDR,OWN_NAME&f=geojson&geometry=-84.55,39.10,-84.51,39.16&geometryType=esriGeometryEnvelope&spatialRel=esriSpatialRelIntersects&outSR=4326&resultRecordCount=200',
+  ];
+  toast('🔄 Trying live CAGIS pull…');
+  for(const url of endpoints){
+    try{
+      const r=await fetch(url,{mode:'cors'});
+      if(!r.ok) continue;
+      const j=await r.json();
+      if(!j.features||!j.features.length) continue;
+      // Map to our parcel shape
+      const newP=j.features.slice(0,60).map((f,i)=>({
+        id:1000+i, apn:f.properties?.PARID||('LIVE-'+i),
+        addr:f.properties?.SITE_ADDR||'Unknown address', city:'Cincinnati', zip:'',
+        ownerName:f.properties?.OWN_NAME||'Unknown owner', ownerAddress:'',
+        useCode:'',useDesc:'Live data',landSF:0,buildingSF:0,yearBuilt:0,stories:0,
+        landValue:0,buildingValue:0,totalValue:0,lastSale:{},saleHistory:[],zoning:'',
+        lat:f.geometry.coordinates[0][0][1],lng:f.geometry.coordinates[0][0][0],
+        geometry:f.geometry, notes:[],photos:[],contacts:[],userSpecs:{},tags:['Live CAGIS']
+      }));
+      parcels=[...newP,...parcels];
+      document.getElementById('p-datasrc').textContent='LIVE'; document.getElementById('p-datasrc').classList.remove('seed');
+      renderParcelPolygons(); saveState();
+      toast(`✅ Loaded ${newP.length} live CAGIS parcels`);
+      return;
+    }catch(e){/* try next */}
+  }
+  toast('⚠ CAGIS endpoint not reachable from browser (CORS) — running on seeded data');
+}
+
+// =========================================================================
 // LINKEDIN POST GENERATOR (adds to marketing)
 // =========================================================================
 function buildLinkedInHTML(l,sel){
@@ -3261,6 +4017,28 @@ document.addEventListener('click', function(e){
       }
       openOwnerReport(+id); break;
     }
+    // Parcels
+    case 'p-tool': setParcelTool(el.dataset.tool); break;
+    case 'p-tryload': tryLoadCAGIS(); break;
+    case 'p-clear': pClear(); break;
+    case 'p-info-close': parcelInfoClose(); break;
+    case 'p-tab': parcelTabSwitch(el.dataset.tab); break;
+    case 'p-addspec': addParcelSpec(el.dataset.label); break;
+    case 'p-savep': saveParcelEdits(); break;
+    case 'p-addnote': addParcelNote(); break;
+    case 'p-delnote': delParcelNote(+el.dataset.i); break;
+    case 'p-addcontact': addParcelContact(); break;
+    case 'p-delcontact': delParcelContact(+el.dataset.i); break;
+    case 'p-owner-portfolio': showOwnerPortfolio(); break;
+    case 'p-prospect': parcelToProspect(); break;
+    case 'p-listing': parcelToListing(); break;
+    case 'p-bov': parcelToBOV(); break;
+    case 'p-radius-change': radiusRender(); break;
+    case 'p-radius-clear': radiusClear(); break;
+    case 'p-measure-clear': measureClear(); break;
+    case 'p-assemble-clear': assembleClear(); break;
+    case 'p-assemble-report': assembleReport(); break;
+    case 'p-assemble-prospect': assembleToProspect(); break;
   }
 });
 
@@ -3340,6 +4118,10 @@ function renderAll(){
 });
 { const s=document.getElementById('loi-listing'); if(s) s.addEventListener('change',e=>loiListingChange(e.target.value)); }
 { const s=document.getElementById('bov-subject'); if(s) s.addEventListener('change',()=>{ bovSubject=null; document.getElementById('bov-body').classList.add('hide'); }); }
+['p-search','p-usecode'].forEach(id=>{
+  const el=document.getElementById(id); if(el) el.addEventListener(el.tagName==='SELECT'?'change':'input',()=>{ if(parcelLayer) renderParcelPolygons(); });
+});
+{ const s=document.getElementById('pr-dist'); if(s) s.addEventListener('change',radiusRender); }
 
 loadState();
 renderDash();
